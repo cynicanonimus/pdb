@@ -36,5 +36,6 @@
         <file>images/no_shield.png</file>
         <file>images/shield.png</file>
         <file>images/db_connection.png</file>
+        <file>images/about.ico</file>
     </qresource>
 </RCC>

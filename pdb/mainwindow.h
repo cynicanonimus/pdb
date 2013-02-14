@@ -70,6 +70,7 @@ private slots:
     void onSearch                   ();
     void onDbAlreadyInUse           () const;
     void saveCurrentModeDescriptor  ();
+    void onClickAbout               ();
 
 private:
     Ui::MainWindow* ui;

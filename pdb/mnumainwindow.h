@@ -67,6 +67,7 @@ private:
     void        createProtectionMenu        ();
     void        createSecurityMenu          ();
     void        createCryptograficMenu      ();
+    void        createHelpMenu              ();
     //
     void        assemblyAllMenus            ();
     //
@@ -81,6 +82,8 @@ private:
     void        assemblyAttachCryptographySubMenu( QMenu* ptr_node_menu );
     //
     void        assemblySecurityMenu            ( QMenu* ptr_node_menu );
+    //
+    void        assemblyHelpMenu                ();
     //
     void        adjustProtectionMenuForSelectedAttacments   ( const AttachStatusChecker& checker ); //
     void        adjustProtectionMenuForAllAttacmentsOfNode  ( TreeLeaf *ptr_parent );               //
@@ -158,6 +161,9 @@ public:
     //
     QAction*    m_ptrEncryptSelectedAttachments;         //for all currently selected attachments
     QAction*    m_ptrDecryptSelectedAttachments;         //for all currently selected attachments
+    //----------------------------------------------------------------------------------------------------
+    QMenu*      m_ptrHelpMenu;
+    QAction*    m_ptrAbout;
     //
 private:
     MainWindow*     m_ptrParent;

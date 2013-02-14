@@ -29,15 +29,15 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     m_ptrParent         = parent;
     m_bPasswordExist    = false;
     //
-    createTreeControlMenu();
-    createNodeControlMenu();
-    createAttachmentControlMenu();
-    createCryptograficMenu();
-    createProtectionMenu();
+    createTreeControlMenu       ();
+    createNodeControlMenu       ();
+    createAttachmentControlMenu ();
+    createCryptograficMenu      ();
+    createProtectionMenu        ();
+    createSecurityMenu          ();
+    createHelpMenu              ();
     //
-    createSecurityMenu();
-    //
-    assemblyAllMenus();
+    assemblyAllMenus            ();
 }
 
 MnuMainWindow::~MnuMainWindow()
@@ -546,6 +546,16 @@ void MnuMainWindow::adjustCryptoMenuForSelectedAttacments (  const AttachStatusC
     m_ptrDecryptSelectedAttachments->setEnabled ( checker.m_bAtLeastOneAttachmentOKAndEncrypted );
 }
 
+void MnuMainWindow::createHelpMenu ()
+{
+    m_ptrAbout  = new QAction(tr("About..."), this);
+    m_ptrAbout  ->setIconVisibleInMenu(true);
+    m_ptrAbout  ->setIcon(QIcon(":/images/images/about.ico"));
+    m_ptrAbout  ->setShortcut(QKeySequence (Qt::Key_F1));
+    m_ptrAbout  ->setStatusTip(tr("About the program"));
+    m_ptrAbout  ->setEnabled(true); //always enabled
+ }
+
 void MnuMainWindow::createAttachmentControlMenu()
 {
     m_ptrRestoreAttach  = new QAction(tr("Restore attachment"), this);
@@ -911,6 +921,11 @@ void MnuMainWindow::assemblySecurityMenu( QMenu* ptr_node_menu )
     ptr_node_menu->addAction(m_ptrCreateChangePassword);
 }
 
+void MnuMainWindow::assemblyHelpMenu()
+{
+    m_ptrHelpMenu->addAction(m_ptrAbout);
+}
+
 void MnuMainWindow::assemblyAllMenus()
 {
     m_ptrTreeControlMenu = m_ptrParent->menuBar()->addMenu(tr("&Tree"));
@@ -946,4 +961,9 @@ void MnuMainWindow::assemblyAllMenus()
     m_ptrSecurity = m_ptrParent->menuBar()->addMenu(tr("Security"));
     //
     assemblySecurityMenu(m_ptrSecurity);
+    //
+    //m_ptrParent->menuBar()->addAction(m_ptrAbout);
+    //
+    m_ptrHelpMenu = m_ptrParent->menuBar()->addMenu(tr("&Help"));
+    assemblyHelpMenu();
 };

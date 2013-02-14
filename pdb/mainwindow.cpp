@@ -128,10 +128,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //
     statusBar()->showMessage(tr("Ready"));
     //
-    return;
-    //**********************************************
+    /**********************************************
     //             this is debug code
-    //**********************************************
     QStringList str_paths =  QApplication::libraryPaths();
     //
     QString str_out;
@@ -142,6 +140,8 @@ MainWindow::MainWindow(QWidget *parent) :
     };
     statusBar()->showMessage(str_out);
     //
+
+    **********************************************/
     return;
 }
 
@@ -186,6 +186,8 @@ void MainWindow::connectSignalsAndSlots ()
     QObject::connect( ui->m_Service_Tab,                SIGNAL(attachmentForCutSelected(Attachment::AttachmentsList)), ui->m_TreeOfNodes, SLOT (onAcceptCutAttachment(Attachment::AttachmentsList) ));
     //TreeLeaf::AttachmentsList
     //
+    //about
+    QObject::connect(m_pMainMenu->m_ptrAbout,           SIGNAL(triggered()), this,              SLOT( onClickAbout()    ) );
     //attachments menu:
     //
     QObject::connect(m_pMainMenu->m_ptrImportAttach,    SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onImportAttach () ) );
@@ -514,3 +516,18 @@ void MainWindow::restoreWindowParams()
     restoreState(settings.value(g_str_WINDOW_STATE).toByteArray());
 }
 
+void MainWindow::onClickAbout ()
+{
+    QMessageBox msgBox(this);
+    QString str_msg;
+    str_msg = "<p align=\"center\">";
+    str_msg += "Pdb is under GNU General Public License version 3. <br>";
+    str_msg += "You can find latest version of pdb <a href=\"git://github.com/cynicanonimus/pdb.git\">here</a> <br>";
+    str_msg += "<a href=\"mailto:me@amironov.com?Subject=Pdb%20Project\">me@amironov.com</a>";
+    str_msg += "</p>";
+    //
+    msgBox.setWindowTitle("About");
+    msgBox.setTextFormat(Qt::RichText); //this is what makes the links clickable
+    msgBox.setText(str_msg);
+    msgBox.exec();
+}
