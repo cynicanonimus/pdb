@@ -522,13 +522,14 @@ void MainWindow::onClickAbout ()
     QString str_msg;
     str_msg = "<p align=\"center\">";
     str_msg += "Pdb is under GNU General Public License version 3. <br>";
-    str_msg += "You can find latest version of Pdb <a href=\"git://github.com/cynicanonimus/pdb.git\">here</a> <br>";
-    str_msg += "<a href=\"mailto:me@amironov.com?Subject=Pdb%20Project\">me@amironov.com</a>";
+    str_msg += "You can find latest version of Pdb ";
+    str_msg += "<a href=\"http://github.com/cynicanonimus/pdb.git\">here</a> <br>";
+    str_msg += "For questions and ideas: <a href=\"mailto:me@amironov.com?Subject=Pdb%20Project\">me@amironov.com</a>";
     str_msg += "</p>";
     //
     msgBox.setWindowTitle("About");
     msgBox.setTextFormat(Qt::RichText); //this is what makes the links clickable
-
+    //
     msgBox.setText(str_msg);
     msgBox.exec();
 }
