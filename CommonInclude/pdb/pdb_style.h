@@ -21,9 +21,7 @@
 
 #ifdef Q_WS_WIN
 static const QString  g_strPATH_DELIMETER = "\\";
-#endif
-//
-#ifdef Q_WS_X11
+#else
 static const QString  g_strPATH_DELIMETER = "/";
 #endif
 
