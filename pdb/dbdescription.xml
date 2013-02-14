@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!-- Warning!  -->
+<!-- Changing of this file may damage your database. You do it on your own risk! -->
+<databases>
+		<!-- list of mandatory tables in every database -->
+	<mandatory_tables>
+		<table>attachments</table>
+		<table>node_tbl</table>
+		<table>root_tbl</table>
+		<table>service_tbl</table>
+	</mandatory_tables>
+		<!--  -->
+	<database type="MySql">
+		<!-- drive name for main application -->
+		<driver>QMYSQL</driver>
+		<!-- 
+				this request must returns list of existing tables (SQL query or stored procedure) in the form like this: 
+				tablename1
+				tablename2
+				....
+				tablenameN
+		-->
+		<show_tables_request>
+		SHOW TABLES;		
+		</show_tables_request>		
+		<!-- list of executing statement. 'id' means priority of execution -->
+
+		<statement id="0">
+			DROP TABLE IF EXISTS `attachments`;
+		</statement>
+
+		<statement id="1">
+			DROP TABLE IF EXISTS `service_tbl`;
+		</statement>
+
+		<statement id="2">
+			DROP TABLE IF EXISTS `node_tbl`;		
+		</statement>
+
+		<statement id="3">
+			DROP TABLE IF EXISTS `root_tbl`;
+		</statement>
+
+		<statement id="4">
+			CREATE TABLE `service_tbl` (
+			  `id_param` int(11) NOT NULL AUTO_INCREMENT,
+			  `is_already_in_use` tinyint(1) NOT NULL DEFAULT '0',
+			  `password` varchar(255) DEFAULT NULL,
+			  PRIMARY KEY (`id_param`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		</statement>
+
+		<statement id="5">
+			CREATE TABLE `root_tbl` (
+			  `id_tree` int(11) NOT NULL AUTO_INCREMENT,
+			  `tree_name` varchar(255) NOT NULL,
+			  `last_change` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			  `active` tinyint(1) NOT NULL DEFAULT '1',
+			  `current` tinyint(1) NOT NULL DEFAULT '0',
+			  PRIMARY KEY (`id_tree`),
+			  UNIQUE KEY `tree_name_UNIQUE` (`tree_name`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		</statement>
+
+		<statement id="6">
+			CREATE TABLE `node_tbl` (
+			  `id_node` int(11) NOT NULL AUTO_INCREMENT,
+			  `id_parent` int(11) NOT NULL,
+			  `id_tree` int(11) NOT NULL,
+			  `node_name` varchar(255) NOT NULL,
+			  `node_descriptor` longtext,
+			  `active` tinyint(1) NOT NULL DEFAULT '1',
+			  `expanded` tinyint(1) NOT NULL DEFAULT '0',
+			  `last_change` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			  `id_icon` int(11) NOT NULL DEFAULT '0',
+			  PRIMARY KEY (`id_node`),
+			  KEY `tree_ind` (`id_tree`),
+			  CONSTRAINT `node_tbl_ibfk_1` FOREIGN KEY (`id_tree`) REFERENCES `root_tbl` (`id_tree`) ON DELETE CASCADE
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		</statement>
+
+		<statement id="7">
+			CREATE TABLE `attachments` (
+			  `id_attach` int(11) NOT NULL AUTO_INCREMENT,
+			  `id_parent` int(11) NOT NULL,
+			  `attach_name` varchar(255) NOT NULL,
+			  `attach_size` int(11) NOT NULL DEFAULT '1',
+			  `active` tinyint(1) NOT NULL DEFAULT '1',
+			  `crypted` tinyint(1) NOT NULL DEFAULT '0',
+			  `locked` tinyint(1) NOT NULL DEFAULT '0',
+			  `is_binary` tinyint(1) NOT NULL,
+			  `last_change` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			  `attach` longblob NOT NULL,
+			  PRIMARY KEY (`id_attach`),
+			  KEY `attach_ind` (`id_parent`),
+			  CONSTRAINT `attachments_ibfk_1` FOREIGN KEY (`id_parent`) REFERENCES `node_tbl` (`id_node`) ON DELETE CASCADE
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		</statement>
+
+ 	</database>
+	<database type="Oracle">
+		<!-- drive name for main application -->
+		<driver>QOCI</driver>
+		<!-- list of executing statement. 'id' means priority of execution -->
+		<show_tables_request>
+		SHOW TABLES;		
+		</show_tables_request>		
+		<statement id="0">
+			select count (*) from attachments;
+		</statement>
+	</database>
+<databases>

@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>images/export.ico</file>
+        <file>images/paste.ico</file>
+        <file>images/import.ico</file>
+        <file>images/delete.ico</file>
+        <file>images/add.ico</file>
+        <file>images/add2.ico</file>
+        <file>images/restore.ico</file>
+        <file>images/download.ico</file>
+        <file>images/delete2.ico</file>
+        <file>images/restore2.ico</file>
+        <file>images/new.png</file>
+        <file>images/tree.ico</file>
+        <file>images/drag_node.png</file>
+        <file>images/no_drag_node.png</file>
+        <file>images/question.ico</file>
+        <file>images/lock.ico</file>
+        <file>images/lock_open.ico</file>
+        <file>images/view.ico</file>
+        <file>images/restore3.ico</file>
+        <file>images/branch-closed.png</file>
+        <file>images/branch-end.png</file>
+        <file>images/branch-more.png</file>
+        <file>images/branch-open.png</file>
+        <file>images/vline.png</file>
+        <file>images/exit.ico</file>
+        <file>images/chest.ico</file>
+        <file>images/cut.ico</file>
+        <file>images/replace.ico</file>
+        <file>images/information2.ico</file>
+        <file>images/chest.png</file>
+        <file>images/save.ico</file>
+        <file>images/shield_add.png</file>
+        <file>images/shield_delete.png</file>
+        <file>images/no_shield.png</file>
+        <file>images/shield.png</file>
+        <file>images/db_connection.png</file>
+    </qresource>
+</RCC>

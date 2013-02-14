@@ -1,0 +1,107 @@
+#include "tunnelmaker.h"
+#include "../CommonInclude/pdb/pdb_style.h"
+#include "../CommonInclude/pdb/DBSettings.h"
+//
+#include <QSettings>
+#include <QMessageBox>
+#include <QTime>
+#include <QCoreApplication>
+//
+TunnelMaker::TunnelMaker(QObject *parent) :
+    QObject(parent)
+{
+    m_ptrTunnelProcess      = NULL;
+    m_bTunnelIsActiveNow    = false;
+    m_bTunnelNeedToCreate   = false;
+    //
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    //
+    QVariant var            = settings.value(g_str_DB_SETTINGS);
+    DBSettings db_settings  = var.value<DBSettings>();
+    //
+    m_bTunnelNeedToCreate   = db_settings.m_vMakeTunnel[db_settings.getCurrentPage()];
+    m_strRawCommand         = db_settings.m_TunnelList[db_settings.getCurrentPage()];
+    //
+    return;
+}
+
+TunnelMaker::~TunnelMaker ()
+{
+    destroyTunnel();
+}
+
+void TunnelMaker::makeTunnel      ()
+{
+    if (false == m_bTunnelNeedToCreate)
+        return;
+    //
+    QStringList str_split_list = m_strRawCommand.split(" ",QString::SkipEmptyParts);
+    //
+    QString program = str_split_list.at(0);
+    str_split_list.removeAt(0);
+    QStringList arguments = str_split_list;
+    //
+    m_ptrTunnelProcess = new QProcess(this);
+    //
+    QObject::connect(m_ptrTunnelProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(onTunnelError(QProcess::ProcessError)) );
+    //
+    m_ptrTunnelProcess->start(program, arguments);
+    //
+    QTime dieTime= QTime::currentTime().addSecs(3);
+    while( QTime::currentTime() < dieTime )
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+}
+
+void TunnelMaker::destroyTunnel ()
+{
+    if (false == m_bTunnelNeedToCreate)
+        return;
+    //
+    if (m_ptrTunnelProcess)
+    {
+        m_bTunnelIsActiveNow = false;
+        m_ptrTunnelProcess->terminate();
+        m_ptrTunnelProcess->kill();
+        //
+        QTime dieTime= QTime::currentTime().addSecs(3);
+        while( QTime::currentTime() < dieTime )
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        //
+        delete m_ptrTunnelProcess;
+        m_ptrTunnelProcess = NULL;        
+    };
+}
+
+void TunnelMaker::onTunnelError ( QProcess::ProcessError err)
+{
+    if (false == m_bTunnelIsActiveNow) //because when we terminate the task, we always get the error
+        return;
+    //
+    QString str_msg;
+    QMessageBox box;
+    //
+    switch(err)
+    {
+    case QProcess::FailedToStart:
+        str_msg = "Can not make tunnel. Process failed to start.";
+        break;
+    case QProcess::Crashed:
+        str_msg = "Tunnel crashed";
+        break;
+    case QProcess::Timedout:
+        str_msg = "Process timeout expired";
+        break;
+    case QProcess::WriteError:
+        str_msg = "Can not write to process";
+        break;
+    case QProcess::ReadError:
+        str_msg = "Can not read from process";
+        break;
+    default:
+        str_msg = "Unknown error. Process stopped.";
+        break;
+    };
+    //
+    box.setText(str_msg);
+    box.exec();
+}
