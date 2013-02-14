@@ -59,7 +59,6 @@ HEADERS  += mainwindow.h \
     dbconnection.h \
     connectionmanager.h \
     abstractdatabaseobject.h \
-    VariantPtr.h \
     mytree.h \
     mnumainwindow.h \
     attachment.h \
@@ -87,7 +86,8 @@ HEADERS  += mainwindow.h \
     cryptothread.h \
     ../CommonInclude/pdb/DBSettingsStream.h \
     ../CommonInclude/pdb/DBSettings.h \
-    ../CommonInclude/pdb/cryptosupport.h
+    ../CommonInclude/pdb/cryptosupport.h \
+    ../CommonInclude/pdb/VariantPtr.h
 
 FORMS    += mainwindow.ui \
     notificationdialog.ui \

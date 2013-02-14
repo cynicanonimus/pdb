@@ -37,13 +37,13 @@ HEADERS  += mainwindow.h \
     nodesandattachmentsgraficeelements.h \
     abstractgraficeelements.h \
     SectionNames.h \
-    VariantPtr.h \
     loggetelements.h \
     securityelements.h \
     dbcreator.h \
     dbstructuredescriptor.h \
     ../CommonInclude/pdb/DBSettings.h \
     ../CommonInclude/pdb/DBSettingsStream.h \
-    ../CommonInclude/pdb/cryptosupport.h
+    ../CommonInclude/pdb/cryptosupport.h \
+    ../CommonInclude/pdb/VariantPtr.h
 
 FORMS    += mainwindow.ui
