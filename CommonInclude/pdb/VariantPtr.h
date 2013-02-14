@@ -1,3 +1,5 @@
+#ifndef VARIANTPTR_H
+#define VARIANTPTR_H
 //
 /*
  This file is part of project pdb.
@@ -15,29 +17,22 @@
     along with pdb.  If not, see <http://www.gnu.org/licenses/>.
 */
 //
-#include "dbacccesssafe.h"
-#include "connectionmanager.h"
+// VariantPtr.h
 //
-
-DBAcccessSafe::DBAcccessSafe()
-{
-    m_iDBID = 0;
-};
-
-DBAcccessSafe::~DBAcccessSafe()
-{
-    ConnectionManager& manager = ConnectionManager::getInstance();
-    manager.releaseDB(m_iDBID);
-};
+#include <QVariant>
 //
-QSqlDatabase* DBAcccessSafe::getDB()
+template <class T> class VariantPtr
 {
-    ConnectionManager& manager = ConnectionManager::getInstance();
-    if ( manager.getManagerStatus() == ConnectionManager::STATE_OK )
+public:
+    static T* asPtr(QVariant v)
     {
-        DBConnection* conn = manager.getDB(m_iDBID);
-        return conn->get();
-    };
-    //
-    return NULL;
+    return  (T *) v.value<void *>();
+    }
+
+    static QVariant asQVariant(T* ptr)
+    {
+    return qVariantFromValue((void *) ptr);
+    }
 };
+
+#endif // VARIANTPTR_H
