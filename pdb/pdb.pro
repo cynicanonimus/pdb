@@ -16,7 +16,7 @@ TARGET = pdb
 TEMPLATE = app
 
 INCLUDE+=usr/lib/qt4/plugins/sqldrivers/
-LIBS+=-L//u01/app/oracle/product/11.2.0/lib/
+#LIBS+=-L//u01/app/oracle/product/11.2.0/lib/
 
 SOURCES += main.cpp\
         mainwindow.cpp \
