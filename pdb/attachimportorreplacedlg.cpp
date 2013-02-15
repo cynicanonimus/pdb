@@ -18,7 +18,7 @@
 #include "attachimportorreplacedlg.h"
 #include "servicescfg.h"
 #include "../CommonInclude/pdb/pdb_style.h"
-//
+#include "../CommonInclude/pdb/cryptosupport.h"
 //
 #include <QFileDialog>
 #include <QGridLayout>
@@ -29,9 +29,12 @@
 AttachImportOrReplaceDlg::AttachImportOrReplaceDlg(const QString &str_header, bool b_allow_multiple_files, QObject *parent) :
     QObject(parent)
 {
-    m_bAllowMultipleFiles = b_allow_multiple_files;
-    m_strDlgHeader = str_header;
-    m_dlgFileDlg  = NULL;
+    m_bAllowMultipleFiles    = b_allow_multiple_files;
+    m_strDlgHeader           = str_header;
+    m_dlgFileDlg             = NULL;
+    m_ptrEncryptType         = NULL;
+    m_ptrEncryptUploadEnable = NULL;
+    m_uiTypeOfEncrypt        = CryptoSupport::NO_ENCRYPT;
 }
 
 AttachImportOrReplaceDlg::~AttachImportOrReplaceDlg()
@@ -47,6 +50,10 @@ bool AttachImportOrReplaceDlg::exec(const QString&  str_path,
 {
     if (str_path.length() == 0)
         return false;
+    //
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    m_uiTypeOfEncrypt                       = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
+    const unsigned int ui_password_length   = ServicesCfg::getInstance().getPassword().length();
     //
     bool b_res = true;
     //
@@ -72,38 +79,44 @@ bool AttachImportOrReplaceDlg::exec(const QString&  str_path,
     //
     QCheckBox ctrl_delete_after_upload  ( tr("Delete file(s) after upload to the database") , NULL);
     QCheckBox ctrl_protect_upload       ( tr("Protect attachment(s)") , NULL);
-    QCheckBox ctrl_crypt_upload         ( tr("Enrypt attachment(s)") , NULL);
+    //
+    m_ptrEncryptUploadEnable    = new QCheckBox( tr("Encrypt attachment(s)") , NULL );
+    m_ptrEncryptType            = new QComboBox();
+    //
+    QObject::connect( m_ptrEncryptType,             SIGNAL(currentIndexChanged(int)),   this, SLOT( onChangeEncryptType (int)     ) );
+    QObject::connect( m_ptrEncryptUploadEnable,     SIGNAL(stateChanged(int)),          this, SLOT( onChangeEncryptCheckBox (int) ) );
+    //
+    fillEncryptionTypes();
+    //set actual default type of encrypt
+    m_ptrEncryptType->setCurrentIndex(m_uiTypeOfEncrypt);
     //
     ctrl_delete_after_upload.setChecked(b_delete_files_after_attachment);
     ctrl_protect_upload.setChecked(b_protect_attachment);
     //
-    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
-    const unsigned int ui_default_encrypt_method = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
-    const unsigned int ui_password_length        = ServicesCfg::getInstance().getPassword().length();
-    //
-    //TODO: insert combobox with encrypt methods
-    //
-    if ( 0 == ui_default_encrypt_method )
-        ctrl_crypt_upload.setToolTip("Default encrypt method is not defined. Check your settings.");
+    if ( 0 == m_uiTypeOfEncrypt )
+        m_ptrEncryptUploadEnable->setToolTip("Default encrypt method is not defined. Check your settings.");
     else if ( 0 == ui_password_length )
-        ctrl_crypt_upload.setToolTip("Password is not defined. Define password first.");
+        m_ptrEncryptUploadEnable->setToolTip("Password is not defined. Define password first.");
     //
-    if ( (ui_password_length > 0) && (0 != ui_default_encrypt_method))
+    if ( ui_password_length > 0 )
     {
-        ctrl_crypt_upload.setEnabled(true);
+        m_ptrEncryptUploadEnable->setEnabled(true);
     }
     else
     {
-        ctrl_crypt_upload.setEnabled(false);
+        m_ptrEncryptUploadEnable->setEnabled(false);
         b_encrypt_attachment = false;
     };
     //
-    ctrl_crypt_upload.setChecked(b_encrypt_attachment);
+    m_ptrEncryptType->setEnabled(b_encrypt_attachment);
     //
-    gridbox->addWidget(&ctrl_delete_after_upload, gridbox->rowCount(), 0,1,1);
-    gridbox->addWidget(&ctrl_protect_upload, gridbox->rowCount(), 0,1,1);
-    gridbox->addWidget(&ctrl_crypt_upload, gridbox->rowCount(), 0,1,1);
-    //gridbox->addWidget(combo);
+    m_ptrEncryptUploadEnable->setChecked(b_encrypt_attachment);
+    //add additional elements to the layout
+    gridbox->addWidget ( &ctrl_delete_after_upload, gridbox->rowCount(), 0,1,1);
+    gridbox->addWidget ( &ctrl_protect_upload,      gridbox->rowCount(), 0,1,1);
+    gridbox->addWidget ( m_ptrEncryptUploadEnable,  gridbox->rowCount(), 0,1,1);
+    gridbox->addWidget ( m_ptrEncryptType,          gridbox->rowCount()-1, 1,1,1);
+    //
     m_dlgFileDlg->setLayout(gridbox);
     //
     if (!m_dlgFileDlg->exec()) // if user click "cancel"
@@ -137,14 +150,55 @@ bool AttachImportOrReplaceDlg::exec(const QString&  str_path,
             m_bProtectAttachment = true;
         };
         //
-        c_state  = ctrl_crypt_upload.checkState();
+        c_state  = m_ptrEncryptUploadEnable->checkState();
         m_bEncryptAttachment = false;
         //
         if (Qt::Checked == c_state)
         {
             m_bEncryptAttachment = true;
+            m_uiTypeOfEncrypt = m_ptrEncryptType->currentIndex();
         };
     };
     //
     return b_res;
+}
+
+void AttachImportOrReplaceDlg::fillEncryptionTypes ()
+{
+    if (NULL == m_ptrEncryptType)
+        return;
+    //
+    CryptoSupport encrypt_decrypt;
+    //
+    QStringList str_list_tecs = encrypt_decrypt.getSuppotedTec();
+    //
+    m_ptrEncryptType->addItem("Do not use cryptography", 0);
+    //
+    for (int i = 0; i < str_list_tecs.size(); i++)
+    {
+        m_ptrEncryptType->addItem(str_list_tecs.at(i), i+1);
+    };
+}
+
+void AttachImportOrReplaceDlg::onChangeEncryptType (int index)
+{
+    if (CryptoSupport::TRIPLEDES_CBC == index)
+        m_ptrEncryptType->setCurrentIndex(CryptoSupport::BLOWFISH_OFB);
+    else if (CryptoSupport::NO_ENCRYPT == index)
+        m_ptrEncryptUploadEnable->setChecked(false);
+    //
+    return;
+}
+
+void AttachImportOrReplaceDlg::onChangeEncryptCheckBox (int state)
+{
+    if (Qt::Unchecked == state)
+    {
+        if (m_ptrEncryptType)
+            m_ptrEncryptType->setEnabled(false);
+    }else //checked
+    {
+        if (m_ptrEncryptType)
+            m_ptrEncryptType->setEnabled(true);
+    };
 }

@@ -36,14 +36,11 @@
 //
 // from interface
 //
-
-const static int NEED_TO_CRYPT_ATTACH = 1000;
-
 Attachment::Attachment(const QString&      full_path_filename,
                        TreeLeaf*           ptr_parent_leaf,
                        bool                b_delete_files_after,
                        bool                b_protect_attachment,
-                       bool                b_encrypt_attachment):
+                       unsigned int        ui_encrypt_type):
     AbstractDatabaseObject(-1,               //attachment has no ID now.
                            true,             // attachment active
                            QDateTime ( QDateTime::currentDateTime() ),
@@ -55,10 +52,7 @@ Attachment::Attachment(const QString&      full_path_filename,
     m_iCryptType             = 0;
     m_bIsProtected           = b_protect_attachment;
     m_bDeleteFileAfterUpload = b_delete_files_after;
-    if (b_encrypt_attachment)
-        m_iCryptType             = NEED_TO_CRYPT_ATTACH; //attachment must be encrypted in the thread pool using default key
-    else
-        m_iCryptType             = 0;
+    m_iCryptType             = ui_encrypt_type;         //attachment must be encrypted in the thread pool using default key
     //
     makeAttachmentName(full_path_filename);
     //
@@ -155,23 +149,23 @@ void Attachment::run()
 
 void Attachment::insert_new_attacment ()
 {
-    if (NEED_TO_CRYPT_ATTACH == m_iCryptType)
+    if (CryptoSupport::NO_ENCRYPT != m_iCryptType)
     {
-        QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
-        const unsigned int ui_default_encrypt_method = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
+        //QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+        //const unsigned int ui_default_encrypt_method = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
         //
         QByteArray encrypted_aray;
         CryptoSupport crypto;
-        bool b_encrypt = crypto.encrypt_bytearray( (CryptoSupport::SymmetricMethods) ui_default_encrypt_method, ServicesCfg::getInstance().getPassword(), m_ByteArray, encrypted_aray);
+        bool b_encrypt = crypto.encrypt_bytearray( (CryptoSupport::SymmetricMethods) m_iCryptType, ServicesCfg::getInstance().getPassword(), m_ByteArray, encrypted_aray);
         //
         if (false == b_encrypt)
         {
-            m_iCryptType = 0;
+            m_iCryptType = CryptoSupport::NO_ENCRYPT;
             m_ByteArray.clear();
             return;
         };
+        //
         m_ByteArray     = encrypted_aray;
-        m_iCryptType    = ui_default_encrypt_method;
         m_bIsBinary     = true;
     }else
     {
@@ -310,7 +304,7 @@ bool Attachment::readFileToMemory (QString str_full_path_name)
     return true;
 }
 
-bool Attachment::replace_it (const QString str_name, bool b_delete_after_replacement, bool b_protect_attach, bool b_encrypt_attach)
+bool Attachment::replace_it (const QString str_name, bool b_delete_after_replacement, bool b_protect_attach, unsigned int ui_encrypt_type)
 {
     const QString   str_old_path_name       = m_strFilePath;
     const QString   str_old_attachment_name = m_strAttachName;
@@ -321,20 +315,20 @@ bool Attachment::replace_it (const QString str_name, bool b_delete_after_replace
         m_strFilePath = str_name;
         makeAttachmentName(m_strFilePath);
         //
-        if (b_encrypt_attach)
+        if (CryptoSupport::NO_ENCRYPT !=  ui_encrypt_type)
         {
-            QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
-            const unsigned int ui_default_encrypt_method = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
+            //QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+            //const unsigned int ui_default_encrypt_method = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
             //
             QByteArray encrypted_aray;
             CryptoSupport crypto;
-            bool b_encrypt = crypto.encrypt_bytearray( (CryptoSupport::SymmetricMethods) ui_default_encrypt_method, ServicesCfg::getInstance().getPassword(), m_ByteArray, encrypted_aray);
+            bool b_encrypt = crypto.encrypt_bytearray( (CryptoSupport::SymmetricMethods) ui_encrypt_type, ServicesCfg::getInstance().getPassword(), m_ByteArray, encrypted_aray);
             //
             if (false == b_encrypt)
                 return false;
             //
             m_ByteArray     = encrypted_aray;
-            m_iCryptType    = ui_default_encrypt_method;
+            m_iCryptType    = ui_encrypt_type;
         };
         //
         if ( false == replaceBlob_DB() )

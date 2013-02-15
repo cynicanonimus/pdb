@@ -844,6 +844,7 @@ void MyTable::onReplaceAttachment()
         m_bProtectAttachReplacement     = dlg.getProtectAttachment();
         m_bEncryptAttachReplacement     = dlg.getEncryptAttachment();
         m_strLastPathOfReplacement      = dlg.getLastAttachmentFromPath();
+        unsigned int ui_encrypt_type    = dlg.getTypeOfEncrypt();
         //
         QStringList file_list           = dlg.getFileList(); // only one element can be here (see constructor of AttachImportOrReplaceDlg )
         //
@@ -852,7 +853,10 @@ void MyTable::onReplaceAttachment()
         Attachment::AttachmentsList v_attachments;
         getSelectedAttaches(v_attachments);
         //
-        bool b_res_replacement = v_attachments[0]->replace_it( file_list.at(0),m_bDeleteAfterAttachReplacement, m_bProtectAttachReplacement, m_bEncryptAttachReplacement);
+        bool b_res_replacement = v_attachments[0]->replace_it( file_list.at(0),
+                                                               m_bDeleteAfterAttachReplacement,
+                                                               m_bProtectAttachReplacement,
+                                                               ui_encrypt_type);
         //
         if (b_res_replacement)
         {

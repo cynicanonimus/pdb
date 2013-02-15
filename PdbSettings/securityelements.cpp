@@ -62,12 +62,10 @@ void SecurityElements::createLinks()
 
 void SecurityElements::onEncryptModeChanged(int index)
 {
-    if (17 == index)
-        m_ptrEncryptMode->setCurrentIndex(16);
-
-//    m_ptrEncryptMode->setCurrentIndex(ui_encrypt_mode);
-
-
+    //TODO
+    if (CryptoSupport::TRIPLEDES_CBC == index)
+        m_ptrEncryptMode->setCurrentIndex(CryptoSupport::BLOWFISH_OFB);
+    //
     return;
 }
 
@@ -90,7 +88,7 @@ void SecurityElements::writeData()
     settings.setValue(g_str_SEC_SCHRED,     m_bShred);
     settings.setValue(g_str_SEC_SCHRED_CMD, m_strSchredCommandLine);
     //
-    settings.setValue(g_str_SEC_TEC_CODE,   ui_encrypt_mode);
+    settings.setValue(g_str_SEC_TEC_CODE,   m_uiEncryptMode);
     //
 
     settings.setValue(g_str_SEC_MARK_CRYPT, m_bMarkCryptByDefault);
@@ -102,7 +100,7 @@ void SecurityElements::readData()
     //
     m_bProtectByDefault     = settings.value(g_str_SEC_PROTECT).value<bool>();
     //
-    ui_encrypt_mode         = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
+    m_uiEncryptMode         = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
     //
     m_bShred                = settings.value(g_str_SEC_SCHRED).value<bool>();
     m_strSchredCommandLine  = settings.value(g_str_SEC_SCHRED_CMD).value<QString>();
@@ -114,7 +112,7 @@ void    SecurityElements::updateData  (bool b_from_dialog)
 {
     if (b_from_dialog)
     {
-        ui_encrypt_mode = m_ptrEncryptMode->currentIndex();
+        m_uiEncryptMode = m_ptrEncryptMode->currentIndex();
 
         if (m_ptrProtectionByDefault->checkState() == Qt::Checked)
             m_bProtectByDefault = true;
@@ -135,7 +133,7 @@ void    SecurityElements::updateData  (bool b_from_dialog)
 
     }else
     {
-        m_ptrEncryptMode->setCurrentIndex(ui_encrypt_mode);
+        m_ptrEncryptMode->setCurrentIndex(m_uiEncryptMode);
         //
         if (true == m_bProtectByDefault)
         {

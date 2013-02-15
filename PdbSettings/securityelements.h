@@ -64,7 +64,7 @@ private:
     //
     QLabel*         m_ptrEncryptModeLabel;
     QComboBox*      m_ptrEncryptMode;
-    unsigned int    ui_encrypt_mode;
+    unsigned int    m_uiEncryptMode;
     //
     QCheckBox*      m_ptrMarkCryptByDefault;
     bool            m_bMarkCryptByDefault;

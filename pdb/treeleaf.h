@@ -105,9 +105,9 @@ public:
     const Attachment::AttachmentsList&  getAttachments              ();//                  {return m_vAttachments;}
     //
     void                    addAttachments              (const QStringList& file_name_list,
-                                                         bool b_delete_files_after,
-                                                         bool b_protect_attachments,
-                                                         bool b_encrypt_attachments);
+                                                         bool               b_delete_files_after,
+                                                         bool               b_protect_attachments,
+                                                         unsigned int       ui_encrypt_type);
     //
     void                    addAttachment               (Attachment* ptr_attachment);
     void                    removeAttachment            (Attachment* ptr_attachment);

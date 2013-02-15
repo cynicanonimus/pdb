@@ -383,9 +383,10 @@ void MyTree::onImportAttach ()
         m_bProtectAttachment            = dlg.getProtectAttachment();
         m_bEncryptAttachment            = dlg.getEncryptAttachment();
         m_strLastAttachmentFromPath     = dlg.getLastAttachmentFromPath();
+        unsigned int ui_encrypt_type    = dlg.getTypeOfEncrypt();
         //
         setCursor(Qt::BusyCursor);
-        ptr_actual_item->addAttachments(file_list, m_bDeleteFilesAfterAttachment, m_bProtectAttachment, m_bEncryptAttachment);
+        ptr_actual_item->addAttachments(file_list, m_bDeleteFilesAfterAttachment, m_bProtectAttachment, ui_encrypt_type);
         setCursor(Qt::ArrowCursor);
     };
 }

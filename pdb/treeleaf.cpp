@@ -330,7 +330,7 @@ void TreeLeaf::notifyAboutAttachmentUpdate(bool b_result, QString str_attachment
         m_ptrParentTree->leafAttachmentUpdated(this,b_result,str_attachment_name);
 };
 
-void TreeLeaf::addAttachments  (const QStringList& file_name_list, bool b_delete_files_after, bool b_protect_attachments, bool b_encrypt_attachments)
+void TreeLeaf::addAttachments  (const QStringList& file_name_list, bool b_delete_files_after, bool b_protect_attachments, unsigned int ui_encrypt_type)
 {
     //for preventing second request after click on node
     m_bIsAttachmentRequestedAlready = true;
@@ -350,7 +350,7 @@ void TreeLeaf::addAttachments  (const QStringList& file_name_list, bool b_delete
             if ( ui_current_file_size/1000000 <= ui_max_allow_file_size)
             {
                 //create attachment and add it into database
-                Attachment* ptr_new_attachment = new Attachment((*constIterator), this, b_delete_files_after, b_protect_attachments, b_encrypt_attachments);
+                Attachment* ptr_new_attachment = new Attachment((*constIterator), this, b_delete_files_after, b_protect_attachments, ui_encrypt_type);
                 m_vAttachments.push_back(ptr_new_attachment); //create new attachments
                 //
                 //QString str_message =

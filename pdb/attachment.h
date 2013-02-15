@@ -48,7 +48,7 @@ public:
                                    TreeLeaf*           ptr_parent_leaf,
                                    bool                b_delete_files_after,
                                    bool                b_protect_attachment,
-                                   bool                b_encrypt_attachment);
+                                   unsigned int        ui_encrypt_type);
     //
     //this constructor for creating Attachment from DB
     //
@@ -70,7 +70,7 @@ public:
     bool                    restoreObject   ();
     bool                    export_it       ( const QString& str_target_dir);
     bool                    export_for_view ( const QString& str_target_dir, QString& str_temp_name);
-    bool                    replace_it      ( const QString str_name, bool b_delete_after_replacement, bool b_protect_attach, bool b_encrypt_attach);
+    bool                    replace_it      ( const QString str_name, bool b_delete_after_replacement, bool b_protect_attach, unsigned int ui_encrypt_type);
     bool                    is_binary       () const { return m_bIsBinary;      }
     bool                    is_crypted      () const { return (0 != m_iCryptType);     }
     //

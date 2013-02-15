@@ -21,6 +21,8 @@
 //
 #include <QObject>
 #include <QStringList>
+#include <QComboBox>
+#include <QCheckBox>
 
 class QFileDialog;
 
@@ -48,9 +50,20 @@ public:
     bool                getProtectAttachment            () const                    {return m_bProtectAttachment;}
     bool                getEncryptAttachment            () const                    {return m_bEncryptAttachment;}
     const QString&      getLastAttachmentFromPath       () const                    {return m_strLastAttachmentFromPath;}
+    unsigned int        getTypeOfEncrypt                () const                    {return m_uiTypeOfEncrypt;}
+
+private slots:
+    void                onChangeEncryptType             (int);
+    void                onChangeEncryptCheckBox         (int);
 
 private:
 
+    void                fillEncryptionTypes              ();
+
+private:
+
+    QComboBox*      m_ptrEncryptType;
+    QCheckBox*      m_ptrEncryptUploadEnable;
     QString         m_strDlgHeader;
     QFileDialog*    m_dlgFileDlg;
     QStringList     m_FileList;
@@ -60,6 +73,7 @@ private:
     bool            m_bProtectAttachment;
     bool            m_bEncryptAttachment;
     QString         m_strLastAttachmentFromPath;
+    unsigned int    m_uiTypeOfEncrypt;
 };
 
 #endif // ATTACHIMPORTORREPLACEDLG_H
