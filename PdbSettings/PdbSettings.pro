@@ -33,7 +33,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     dbgraficelements.h \
     colorgraficelements.h \
-    ../../../../../home/alex/MyProjects/MyQtSamples/CommonInclude/pdb/pdb_style.h \
+    ../CommonInclude/pdb/pdb_style.h \
     nodesandattachmentsgraficeelements.h \
     abstractgraficeelements.h \
     SectionNames.h \
