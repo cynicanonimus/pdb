@@ -186,7 +186,7 @@ void    SecurityElements::createLayout()
     //
     m_ptrEncryptMode->addItem("Do not use cryptography", 0);
     //
-    for (unsigned int i = 0; i < str_list_tecs.size(); i++)
+    for (int i = 0; i < str_list_tecs.size(); i++)
     {
         m_ptrEncryptMode->addItem(str_list_tecs.at(i), i+1);
     };
