@@ -153,6 +153,7 @@ MainWindow::~MainWindow()
     if ( m_ptrDbInUseLabel  ) delete m_ptrDbInUseLabel;
     //
     if ( m_ptrSearchDlg     ) delete m_ptrSearchDlg;
+    //
 }
 
 void MainWindow::connectSignalsAndSlots ()
@@ -491,6 +492,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
     Logger::getInstance().stopLog();
     //
     statusBar()->showMessage(tr("destroy tunnel..."));
+    //
     m_Tunnel.destroyTunnel();
     //
     QByteArray ba_geometry = saveGeometry();

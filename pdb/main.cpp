@@ -39,6 +39,30 @@ int main(int argc, char *argv[])
     else
         QApplication::setStyle(g_str_ar_APP_STYLES[0]);
     //
+    //check config
+    //
+    QVariant var  = settings.value(g_str_DB_SETTINGS);
+    //
+    if (
+            ( var.isNull()== false  ) &&
+            ( true == var.isValid() )
+       )
+    {
+        DBSettings db_settings  = var.value<DBSettings>();
+        int i_active = db_settings.getActivePage();
+        int i_current = db_settings.getCurrentPage();
+
+    };
+
+    /*
+    if ( -1 == db_settings.getCurrentPage() )
+    {
+        QMessageBox::critical(NULL, "Error", "Database is not defined. Launch PdbSetings and define database first.", QMessageBox::Ok);
+        return -1;
+    }
+    */
+    //add another conditions later.
+    //
     qRegisterMetaTypeStreamOperators<DBSettings>("DBSettings");
     //
     MainWindow w;
