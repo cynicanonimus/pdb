@@ -26,6 +26,11 @@
 #include <QMessageBox>
 #include <QCoreApplication>
 
+namespace
+{
+const QString empty_str("empty");
+}
+
 DBCreator::DBCreator(QObject *parent) :
     QObject(parent)
   ,m_strDescriptorFileName("dbdescription.xml")
@@ -56,7 +61,7 @@ const QString& DBCreator::getDefaultDbDriverName  () const
         return itr.value()->getDriverName();
     };
     //
-    return "empty";
+    return empty_str;
 }
 
 
