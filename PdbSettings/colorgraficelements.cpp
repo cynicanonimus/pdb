@@ -366,25 +366,41 @@ void ColorGraficElements::readData ()
 {
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
-    m_cl_NormalTreeElementFront         = settings.value(g_str_CLR_NORNAL_FG).value<QColor>();
-    m_cl_NormalTreeElementBack          = settings.value(g_str_CLR_NORNAL_BG).value<QColor>();
+    const QColor    white_color(255,255,255);
+    const QColor    black_color(0,0,0);
     //
-    m_cl_DelTreeElementFront            = settings.value(g_str_CLR_DELETED_FG).value<QColor>();
-    m_cl_DelTreeElementBack             = settings.value(g_str_CLR_DELETED_BG).value<QColor>();
+    QColor          actual_color;
     //
-    m_cl_NormalAttachmentElementBack    = settings.value(g_str_CLR_ATTACH_NORNAL_BG).value<QColor>();
-    m_cl_NormalAttachmentElementFront   = settings.value(g_str_CLR_ATTACH_NORNAL_FG).value<QColor>();
+    actual_color = settings.value(g_str_CLR_NORNAL_FG).value<QColor>();
+    m_cl_NormalTreeElementFront = actual_color.isValid() ? actual_color : black_color;
+    actual_color = settings.value(g_str_CLR_NORNAL_BG).value<QColor>();
+    m_cl_NormalTreeElementBack  = actual_color.isValid() ? actual_color : white_color;
     //
-    m_cl_DelAttachmentElementBack       = settings.value(g_str_CLR_ATTACH_DELETED_BG).value<QColor>();
-    m_cl_DelAttachmentElementFront      = settings.value(g_str_CLR_ATTACH_DELETED_FG).value<QColor>();
+    actual_color = settings.value(g_str_CLR_DELETED_FG).value<QColor>();
+    m_cl_DelTreeElementFront = actual_color.isValid() ? actual_color : black_color;
+    actual_color = settings.value(g_str_CLR_DELETED_BG).value<QColor>();
+    m_cl_DelTreeElementBack = actual_color.isValid() ? actual_color : white_color;
     //
-    m_cl_UpdatingAttachmentElementFront = settings.value(g_str_CLR_ATTACH_UPDATING_FG).value<QColor>();
-    m_cl_UpdatingAttachmentElementBack  = settings.value(g_str_CLR_ATTACH_UPDATING_BG).value<QColor>();
+    actual_color = settings.value(g_str_CLR_ATTACH_NORNAL_FG).value<QColor>();
+    m_cl_NormalAttachmentElementFront   = actual_color.isValid() ? actual_color : black_color;
+    actual_color = settings.value(g_str_CLR_ATTACH_NORNAL_BG).value<QColor>();
+    m_cl_NormalAttachmentElementBack    = actual_color.isValid() ? actual_color : white_color;
     //
-    m_cl_FailAttachmentElementFront     = settings.value(g_str_CLR_ATTACH_FAIL_FG).value<QColor>();
-    m_cl_FailAttachmentElementBack      = settings.value(g_str_CLR_ATTACH_FAIL_BG).value<QColor>();
-};
-
+    actual_color = settings.value(g_str_CLR_ATTACH_DELETED_FG).value<QColor>();
+    m_cl_DelAttachmentElementFront      = actual_color.isValid() ? actual_color : black_color;
+    actual_color = settings.value(g_str_CLR_ATTACH_DELETED_BG).value<QColor>();
+    m_cl_DelAttachmentElementBack       = actual_color.isValid() ? actual_color : white_color;
+    //
+    actual_color = settings.value(g_str_CLR_ATTACH_UPDATING_FG).value<QColor>();
+    m_cl_UpdatingAttachmentElementFront = actual_color.isValid() ? actual_color : black_color;
+    actual_color = settings.value(g_str_CLR_ATTACH_UPDATING_BG).value<QColor>();
+    m_cl_UpdatingAttachmentElementBack  = actual_color.isValid() ? actual_color : white_color;
+    //
+    actual_color = settings.value(g_str_CLR_ATTACH_FAIL_FG).value<QColor>();
+    m_cl_FailAttachmentElementFront     = actual_color.isValid() ? actual_color : black_color;
+    actual_color = settings.value(g_str_CLR_ATTACH_FAIL_BG).value<QColor>();
+    m_cl_FailAttachmentElementBack      = actual_color.isValid() ? actual_color : white_color;
+}
 
 void ColorGraficElements::updateData (bool b_from_dialog)
 {

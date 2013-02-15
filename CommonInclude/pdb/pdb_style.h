@@ -33,7 +33,6 @@ const static QString g_str_ar_APP_STYLES[] = {"windows", "motif", "cde", "plasti
 const static QString g_str_WINDOW_STATE     = "window_state";
 const static QString g_str_WINDOW_GEOMETRY  = "window_geometry";
 //
-//
 // Main database settings
 //
 const static QString  g_str_DB_SETTINGS     = "db/settings";
