@@ -30,8 +30,8 @@ const static QString  g_str_CNF_APP_NAME = "Pdb";
 //
 const static QString g_str_ar_APP_STYLES[] = {"windows", "motif", "cde", "plastique", "windowsxp", "macintosh"};
 //
-const static QString g_str_WINDOW_STATE     = "window_state";
-const static QString g_str_WINDOW_GEOMETRY  = "window_geometry";
+const static QString g_str_WINDOW_STATE     = "window/state";
+const static QString g_str_WINDOW_GEOMETRY  = "window/geometry";
 //
 // Main database settings
 //

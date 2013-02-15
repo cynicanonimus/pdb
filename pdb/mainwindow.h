@@ -69,7 +69,7 @@ signals:
 private slots:
     void onSearch                   ();
     void onDbAlreadyInUse           () const;
-    void saveCurrentModeDescriptor  ();
+    void saveCurrentNodeDescriptor  ();
     void onClickAbout               ();
 
 private:
@@ -110,6 +110,7 @@ private:
     void showDBUsageIcon                (bool b_show = true);
     //
     void restoreWindowParams            ();
+    void saveWindowParams               ();
     void connectSignalsAndSlots         ();
 
     //

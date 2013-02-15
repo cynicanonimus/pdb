@@ -176,7 +176,7 @@ void MainWindow::connectSignalsAndSlots ()
     QObject::connect( m_pMainMenu->m_ptrEncryptAttachmentsOfAllNodes,   SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT(OnEncryptAttachmentsGlobal()   ));
     QObject::connect( m_pMainMenu->m_ptrDecryptAttachmentsOfAllNodes,   SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT(OnDecryptAttachmentsGlobal()   ));
     //
-    QObject::connect( m_pMainMenu->m_ptrSaveNodeDescriptor,             SIGNAL(triggered()), this,              SLOT(saveCurrentModeDescriptor()    ));
+    QObject::connect( m_pMainMenu->m_ptrSaveNodeDescriptor,             SIGNAL(triggered()), this,              SLOT(saveCurrentNodeDescriptor()    ));
     //
     //attachments menu status change
     //
@@ -453,7 +453,7 @@ void MainWindow::initComboBoxTreeVSplitter()
     m_pComboBoxTreeVSplitter->setStretchFactor( m_pComboBoxTreeVSplitter->indexOf(ui->m_TreeOfNodes), 1 );
 }
 
-void MainWindow::saveCurrentModeDescriptor ()
+void MainWindow::saveCurrentNodeDescriptor ()
 {
     //save current node descriptor, if need
     TreeLeaf* ptr_actual_item =  (TreeLeaf*) ui->m_TreeOfNodes->currentItem();
@@ -464,7 +464,8 @@ void MainWindow::saveCurrentModeDescriptor ()
 
 void MainWindow::closeEvent(QCloseEvent *e)
 {
-    saveCurrentModeDescriptor ();
+    saveWindowParams ();
+    saveCurrentNodeDescriptor ();
     //
     //setCursor(Qt::BusyCursor);
     statusBar()->showMessage(tr("Save node state..."));
@@ -495,14 +496,6 @@ void MainWindow::closeEvent(QCloseEvent *e)
     //
     m_Tunnel.destroyTunnel();
     //
-    QByteArray ba_geometry = saveGeometry();
-    QByteArray ba_state = saveState();
-    //
-    QSettings settings (g_strCOMPANY, g_str_CNF_APP_NAME);
-    //
-    settings.setValue( g_str_WINDOW_GEOMETRY,    ba_geometry );
-    settings.setValue( g_str_WINDOW_STATE,       ba_state    );
-    //
     //setCursor(Qt::ArrowCursor);
     statusBar()->showMessage(tr("End."));
     e->accept();
@@ -510,12 +503,29 @@ void MainWindow::closeEvent(QCloseEvent *e)
     exit(0);
 }
 
+void MainWindow::saveWindowParams ()
+{
+    QByteArray ba_geometry = saveGeometry();
+    QByteArray ba_state = saveState();
+    //
+    QVariant var_geometry (ba_geometry);
+    QVariant var_state (ba_state);
+    //
+    QSettings settings (g_strCOMPANY, g_str_CNF_APP_NAME);
+    //
+    settings.setValue( g_str_WINDOW_GEOMETRY,    var_geometry );
+    settings.setValue( g_str_WINDOW_STATE,       var_state    );
+}
+
 void MainWindow::restoreWindowParams()
 {
     QSettings settings (g_strCOMPANY, g_str_CNF_APP_NAME);
     //
-    restoreGeometry(settings.value(g_str_WINDOW_GEOMETRY).toByteArray());
-    restoreState(settings.value(g_str_WINDOW_STATE).toByteArray());
+    QVariant var_geometry = settings.value(g_str_WINDOW_GEOMETRY);
+    QVariant var_state    = settings.value(g_str_WINDOW_STATE);
+    //
+    restoreGeometry(var_geometry.toByteArray());
+    restoreState(var_state.toByteArray());
 }
 
 void MainWindow::onClickAbout ()
