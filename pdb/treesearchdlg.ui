@@ -427,7 +427,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>From:</string>
+    <string>Created after:</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="m_checkBoxTo">
@@ -440,7 +440,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>To:</string>
+    <string>Created before:</string>
    </property>
   </widget>
   <zorder>SearchLabel</zorder>

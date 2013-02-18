@@ -50,7 +50,7 @@ public:
     bool                getProtectAttachment            () const                    {return m_bProtectAttachment;}
     bool                getEncryptAttachment            () const                    {return m_bEncryptAttachment;}
     const QString&      getLastAttachmentFromPath       () const                    {return m_strLastAttachmentFromPath;}
-    unsigned int        getTypeOfEncrypt                () const                    {return m_uiTypeOfEncrypt;}
+    unsigned int        getTypeOfEncrypt                () const                    {return m_uiDefaultTypeOfEncrypt;}
 
 private slots:
     void                onChangeEncryptType             (int);
@@ -73,7 +73,7 @@ private:
     bool            m_bProtectAttachment;
     bool            m_bEncryptAttachment;
     QString         m_strLastAttachmentFromPath;
-    unsigned int    m_uiTypeOfEncrypt;
+    unsigned int    m_uiDefaultTypeOfEncrypt;
 };
 
 #endif // ATTACHIMPORTORREPLACEDLG_H

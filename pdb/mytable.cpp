@@ -42,7 +42,7 @@ MyTable::MyTable(QWidget *parent) :
     this->setColumnCount(ITEM_AMOUNT);
     QStringList str_att_header;
     //              0     1      2          3           4            5
-    str_att_header<<"P"<<"E"<< "Name" << "Data" << "Size, bytes"<< "Status";
+    str_att_header<<"P"<<"E"<< "Name of document" << "Data" << "Size, bytes"<< "Status";
     this->setHorizontalHeaderLabels(str_att_header);
     this->setEditTriggers( QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed );
     //

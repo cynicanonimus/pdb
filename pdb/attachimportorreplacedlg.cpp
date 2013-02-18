@@ -34,7 +34,7 @@ AttachImportOrReplaceDlg::AttachImportOrReplaceDlg(const QString &str_header, bo
     m_dlgFileDlg             = NULL;
     m_ptrEncryptType         = NULL;
     m_ptrEncryptUploadEnable = NULL;
-    m_uiTypeOfEncrypt        = CryptoSupport::NO_ENCRYPT;
+    m_uiDefaultTypeOfEncrypt = CryptoSupport::NO_ENCRYPT;
 }
 
 AttachImportOrReplaceDlg::~AttachImportOrReplaceDlg()
@@ -52,7 +52,7 @@ bool AttachImportOrReplaceDlg::exec(const QString&  str_path,
         return false;
     //
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
-    m_uiTypeOfEncrypt                       = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
+    m_uiDefaultTypeOfEncrypt                = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
     const unsigned int ui_password_length   = ServicesCfg::getInstance().getPassword().length();
     //
     bool b_res = true;
@@ -88,12 +88,12 @@ bool AttachImportOrReplaceDlg::exec(const QString&  str_path,
     //
     fillEncryptionTypes();
     //set actual default type of encrypt
-    m_ptrEncryptType->setCurrentIndex(m_uiTypeOfEncrypt);
+    m_ptrEncryptType->setCurrentIndex(m_uiDefaultTypeOfEncrypt);
     //
     ctrl_delete_after_upload.setChecked(b_delete_files_after_attachment);
     ctrl_protect_upload.setChecked(b_protect_attachment);
     //
-    if ( 0 == m_uiTypeOfEncrypt )
+    if ( 0 == m_uiDefaultTypeOfEncrypt )
         m_ptrEncryptUploadEnable->setToolTip("Default encrypt method is not defined. Check your settings.");
     else if ( 0 == ui_password_length )
         m_ptrEncryptUploadEnable->setToolTip("Password is not defined. Define password first.");
@@ -156,7 +156,10 @@ bool AttachImportOrReplaceDlg::exec(const QString&  str_path,
         if (Qt::Checked == c_state)
         {
             m_bEncryptAttachment = true;
-            m_uiTypeOfEncrypt = m_ptrEncryptType->currentIndex();
+            m_uiDefaultTypeOfEncrypt = m_ptrEncryptType->currentIndex();
+        }else
+        {
+            m_uiDefaultTypeOfEncrypt = 0;
         };
     };
     //
