@@ -157,7 +157,7 @@
 			);
 		</statement>
 
-		<statement id="5a">
+		<statement id="50">
 			CREATE TRIGGER `update_root_tbl_timestamp`
 			  AFTER UPDATE ON `root_tbl`
 			  FOR EACH ROW
@@ -181,7 +181,7 @@
 			);
 		</statement>
 
-		<statement id="6a">
+		<statement id="60">
 			CREATE TRIGGER `update_node_tbl_timestamp`
 			  AFTER UPDATE ON `node_tbl`
 			  FOR EACH ROW
@@ -190,7 +190,7 @@
 			  END;
 		</statement>
 
-		<statement id="6b">
+		<statement id="61">
 			CREATE INDEX `tree_ind` ON `node_tbl` (`id_tree`);
 		</statement>
 
@@ -210,7 +210,7 @@
 			);
 		</statement>
 
-		<statement id="7a">
+		<statement id="70">
 			CREATE TRIGGER `update_attachments_timestamp`
 			  AFTER UPDATE ON `attachments`
 			  FOR EACH ROW
@@ -219,7 +219,7 @@
 			  END;
 		</statement>
 
-		<statement id="7b">
+		<statement id="71">
 			CREATE INDEX `attach_ind` ON `attachments` (`id_parent`);
 		</statement>
 	</database>
