@@ -20,6 +20,7 @@
 #include "servicescfg.h"
 #include "dbacccesssafe.h"
 #include "logger.h"
+#include "connectionmanager.h"
 //
 #include <QCryptographicHash>
 #include <QByteArray>
@@ -504,12 +505,20 @@ void PasswordDlg::setDlgMode (PASSWORD_MODE en_mode)
     if (m_enMode == en_mode)
         return;
     //
+    QString str_header = tr("Enter password: host: [");
+    str_header += ConnectionManager::getInstance().getHostName();
+    str_header += "] database: [";
+    str_header += ConnectionManager::getInstance().getDBName();
+    str_header += "]";
+    //
+    setWindowTitle(str_header);
+    //
     m_enMode = en_mode;
     //
     switch(m_enMode)
     {
     case ENTER_PASSWORD:
-        this                        ->setWindowTitle("Enter application password");
+        this                        ->setWindowTitle(str_header); //Enter application password
         ui->m_LblPassword1          ->setText("Enter password:");
         ui->m_EnterPasswdLineEdit1  ->setEchoMode(QLineEdit::Password);
         ui->m_EnterPasswdLineEdit1  ->clear();
