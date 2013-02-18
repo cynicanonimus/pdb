@@ -112,7 +112,7 @@
 	<database type="SQLite">
 		<driver>QSQLITE</driver>
 		<show_tables_request>
-			<!-- TODO -->
+			select name from sqlite_master where type='table';
 		</show_tables_request>
 
 		<!-- this must be executed as the first command in each connection for the
