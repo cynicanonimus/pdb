@@ -109,4 +109,4 @@
 			select count (*) from attachments;
 		</statement>
 	</database>
-<databases>
+</databases>
