@@ -114,6 +114,14 @@
 		<show_tables_request>
 			<!-- TODO -->
 		</show_tables_request>
+
+		<!-- this must be executed as the first command in each connection for the
+		     foreign keys to function properly
+		     -->
+		<connection_setup_request>
+			PRAGMA foreign_keys=on;
+		</connection_setup_request>
+
 		<statement id="0">
 			DROP TABLE IF EXISTS `attachments`;
 		</statement>
