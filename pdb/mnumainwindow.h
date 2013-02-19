@@ -105,6 +105,8 @@ public:
     QAction*    m_ptrSearchInTree;
     //
     QAction*    m_ptrExitApp;
+    //
+    QToolBar*    m_ptrTreeToolBar;
     //-----------------------------  node menu -----------------------------
     QMenu*      m_ptrNodeControlMenu;
     //
