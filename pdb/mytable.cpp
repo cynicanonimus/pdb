@@ -259,7 +259,7 @@ QTableWidgetItem* MyTable::makeCellEncrypted(Attachment* ptr_attachment)
     //
     if ( ptr_attachment->is_crypted() )
     {
-        ptr_item_encrypted->setIcon(QIcon(":/images/images/lock.ico"));
+        ptr_item_encrypted->setIcon(QIcon(":/images/images/lock.png"));
         ptr_item_encrypted->setToolTip(tr("Attachment is encrypted."));
     }else
     {
@@ -275,7 +275,7 @@ QTableWidgetItem* MyTable::makeCellLocked(Attachment* ptr_attachment)
     //
     if ( ptr_attachment->is_protected() )
     {
-        ptr_item_locked->setIcon(QIcon(":/images/images/no_shield.png"));
+        ptr_item_locked->setIcon(QIcon(":/images/images/shield_green.png"));
         ptr_item_locked->setToolTip(tr("Attachment is protected. Impossible move, update, rename or delete it."));
     }else
     {

@@ -24,6 +24,7 @@
 //
 #include <QObject>
 #include <QMenu>
+#include <QToolBar>
 //
 #include "treeleaf.h"
 #include "abstractdatabaseobject.h"
@@ -129,6 +130,8 @@ public:
     //
     //
     QAction*    m_ptrSaveNodeDescriptor;
+    //
+    QToolBar*    m_ptrNodeToolBar;
     //----------------------------- attachment menu -----------------------------
     QMenu*      m_ptrAttachmentMenu;
     //
@@ -142,6 +145,8 @@ public:
     QAction*    m_ptrPasteAttach;
     //
     QAction*    m_ptrViewAttach;
+    //
+    QToolBar*    m_ptrAttachmentToolBar;
     //----------------------------- protection - submenu of the Attach menu  -----------------------------
     QMenu*      m_ptrAttachProtectionSubMenu;
     //

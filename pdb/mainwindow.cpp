@@ -65,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //
     m_pMainMenu = new MnuMainWindow( this );
     //
+    addToolBar(Qt::LeftToolBarArea,     m_pMainMenu->m_ptrNodeToolBar);
+    addToolBar(Qt::RightToolBarArea,    m_pMainMenu->m_ptrAttachmentToolBar);
     //
     statusBar()->addPermanentWidget(m_ptrDbInUseLabel);
     //

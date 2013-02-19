@@ -1,0 +1,3 @@
+after restore subtree icon "restore subtree" still available 
+make "save description" after user press "Ctrl+F"
+

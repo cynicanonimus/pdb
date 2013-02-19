@@ -28,6 +28,8 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     Q_ASSERT ( parent );
     m_ptrParent         = parent;
     m_bPasswordExist    = false;
+    m_ptrAttachmentToolBar  = NULL;
+    m_ptrNodeToolBar        = NULL;
     //
     createTreeControlMenu       ();
     createNodeControlMenu       ();
@@ -560,28 +562,28 @@ void MnuMainWindow::createAttachmentControlMenu()
 {
     m_ptrRestoreAttach  = new QAction(tr("Restore attachment"), this);
     m_ptrRestoreAttach  ->setIconVisibleInMenu(true);
-    m_ptrRestoreAttach  ->setIcon(QIcon(":/images/images/restore2.ico"));
+    m_ptrRestoreAttach  ->setIcon(QIcon(":/images/images/cube_green_new.png"));
     m_ptrRestoreAttach  ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_R));
     m_ptrRestoreAttach  ->setStatusTip(tr("Restore selected attachment"));
     m_ptrRestoreAttach  ->setEnabled(false);
     //
     m_ptrDeleteAttach   = new QAction(tr("Delete attachment"), this);
     m_ptrDeleteAttach   ->setIconVisibleInMenu(true);
-    m_ptrDeleteAttach   ->setIcon(QIcon(":/images/images/delete2.ico"));
+    m_ptrDeleteAttach   ->setIcon(QIcon(":/images/images/delete2.png"));
     m_ptrDeleteAttach   ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_D));
     m_ptrDeleteAttach   ->setStatusTip(tr("Delete selected attachment"));
     m_ptrDeleteAttach   ->setEnabled(false);
     //
     m_ptrExportAttach   = new QAction(tr("Download attachment"), this);
     m_ptrExportAttach   ->setIconVisibleInMenu(true);
-    m_ptrExportAttach   ->setIcon(QIcon(":/images/images/download.ico"));
+    m_ptrExportAttach   ->setIcon(QIcon(":/images/images/down_plus.png"));
     m_ptrExportAttach   ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_E));
     m_ptrExportAttach   ->setStatusTip(tr("Export selected attachment"));
     m_ptrExportAttach   ->setEnabled(false);
     //
     m_ptrImportAttach   = new QAction(tr("Import attachment"), this);
     m_ptrImportAttach   ->setIconVisibleInMenu(true);
-    m_ptrImportAttach   ->setIcon(QIcon(":/images/images/add2.ico"));
+    m_ptrImportAttach   ->setIcon(QIcon(":/images/images/up_plus.png"));
     m_ptrImportAttach   ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_I));
     m_ptrImportAttach   ->setStatusTip(tr("Attach files to the node"));
     m_ptrImportAttach   ->setEnabled(false);
@@ -595,25 +597,44 @@ void MnuMainWindow::createAttachmentControlMenu()
     //
     m_ptrCutAttach      = new QAction(tr("Cut attachment"), this);
     m_ptrCutAttach      ->setIconVisibleInMenu(true);
-    m_ptrCutAttach      ->setIcon(QIcon(":/images/images/cut.ico"));
+    m_ptrCutAttach      ->setIcon(QIcon(":/images/images/cut.png"));
     m_ptrCutAttach      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrCutAttach      ->setStatusTip(tr("Cut selected attachments"));
     m_ptrCutAttach      ->setEnabled(false);
     //
     m_ptrPasteAttach    = new QAction(tr("Paste attachment"), this);
     m_ptrPasteAttach    ->setIconVisibleInMenu(true);
-    m_ptrPasteAttach    ->setIcon(QIcon(":/images/images/paste.ico"));
+    m_ptrPasteAttach    ->setIcon(QIcon(":/images/images/paste.png"));
     m_ptrPasteAttach    ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_P));
     m_ptrPasteAttach    ->setStatusTip(tr("Paste selected attachments"));
     m_ptrPasteAttach    ->setEnabled(false);
     //
     m_ptrViewAttach    = new QAction(tr("View attachment"), this);
     m_ptrViewAttach    ->setIconVisibleInMenu(true);
-    m_ptrViewAttach    ->setIcon(QIcon(":/images/images/view.ico"));
+    m_ptrViewAttach    ->setIcon(QIcon(":/images/images/view.png"));
     m_ptrViewAttach    ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_O));
     m_ptrViewAttach    ->setStatusTip(tr("Open and view attachments"));
     m_ptrViewAttach    ->setEnabled(false);
-};
+    //
+    if (NULL == m_ptrAttachmentToolBar)
+        m_ptrAttachmentToolBar = new QToolBar;
+    //
+    m_ptrAttachmentToolBar->addAction(m_ptrImportAttach);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrExportAttach);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrDeleteAttach);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrRestoreAttach);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrReplaceAttach);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrCutAttach);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrPasteAttach);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrViewAttach);
+}
 
 void MnuMainWindow::createSecurityMenu()
 {
@@ -629,60 +650,73 @@ void MnuMainWindow::createCryptograficMenu ()
 {
     m_ptrEncryptAllAttachmentsOfNode      = new QAction(tr("Encrypt all attachments"), this);
     m_ptrEncryptAllAttachmentsOfNode      ->setIconVisibleInMenu(true);
-    m_ptrEncryptAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/lock.ico"));
+    m_ptrEncryptAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/lock.png"));
     //m_ptrEncryptListOfAttachments      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrEncryptAllAttachmentsOfNode      ->setStatusTip(tr("Encrypt all attachments of this node"));
     m_ptrEncryptAllAttachmentsOfNode      ->setEnabled(false);
     //
     m_ptrDecryptAllAttachmentsOfNode      = new QAction(tr("Decrypt all attachments"), this);
     m_ptrDecryptAllAttachmentsOfNode      ->setIconVisibleInMenu(true);
-    m_ptrDecryptAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/lock_open.ico"));
+    m_ptrDecryptAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/lock_open.png"));
     //m_ptrDecryptAll      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrDecryptAllAttachmentsOfNode      ->setStatusTip(tr("Decrypt all attachments of this node"));
     m_ptrDecryptAllAttachmentsOfNode      ->setEnabled(false);
     //
     m_ptrEncryptSelectedAttachments        = new QAction(tr("Encrypt selected attachment"), this);
     m_ptrEncryptSelectedAttachments        ->setIconVisibleInMenu(true);
-    //m_ptrEncryptSelectedAttachments        ->setIcon(QIcon(":/images/images/no_shield.png"));
+    m_ptrEncryptSelectedAttachments        ->setIcon(QIcon(":/images/images/lock_add.png"));
     //m_ptrEncryptSelectedAttachments   ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrEncryptSelectedAttachments        ->setStatusTip(tr("Encrypt selected attachment"));
     m_ptrEncryptSelectedAttachments        ->setEnabled(false);
     //
     m_ptrDecryptSelectedAttachments       = new QAction(tr("Decrypt selected attachment"), this);
     m_ptrDecryptSelectedAttachments        ->setIconVisibleInMenu(true);
-    //m_ptrDecryptSelectedAttachments        ->setIcon(QIcon(":/images/images/no_shield.png"));
+    m_ptrDecryptSelectedAttachments        ->setIcon(QIcon(":/images/images/lock_delete.png"));
     //m_ptrDecryptSelectedAttachments   ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrDecryptSelectedAttachments        ->setStatusTip(tr("Decrypt selected attachment"));
     m_ptrDecryptSelectedAttachments        ->setEnabled(false);
-
+    //
+    if (NULL == m_ptrAttachmentToolBar)
+        m_ptrAttachmentToolBar = new QToolBar;
+    else
+        m_ptrAttachmentToolBar->addSeparator();
+    //
+    m_ptrAttachmentToolBar->addAction(m_ptrEncryptAllAttachmentsOfNode);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrDecryptAllAttachmentsOfNode);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrEncryptSelectedAttachments);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrDecryptSelectedAttachments);
+    //
 }
 
 void MnuMainWindow::createProtectionMenu()
 {
     m_ptrProtectAllAttachmentsOfNode= new QAction(tr("Protect all attachments "), this);
     m_ptrProtectAllAttachmentsOfNode      ->setIconVisibleInMenu(true);
-    m_ptrProtectAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/no_shield.png"));
+    m_ptrProtectAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/shield_green.png"));
     //m_ptrProtectAllAttachmentsOfNode      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrProtectAllAttachmentsOfNode      ->setStatusTip(tr("Protect all attachments of this node"));
     m_ptrProtectAllAttachmentsOfNode      ->setEnabled(false);
     //
     m_ptrUn_ProtectAllAttachmentsOfNode= new QAction(tr("Remove protection of all attachments"), this);
     m_ptrUn_ProtectAllAttachmentsOfNode      ->setIconVisibleInMenu(true);
-    m_ptrUn_ProtectAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/shield_add.png"));
+    m_ptrUn_ProtectAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/shield_delete.png"));
     //m_ptrUn_ProtectAllAttachmentsOfNode      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrUn_ProtectAllAttachmentsOfNode      ->setStatusTip(tr("Protect all attachments of this node"));
     m_ptrUn_ProtectAllAttachmentsOfNode      ->setEnabled(false);
     //
     m_ptrProtectSelectedAttachments= new QAction(tr("Protect selected attachment"), this);
     m_ptrProtectSelectedAttachments      ->setIconVisibleInMenu(true);
-    m_ptrProtectSelectedAttachments      ->setIcon(QIcon(":/images/images/no_shield.png"));
+    m_ptrProtectSelectedAttachments      ->setIcon(QIcon(":/images/images/shield_ok.png"));
     //m_ptrProtectSelectedAttachments      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrProtectSelectedAttachments      ->setStatusTip(tr("Set protection for selected attachment"));
     m_ptrProtectSelectedAttachments      ->setEnabled(false);
     //
     m_ptrUn_ProtectSelectedAttachments= new QAction(tr("Remove protection of selected attachment"), this);
     m_ptrUn_ProtectSelectedAttachments      ->setIconVisibleInMenu(true);
-    m_ptrUn_ProtectSelectedAttachments      ->setIcon(QIcon(":/images/images/shield.png"));
+    m_ptrUn_ProtectSelectedAttachments      ->setIcon(QIcon(":/images/images/shield_red.png"));
     //m_ptrDropThisProtect      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrUn_ProtectSelectedAttachments      ->setStatusTip(tr("Drop protection for selected attachment"));
     m_ptrUn_ProtectSelectedAttachments      ->setEnabled(false);
@@ -731,84 +765,84 @@ void MnuMainWindow::createNodeControlMenu()
 {
     m_ptrDelNode        = new QAction(tr("Delete current node"), this);
     m_ptrDelNode        ->setIconVisibleInMenu(true);
-    m_ptrDelNode        ->setIcon(QIcon(":/images/images/delete.ico"));
+    m_ptrDelNode        ->setIcon(QIcon(":/images/images/delete.png"));
     m_ptrDelNode        ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_D));
     m_ptrDelNode        ->setStatusTip(tr("Delete current node"));
     m_ptrDelNode        ->setEnabled(false);
     //
     m_ptrRestoreNode    = new QAction(tr("Restore current node"), this);
     m_ptrRestoreNode    ->setIconVisibleInMenu(true);
-    m_ptrRestoreNode    ->setIcon(QIcon(":/images/images/restore.ico"));
+    m_ptrRestoreNode    ->setIcon(QIcon(":/images/images/cube_green.png"));
     m_ptrRestoreNode    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_R));
     m_ptrRestoreNode    ->setStatusTip(tr("Restore current node"));
     m_ptrRestoreNode    ->setEnabled(false);
     //
     m_ptrRestoreSubtree = new QAction(tr("Completely restore subtree"), this);
     m_ptrRestoreSubtree ->setIconVisibleInMenu(true);
-    m_ptrRestoreSubtree ->setIcon(QIcon(":/images/images/restore3.ico"));
+    m_ptrRestoreSubtree ->setIcon(QIcon(":/images/images/cube_green_add.png"));
     m_ptrRestoreSubtree ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_G));
     m_ptrRestoreSubtree ->setStatusTip(tr("Restore current subtree: all nodes and attachments"));
     m_ptrRestoreSubtree ->setEnabled(false);
     //
     m_ptrInsertNewNode  = new QAction(tr("Insert new node"), this);
     m_ptrInsertNewNode  ->setIconVisibleInMenu(true);
-    m_ptrInsertNewNode  ->setIcon(QIcon(":/images/images/add.ico"));
+    m_ptrInsertNewNode  ->setIcon(QIcon(":/images/images/add.png"));
     m_ptrInsertNewNode  ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_Insert));
     m_ptrInsertNewNode  ->setStatusTip(tr("Insert new node"));
     m_ptrInsertNewNode  ->setEnabled(false);
     //
     m_ptrCutNode        = new QAction(tr("Cut node"), this);
     m_ptrCutNode        ->setIconVisibleInMenu(true);
-    m_ptrCutNode        ->setIcon(QIcon(":/images/images/cut.ico"));
+    m_ptrCutNode        ->setIcon(QIcon(":/images/images/cut.png"));
     m_ptrCutNode        ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_M));
     m_ptrCutNode        ->setStatusTip(tr("Cut node"));
     m_ptrCutNode        ->setEnabled(false);
     //----  alternate menu item
     m_ptrPasteNode      = new QAction(tr("Paste node"), this);
     m_ptrPasteNode      ->setIconVisibleInMenu(true);
-    m_ptrPasteNode      ->setIcon(QIcon(":/images/images/paste.ico"));
+    m_ptrPasteNode      ->setIcon(QIcon(":/images/images/paste.png"));
     m_ptrPasteNode      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
     m_ptrPasteNode      ->setStatusTip(tr("Paste node"));
     m_ptrPasteNode      ->setEnabled(false);
     //
-    m_ptrExportNode     = new QAction(tr("Export..."), this);
+    m_ptrExportNode     = new QAction(tr("Export node..."), this);
     m_ptrExportNode     ->setIconVisibleInMenu(true);
-    m_ptrExportNode     ->setIcon(QIcon(":/images/images/export.ico"));
+    m_ptrExportNode     ->setIcon(QIcon(":/images/images/export.png"));
     m_ptrExportNode     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_E));
     m_ptrExportNode     ->setStatusTip(tr("Export current node or subtree to the disk"));
     m_ptrExportNode     ->setEnabled(false);
     //
-    m_ptrImportNode     = new QAction(tr("Import..."), this);
+    m_ptrImportNode     = new QAction(tr("Import directory..."), this);
     m_ptrImportNode     ->setIconVisibleInMenu(true);
-    m_ptrImportNode     ->setIcon(QIcon(":/images/images/import.ico"));
+    m_ptrImportNode     ->setIcon(QIcon(":/images/images/import.png"));
     m_ptrImportNode     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_I));
     m_ptrImportNode     ->setStatusTip(tr("Import from disk under current node"));
     m_ptrImportNode     ->setEnabled(false);
     //
-    m_ptrEncryptAttachmentsOfAllNodes     = new QAction(tr("Encrypt all attachments.."), this);
-    //m_ptrEncryptAttachmentsOfAllNodes     ->setIconVisibleInMenu(true);
-    //m_ptrEncryptAttachmentsOfAllNodes     ->setIcon(QIcon(":/images/images/import.ico"));
-    //m_ptrEncryptAttachmentsOfAllNodes     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_I));
+    m_ptrEncryptAttachmentsOfAllNodes     = new QAction(tr("Encrypt all attachments of current node.."), this);
+    m_ptrEncryptAttachmentsOfAllNodes     ->setIconVisibleInMenu(true);
+    m_ptrEncryptAttachmentsOfAllNodes     ->setIcon(QIcon(":/images/images/lock_add.png"));
+    //m_ptrEncryptAttachmentsOfAllNodes     ->setShortcut(QKeySequence (Qt::SHIFT + Qt::ALT + Qt::Key_P));
     m_ptrEncryptAttachmentsOfAllNodes     ->setStatusTip(tr("Encrypt all attachments of the node (with childs optionally"));
     m_ptrEncryptAttachmentsOfAllNodes     ->setEnabled(false);
     //
-    m_ptrDecryptAttachmentsOfAllNodes     = new QAction(tr("Decrypt all attachments.."), this);
-    //m_ptrDecryptAttachmentsOfAllNodes     ->setIconVisibleInMenu(true);
-    //m_ptrDecryptAttachmentsOfAllNodes     ->setIcon(QIcon(":/images/images/import.ico"));
+    m_ptrDecryptAttachmentsOfAllNodes     = new QAction(tr("Decrypt all attachments of current node.."), this);
+    m_ptrDecryptAttachmentsOfAllNodes     ->setIconVisibleInMenu(true);
+    m_ptrDecryptAttachmentsOfAllNodes     ->setIcon(QIcon(":/images/images/lock_delete.png"));
     //m_ptrDecryptAttachmentsOfAllNodes     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_I));
     m_ptrDecryptAttachmentsOfAllNodes     ->setStatusTip(tr("Decrypt all attachments of the node (with childs optionally"));
     m_ptrDecryptAttachmentsOfAllNodes     ->setEnabled(false);
-    //
+    //....... not added to the toolbar yet
     m_ptrProtectAttachmentsOfAllNodes     = new QAction(tr("Protect all attachments.."), this);
-    //m_ptrProtectAttachmentsOfAllNodes     ->setIconVisibleInMenu(true);
-    //m_ptrProtectAttachmentsOfAllNodes     ->setIcon(QIcon(":/images/images/import.ico"));
+    m_ptrProtectAttachmentsOfAllNodes     ->setIconVisibleInMenu(true);
+    m_ptrProtectAttachmentsOfAllNodes     ->setIcon(QIcon(":/images/images/shield_green.png"));
     //m_ptrProtectAttachmentsOfAllNodes     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_I));
     m_ptrProtectAttachmentsOfAllNodes     ->setStatusTip(tr("Protect all attachments of the node (with childs optionally"));
     m_ptrProtectAttachmentsOfAllNodes     ->setEnabled(false);
     //
     m_ptrUn_ProtectAttachmentsOfAllNodes     = new QAction(tr("Unprotect all attachments.."), this);
-    //m_ptrUn_ProtectAttachmentsOfAllNodes     ->setIconVisibleInMenu(true);
-    //m_ptrUn_ProtectAttachmentsOfAllNodes     ->setIcon(QIcon(":/images/images/import.ico"));
+    m_ptrUn_ProtectAttachmentsOfAllNodes     ->setIconVisibleInMenu(true);
+    m_ptrUn_ProtectAttachmentsOfAllNodes     ->setIcon(QIcon(":/images/images/shield_delete.png"));
     //m_ptrUn_ProtectAttachmentsOfAllNodes     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_I));
     m_ptrUn_ProtectAttachmentsOfAllNodes     ->setStatusTip(tr("Protect all attachments of the node (with childs optionally"));
     m_ptrUn_ProtectAttachmentsOfAllNodes     ->setEnabled(false);
@@ -819,7 +853,35 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrSaveNodeDescriptor     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_S));
     m_ptrSaveNodeDescriptor     ->setStatusTip(tr("Save changed node descriptor"));
     m_ptrSaveNodeDescriptor     ->setEnabled(false);
-};
+    //
+    m_ptrNodeToolBar    = new QToolBar;
+    //
+    m_ptrNodeToolBar->addAction(m_ptrInsertNewNode);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrDelNode);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrRestoreNode);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrRestoreSubtree);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrCutNode);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrPasteNode);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrExportNode);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrImportNode);
+    ///---------------
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrEncryptAttachmentsOfAllNodes);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrDecryptAttachmentsOfAllNodes);
+    m_ptrNodeToolBar->addSeparator();
+    //----
+    m_ptrNodeToolBar->addAction(m_ptrProtectAttachmentsOfAllNodes);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrUn_ProtectAttachmentsOfAllNodes);
+}
 
 void MnuMainWindow::assemblyTreeMenu(QMenu* ptr_node_menu)
 {
