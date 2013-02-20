@@ -655,28 +655,28 @@ void MnuMainWindow::createCryptograficMenu ()
     m_ptrEncryptAllAttachmentsOfNode      = new QAction(tr("Encrypt all attachments"), this);
     m_ptrEncryptAllAttachmentsOfNode      ->setIconVisibleInMenu(true);
     m_ptrEncryptAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/lock.png"));
-    //m_ptrEncryptListOfAttachments      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
+    m_ptrEncryptAllAttachmentsOfNode      ->setShortcut(QKeySequence("Ctrl+Alt+N"));
     m_ptrEncryptAllAttachmentsOfNode      ->setStatusTip(tr("Encrypt all attachments of this node"));
     m_ptrEncryptAllAttachmentsOfNode      ->setEnabled(false);
     //
     m_ptrDecryptAllAttachmentsOfNode      = new QAction(tr("Decrypt all attachments"), this);
     m_ptrDecryptAllAttachmentsOfNode      ->setIconVisibleInMenu(true);
     m_ptrDecryptAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/lock_open.png"));
-    //m_ptrDecryptAll      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
+    m_ptrDecryptAllAttachmentsOfNode      ->setShortcut(QKeySequence("Ctrl+Alt+U"));
     m_ptrDecryptAllAttachmentsOfNode      ->setStatusTip(tr("Decrypt all attachments of this node"));
     m_ptrDecryptAllAttachmentsOfNode      ->setEnabled(false);
     //
     m_ptrEncryptSelectedAttachments        = new QAction(tr("Encrypt selected attachment"), this);
     m_ptrEncryptSelectedAttachments        ->setIconVisibleInMenu(true);
     m_ptrEncryptSelectedAttachments        ->setIcon(QIcon(":/images/images/lock_add.png"));
-    //m_ptrEncryptSelectedAttachments   ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
+    m_ptrEncryptSelectedAttachments        ->setShortcut( QKeySequence ("Ctrl+Shift+N") );
     m_ptrEncryptSelectedAttachments        ->setStatusTip(tr("Encrypt selected attachment"));
     m_ptrEncryptSelectedAttachments        ->setEnabled(false);
     //
     m_ptrDecryptSelectedAttachments       = new QAction(tr("Decrypt selected attachment"), this);
     m_ptrDecryptSelectedAttachments        ->setIconVisibleInMenu(true);
     m_ptrDecryptSelectedAttachments        ->setIcon(QIcon(":/images/images/lock_delete.png"));
-    //m_ptrDecryptSelectedAttachments   ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
+    m_ptrDecryptSelectedAttachments        ->setShortcut( QKeySequence ("Ctrl+Shift+U") );
     m_ptrDecryptSelectedAttachments        ->setStatusTip(tr("Decrypt selected attachment"));
     m_ptrDecryptSelectedAttachments        ->setEnabled(false);
     //
