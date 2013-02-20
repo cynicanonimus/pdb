@@ -103,9 +103,13 @@ bool TreeSearchDlg::getEarliestDateFromDB ()
     if (NULL == ptr_db)
         return false;
     //
+    QDateTime   attach_change;
+    //
     QSqlQuery qry(*ptr_db);
-    ////select  min(last_change) AS from_day from node_tbl;
-    QString str_select_str = QString ("select least (min(node_tbl.last_change), min(attachments.last_change)) as early_date from node_tbl, attachments;");
+    //
+    // select from both tables because it is modification, but not creation date.
+    //
+    QString str_select_str = QString ("select min(node_tbl.last_change) as node_change, min(attachments.last_change) as attach_change from node_tbl, attachments;");
     //
     if (!qry.prepare( str_select_str ))
     {
@@ -123,9 +127,14 @@ bool TreeSearchDlg::getEarliestDateFromDB ()
         while( qry.next() )
         {
             m_dtEarliestDateTime = qry.value(0).toDateTime();
+            attach_change = qry.value(1).toDateTime();
             break;
         }; // while( qry.next() )
     }; //if (!qry.prepare( str_select_str ))
+    //
+    if ( attach_change < m_dtEarliestDateTime )
+        m_dtEarliestDateTime = attach_change;
+    //
     return true;
 }
 

@@ -744,6 +744,13 @@ void MnuMainWindow::createTreeControlMenu()
 {
     //for the m_ptrTreeControlMenu
     //
+    m_ptrBackupDatabase = new QAction(tr("Backup database"), this);
+    m_ptrBackupDatabase  ->setIconVisibleInMenu(true);
+    m_ptrBackupDatabase  ->setIcon(QIcon(":/images/images/data_disk.png"));
+    m_ptrBackupDatabase  ->setShortcut(QKeySequence (Qt::Key_F5));
+    m_ptrBackupDatabase  ->setStatusTip(tr("Immediately backup database"));
+    m_ptrBackupDatabase  ->setEnabled(true);
+    //
     m_ptrCreateNewTree  = new QAction(tr("Create new tree"), this);
     m_ptrCreateNewTree  ->setIconVisibleInMenu(true);
     m_ptrCreateNewTree  ->setIcon(QIcon(":/images/images/tree.png"));
@@ -797,6 +804,8 @@ void MnuMainWindow::createTreeControlMenu()
     m_ptrTreeToolBar->addAction(m_ptrInfoTree);
     m_ptrTreeToolBar->addSeparator();
     m_ptrTreeToolBar->addAction(m_ptrSearchInTree);
+    m_ptrTreeToolBar->addSeparator();
+    m_ptrTreeToolBar->addAction(m_ptrBackupDatabase);
     m_ptrTreeToolBar->addSeparator();
     m_ptrTreeToolBar->addAction(m_ptrExitApp);
 }
@@ -939,6 +948,8 @@ void MnuMainWindow::assemblyTreeMenu(QMenu* ptr_node_menu)
     ptr_node_menu->addAction(m_ptrInfoTree);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrSearchInTree);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrBackupDatabase);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrExitApp);
 }

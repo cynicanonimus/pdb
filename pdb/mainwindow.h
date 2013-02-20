@@ -71,6 +71,7 @@ private slots:
     void onDbAlreadyInUse           () const;
     void saveCurrentNodeDescriptor  ();
     void onClickAbout               ();
+    void onBackupDatabaseNow        ();
 
 private:
     Ui::MainWindow* ui;

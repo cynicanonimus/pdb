@@ -98,6 +98,8 @@ public:
     //----------------------------- tree menu -----------------------------
     QMenu*      m_ptrTreeControlMenu;
     //
+    QAction*    m_ptrBackupDatabase;
+    //
     QAction*    m_ptrDelTree;
     QAction*    m_ptrCreateNewTree;
     QAction*    m_ptrRenameTree;
