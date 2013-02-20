@@ -424,6 +424,7 @@ void  TreeLeaf::setDescriptor  (const QString& str_html_descriptor)
         return;
     //
     {
+        //bug in Qt, this code is NOT useless.
         m_docDescriptor.setHtml(str_html_descriptor);
         QString str_original_html = m_docDescriptor.toHtml();
     }
@@ -625,13 +626,16 @@ bool  TreeLeaf::updateDescriptor_DB()
     QSqlQuery qry(*ptr_db);
     //
     const QString str_html_string = m_docDescriptor.toHtml();
-    QString str_update_string = QString("UPDATE node_tbl SET node_descriptor = '%1' WHERE id_node = %2;").arg( getSQLAdaptedString( str_html_string ) ).arg(m_iID);
+    QString str_update_string = QString("UPDATE node_tbl SET node_descriptor = :DESCRIPTOR WHERE id_node = :ID;");
     //
     if ( !qry.prepare( str_update_string ) )
     {
         Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
         return false;
     };
+    //
+    qry.bindValue(":DESCRIPTOR",   str_html_string );
+    qry.bindValue(":ID",   m_iID );
     //
     if( !qry.exec() )
     {
@@ -1158,21 +1162,32 @@ int  TreeLeaf::insertTo_DB()
     //INSERT INTO into node_tbl (id_parent, id_tree, node_name, node_descriptor) values (0, 1, 'Root node Tree 1', 'empty_desciptor');
     QString str_insert_string;
     //
-    if (m_docDescriptor.toHtml().length() > 0) //because use for import (where descriptor can exist) and for new created node, where can not.
+    if (m_docDescriptor.toPlainText().length() > 0) //check plaintext because toHtml always gets at least empty HTML-document
     {
-        str_insert_string = QString("INSERT INTO node_tbl (id_parent, id_tree, node_name, node_descriptor) values (%1, %2, '%3', '%4');").
-                arg( this->getParentID() ).arg( this->getTreeID() ).arg( this->getSQLAdaptedString(this->text(0)) ).arg( this->getSQLAdaptedString(m_docDescriptor.toHtml())  );
-    }
-    else
+        str_insert_string = QString("INSERT INTO node_tbl (id_parent, id_tree, node_name, node_descriptor) values (:ID_PARENT, :ID_TREE, :NODENAME, :DESCRIPTOR);");
+    }else
     {
-        str_insert_string = QString("INSERT INTO node_tbl (id_parent, id_tree, node_name) values (%1, %2, '%3');").
-                arg( this->getParentID() ).arg( this->getTreeID() ).arg( this->getSQLAdaptedString(this->text(0)) );
+        str_insert_string = QString("INSERT INTO node_tbl (id_parent, id_tree, node_name) values (:ID_PARENT, :ID_TREE, :NODENAME);");
     };
     //
     if (!qry.prepare( str_insert_string ))
     {
         Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
         return -1;
+    };
+    //
+    if (m_docDescriptor.toPlainText().length() > 0) //because use for import (where descriptor can exist) and for new created node, where can not.
+    {
+        qry.bindValue(":ID_PARENT",   this->getParentID() );
+        qry.bindValue(":ID_TREE",     this->getTreeID()   );
+        qry.bindValue(":NODENAME",    this->text(0)       );
+        qry.bindValue(":DESCRIPTOR",  m_docDescriptor.toHtml() );
+    }
+    else
+    {
+        qry.bindValue(":ID_PARENT",   this->getParentID() );
+        qry.bindValue(":ID_TREE",     this->getTreeID()   );
+        qry.bindValue(":NODENAME",    this->text(0)       );
     };
     //
     if( !qry.exec() )
@@ -1184,7 +1199,7 @@ int  TreeLeaf::insertTo_DB()
     m_iID = qry.lastInsertId().toInt();
     //
     return m_iID;
-};
+}
 
 bool TreeLeaf::updateName_DB()
 {
