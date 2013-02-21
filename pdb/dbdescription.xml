@@ -109,4 +109,118 @@
 			select count (*) from attachments;
 		</statement>
 	</database>
+	<database type="SQLite">
+		<driver>QSQLITE</driver>
+		<show_tables_request>
+			select name from sqlite_master where type='table';
+		</show_tables_request>
+
+		<!-- this must be executed as the first command in each connection for the
+		     foreign keys to function properly
+		     -->
+		<connection_setup_request>
+			PRAGMA foreign_keys=on;
+		</connection_setup_request>
+
+		<statement id="0">
+			DROP TABLE IF EXISTS `attachments`;
+		</statement>
+
+		<statement id="1">
+			DROP TABLE IF EXISTS `service_tbl`;
+		</statement>
+
+		<statement id="2">
+			DROP TABLE IF EXISTS `node_tbl`;
+		</statement>
+
+		<statement id="3">
+			DROP TABLE IF EXISTS `root_tbl`;
+		</statement>
+
+		<statement id="4">
+			CREATE TABLE `service_tbl` (
+			  `id_param` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			  `is_already_in_use` INTEGER(1) NOT NULL DEFAULT '0',
+			  `password` TEXT DEFAULT NULL
+			);
+		</statement>
+
+		<statement id="5">
+			CREATE TABLE `root_tbl` (
+			  `id_tree` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			  `tree_name` TEXT NOT NULL,
+			  `last_change` INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			  `active` INTEGER(1) NOT NULL DEFAULT '1',
+			  `current` INTEGER(1) NOT NULL DEFAULT '0',
+			  UNIQUE (`tree_name`)
+			);
+		</statement>
+
+		<statement id="50">
+			CREATE TRIGGER `update_root_tbl_timestamp`
+			  AFTER UPDATE ON `root_tbl`
+			  FOR EACH ROW
+			  BEGIN
+			    UPDATE `root_tbl` SET last_change=datetime('now') WHERE id_tree=OLD.id_tree;
+			  END;
+		</statement>
+
+		<statement id="6">
+			CREATE TABLE `node_tbl` (
+			  `id_node` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			  `id_parent` INTEGER NOT NULL,
+			  `id_tree` INTEGER NOT NULL,
+			  `node_name` TEXT NOT NULL,
+			  `node_descriptor` TEXT,
+			  `active` INTEGER(1) NOT NULL DEFAULT '1',
+			  `expanded` INTEGER(1) NOT NULL DEFAULT '0',
+			  `last_change` INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			  `id_icon` INTEGER NOT NULL DEFAULT '0',
+			  CONSTRAINT `node_tbl_ibfk_1` FOREIGN KEY (`id_tree`) REFERENCES `root_tbl` (`id_tree`) ON DELETE CASCADE
+			);
+		</statement>
+
+		<statement id="60">
+			CREATE TRIGGER `update_node_tbl_timestamp`
+			  AFTER UPDATE ON `node_tbl`
+			  FOR EACH ROW
+			  BEGIN
+			    UPDATE `node_tbl` SET last_change=datetime('now') WHERE id_node=OLD.id_node;
+			  END;
+		</statement>
+
+		<statement id="61">
+			CREATE INDEX `tree_ind` ON `node_tbl` (`id_tree`);
+		</statement>
+
+		<statement id="7">
+			CREATE TABLE `attachments` (
+			  `id_attach` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			  `id_parent` INTEGER NOT NULL,
+			  `attach_name` TEXT NOT NULL,
+			  `attach_size` INTEGER NOT NULL DEFAULT '1',
+			  `active` INTEGER(1) NOT NULL DEFAULT '1',
+			  `crypted` INTEGER(1) NOT NULL DEFAULT '0',
+			  `locked` INTEGER(1) NOT NULL DEFAULT '0',
+			  `is_binary` INTEGER(1) NOT NULL,
+			  `last_change` INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			  `attach` BLOB NOT NULL,
+			  CONSTRAINT `attachments_ibfk_1` FOREIGN KEY (`id_parent`) REFERENCES `node_tbl` (`id_node`) ON DELETE CASCADE
+			);
+		</statement>
+
+		<statement id="70">
+			CREATE TRIGGER `update_attachments_timestamp`
+			  AFTER UPDATE ON `attachments`
+			  FOR EACH ROW
+			  BEGIN
+			    UPDATE `attachments` SET last_change=datetime('now') WHERE id_attach=OLD.id_attach;
+			  END;
+		</statement>
+
+		<statement id="71">
+			CREATE INDEX `attach_ind` ON `attachments` (`id_parent`);
+		</statement>
+	</database>
 </databases>
