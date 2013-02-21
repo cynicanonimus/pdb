@@ -590,14 +590,16 @@ bool Attachment::updateName_DB()
     //
     QSqlQuery qry(*ptr_db);
     //
-    const QString str_update_string = QString("UPDATE attachments SET attach_name = '%1' WHERE id_attach = %2;").
-                                             arg( getSQLAdaptedString( m_strAttachName ) ).arg(m_iID);
+    const QString str_update_string = QString("UPDATE attachments SET attach_name = :NAME WHERE id_attach = :ID;").
     //
     if (!qry.prepare( str_update_string ))
     {
         Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
         return false;
     };
+    //
+    qry.bindValue(":NAME", m_strAttachName);
+    qry.bindValue(":ID",   m_iID);
     //
     if( !qry.exec() )
     {
