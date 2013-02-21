@@ -590,7 +590,7 @@ bool Attachment::updateName_DB()
     //
     QSqlQuery qry(*ptr_db);
     //
-    const QString str_update_string = QString("UPDATE attachments SET attach_name = :NAME WHERE id_attach = :ID;").
+    const QString str_update_string = QString("UPDATE attachments SET attach_name = :NAME WHERE id_attach = :ID;");
     //
     if (!qry.prepare( str_update_string ))
     {
