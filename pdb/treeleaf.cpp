@@ -1211,13 +1211,16 @@ bool TreeLeaf::updateName_DB()
     //
     QSqlQuery qry(*ptr_db);
     //
-    QString str_update_string = QString("UPDATE node_tbl SET node_name = '%1' WHERE id_node = %2;").arg( getSQLAdaptedString(this->text(0)) ).arg(m_iID);
+    QString str_update_string = QString("UPDATE node_tbl SET node_name = :NAME WHERE id_node = :ID;");
     //
     if(! qry.prepare( str_update_string ) )
     {
         Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
         return false;
     };
+    //
+    qry.bindValue(":NAME", this->text(0));
+    qry.bindValue(":ID",   m_iID);
     //
     if( !qry.exec() )
     {
