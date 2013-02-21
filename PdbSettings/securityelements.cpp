@@ -38,6 +38,9 @@ SecurityElements::SecurityElements(QGroupBox *ptr_parent_frame, QGridLayout *ptr
     //
     m_ptrProtectionByDefault    = NULL;
     //
+    m_ptrBackupLabel            = NULL;
+    m_ptrEditBackup             = NULL;
+    //
     readData();
     //
     createLayout();
@@ -197,24 +200,10 @@ void    SecurityElements::createLayout()
     //
     m_ptrMarkCryptByDefault= new QCheckBox( tr("Always select \"Encrypt attachment(s)\" in upload and replace dialogs") );
     m_ptrAttachmentGrid->addWidget(m_ptrMarkCryptByDefault, i_attach_row,0,1,4);
-/*
-  Always select \"crypt attachment(s)\" for upload and replace
-    m_ptrClientSide = new QRadioButton(tr("crypt on client side"));
-    m_ptrAttachmentGrid->addWidget(m_ptrClientSide, i_attach_row,0,1,2);
-    //...
-    m_ptrServerSide  = new QRadioButton(tr("crypt on server side"));
-    m_ptrAttachmentGrid->addWidget(m_ptrServerSide, i_attach_row,2,1,2);
-    //
-    i_attach_row++;
-    //
-    m_ptrLblClientCrypt = new QLabel(tr("client side command"));
-    m_ptrAttachmentGrid->addWidget(m_ptrLblClientCrypt, i_attach_row,0,1,2);
-    //---
-*/
     //
     i_row++;
     //
-    m_ptrProtectionGroupBox     = new QGroupBox( tr("Protecting attachments") );
+    m_ptrProtectionGroupBox     = new QGroupBox( tr("Protecting attachments and backup") );
     m_ptrProtectionGrid         = new QGridLayout(m_ptrProtectionGroupBox);
     m_ptrProtectionGroupBox->setLayout(m_ptrProtectionGrid);
     addAndRegisterElement(m_ptrProtectionGroupBox, i_row,0,1,4);
@@ -225,6 +214,14 @@ void    SecurityElements::createLayout()
     m_ptrProtectionByDefault= new QCheckBox( tr("Protect attachment by default") );
     m_ptrProtectionByDefault->setToolTip("Protects attachments from unintetional deletion");
     m_ptrProtectionGrid->addWidget(m_ptrProtectionByDefault, i_protection_row,0,1,4);
+    i_protection_row++;
+    //
+    m_ptrBackupLabel = new QLabel(tr("DB backup command:"));
+    m_ptrProtectionGrid->addWidget(m_ptrBackupLabel, i_protection_row,0,1,1);
+    //
+    m_ptrEditBackup = new QLineEdit();
+    m_ptrEditBackup->setToolTip("batch_file %dir \n '%dir' is mandatory part of the command");
+    m_ptrProtectionGrid->addWidget(m_ptrEditBackup, i_protection_row,1,1,3);
     //-----------------------------------------------------------------------------
     i_row++;
     //

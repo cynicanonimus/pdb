@@ -192,7 +192,7 @@ void MainWindow::createSettingsTree()
     //
     QTreeWidgetItem* ptr_att_security = new QTreeWidgetItem(ui->m_TreeOfSettings);
     ptr_att_security->setFlags(Qt::ItemIsEnabled|Qt::ItemIsSelectable);
-    ptr_att_security->setText(0,QObject::trUtf8("Security"));
+    ptr_att_security->setText(0,QObject::trUtf8("Safety and security"));
     QVariant security_page =  VariantPtr<AbstractGraficeElements>::asQVariant( m_ptrSecurity );
     ptr_att_security->setData(1,0,security_page);
     //

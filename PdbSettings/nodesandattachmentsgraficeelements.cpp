@@ -195,6 +195,9 @@ void NodesAndAttachmentsGraficeElements::writeData()
     //
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
+    if (0 == m_uiMaxAttachmentSizeMB)
+        m_uiMaxAttachmentSizeMB = 1;
+    //
     settings.setValue( g_str_ATTACH_MAX_SIZE_MB, m_uiMaxAttachmentSizeMB );
     //if any path is empty - write default path to the app
     //
@@ -227,6 +230,9 @@ void NodesAndAttachmentsGraficeElements::readData()
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
     m_uiMaxAttachmentSizeMB     = settings.value(g_str_ATTACH_MAX_SIZE_MB).toInt();
+    //
+    if (0 == m_uiMaxAttachmentSizeMB)
+        m_uiMaxAttachmentSizeMB = 1;
     //
     m_strDefaultExportPath      = settings.value(g_str_ATTACH_EXPORT_PATH).toString();
     m_strDefaultImportPath      = settings.value(g_str_ATTACH_IMPORT_PATH).toString();
