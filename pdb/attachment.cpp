@@ -439,7 +439,7 @@ int Attachment::insertTo_DB()
     };
     //
     qry.bindValue(":ID",    m_pParentNode->getID());
-    qry.bindValue(":NAME",  getSQLAdaptedString(m_strAttachName));
+    qry.bindValue(":NAME",  m_strAttachName);
     qry.bindValue(":ASIZE", m_iSize );
     if (m_bIsBinary)
         qry.bindValue(":ISBINARY", 1);
