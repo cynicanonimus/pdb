@@ -141,9 +141,16 @@ bool RootOfTree::updateName_DB ()
     //
     QSqlQuery qry(*ptr_db);
     //
-    QString str_update_string = QString("UPDATE root_tbl SET  tree_name = '%1' WHERE  id_tree = %2;").arg( getSQLAdaptedString(m_strName) ).arg(m_iID);
+    QString str_update_string = QString("UPDATE root_tbl SET  tree_name = :NAME WHERE  id_tree = :ID;");
     //
-    qry.prepare( str_update_string );
+    if( !qry.prepare( str_update_string ) )
+    {
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        return false;
+    }
+    //
+    qry.bindValue(":NAME", m_strName);
+    qry.bindValue(":ID",   m_iID);
     //
     if( !qry.exec() )
     {
@@ -163,9 +170,15 @@ int RootOfTree::insertTo_DB() //
     //
     QSqlQuery qry(*ptr_db);
     //
-    QString str_insert_string = QString("INSERT INTO root_tbl (tree_name) values ('%1');").arg(this->getSQLAdaptedString(m_strName));
+    QString str_insert_string = QString("INSERT INTO root_tbl (tree_name) values (:NAME);");
     //
-    qry.prepare( str_insert_string );
+    if( !qry.prepare( str_insert_string ) )
+    {
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        return -1;
+    };
+    //
+    qry.bindValue(":NAME", m_strName);
     //
     if( !qry.exec() )
     {
