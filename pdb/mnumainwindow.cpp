@@ -655,6 +655,7 @@ void MnuMainWindow::createCryptograficMenu ()
     m_ptrEncryptAllAttachmentsOfNode      = new QAction(tr("Encrypt all attachments"), this);
     m_ptrEncryptAllAttachmentsOfNode      ->setIconVisibleInMenu(true);
     m_ptrEncryptAllAttachmentsOfNode      ->setIcon(QIcon(":/images/images/lock.png"));
+    //m_ptrEncryptAllAttachmentsOfNode      ->setShortcut(QKeySequence("Ctrl+Alt+N"));
     m_ptrEncryptAllAttachmentsOfNode      ->setShortcut(QKeySequence("Ctrl+Alt+N"));
     m_ptrEncryptAllAttachmentsOfNode      ->setStatusTip(tr("Encrypt all attachments of this node"));
     m_ptrEncryptAllAttachmentsOfNode      ->setEnabled(false);
