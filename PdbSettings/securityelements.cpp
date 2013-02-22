@@ -87,6 +87,7 @@ void SecurityElements::writeData()
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
     settings.setValue(g_str_SEC_PROTECT,    m_bProtectByDefault);
+    //g_str_SEC_BACKUP
     //
     settings.setValue(g_str_SEC_SCHRED,     m_bShred);
     settings.setValue(g_str_SEC_SCHRED_CMD, m_strSchredCommandLine);
@@ -102,6 +103,8 @@ void SecurityElements::readData()
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
     m_bProtectByDefault     = settings.value(g_str_SEC_PROTECT).value<bool>();
+    //
+    //g_str_SEC_BACKUP
     //
     m_uiEncryptMode         = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
     //

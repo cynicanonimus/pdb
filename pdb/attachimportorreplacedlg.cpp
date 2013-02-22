@@ -23,6 +23,8 @@
 #include <QFileDialog>
 #include <QGridLayout>
 #include <QCheckBox>
+#include <QLabel>
+#include <QLineEdit>
 #include <QFileInfo>
 #include <QSettings>
 //
@@ -77,8 +79,13 @@ bool AttachImportOrReplaceDlg::exec(const QString&  str_path,
     if (NULL == gridbox)
         return false;
     //
+    const QString str_origin_attach_size = settings.value(g_str_ATTACH_MAX_SIZE_MB).toString();
+    //
     QCheckBox ctrl_delete_after_upload  ( tr("Delete file(s) after upload to the database") , NULL);
     QCheckBox ctrl_protect_upload       ( tr("Protect attachment(s)") , NULL);
+    QLineEdit ctrl_max_attach_size      ( str_origin_attach_size );
+    ctrl_max_attach_size.setMaxLength (2);//not more than 99 Mb.
+    ctrl_max_attach_size.setInputMask("99");
     //
     m_ptrEncryptUploadEnable    = new QCheckBox( tr("Encrypt attachment(s)") , NULL );
     m_ptrEncryptType            = new QComboBox();
@@ -116,6 +123,8 @@ bool AttachImportOrReplaceDlg::exec(const QString&  str_path,
     gridbox->addWidget ( &ctrl_protect_upload,      gridbox->rowCount(), 0,1,1);
     gridbox->addWidget ( m_ptrEncryptUploadEnable,  gridbox->rowCount(), 0,1,1);
     gridbox->addWidget ( m_ptrEncryptType,          gridbox->rowCount()-1, 1,1,1);
+    gridbox->addWidget ( new QLabel("Actual max. size of attaments, Mb:"), gridbox->rowCount(), 0,1,1);
+    gridbox->addWidget ( &ctrl_max_attach_size,     gridbox->rowCount()-1, 1,1,1);
     //
     m_dlgFileDlg->setLayout(gridbox);
     //
@@ -126,6 +135,16 @@ bool AttachImportOrReplaceDlg::exec(const QString&  str_path,
     };
     //
     m_FileList = m_dlgFileDlg->selectedFiles();
+    //
+    QString str_new_attach_size = ctrl_max_attach_size.text();
+    //
+    if (str_origin_attach_size != str_new_attach_size)
+    {
+        unsigned int ui_attach_size = str_new_attach_size.toInt();
+        if (ui_attach_size < 1)
+            ui_attach_size = 1;
+        settings.setValue( g_str_ATTACH_MAX_SIZE_MB, ui_attach_size );
+    };
     //
     if ( m_FileList.size() > 0 )
     {
