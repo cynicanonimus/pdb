@@ -77,7 +77,7 @@ const static QString  g_str_LOG_ERROR           =   "log/error";
 const static QString  g_str_LOG_FLAGS           =   "log/flags";
 //--------------------------------------------------------------------------
 const static QString  g_str_SEC_PROTECT     =   "security/protect";
-const static QString  g_str_SEC_BACKUP     =   "security/backup";
+const static QString  g_str_SEC_BACKUP      =   "security/backup";
 //
 const static QString  g_str_SEC_TEC_CODE    =   "security/tec_code";
 //

@@ -92,6 +92,8 @@ void SecurityElements::writeData()
     settings.setValue(g_str_SEC_SCHRED,     m_bShred);
     settings.setValue(g_str_SEC_SCHRED_CMD, m_strSchredCommandLine);
     //
+    settings.setValue(g_str_SEC_BACKUP,     m_strBackupCommandLine);
+    //
     settings.setValue(g_str_SEC_TEC_CODE,   m_uiEncryptMode);
     //
 
@@ -110,6 +112,8 @@ void SecurityElements::readData()
     //
     m_bShred                = settings.value(g_str_SEC_SCHRED).value<bool>();
     m_strSchredCommandLine  = settings.value(g_str_SEC_SCHRED_CMD).value<QString>();
+    //
+    m_strBackupCommandLine  = settings.value(g_str_SEC_BACKUP).value<QString>();
     //
     m_bMarkCryptByDefault   = settings.value(g_str_SEC_MARK_CRYPT).value<bool>();
 }
@@ -131,6 +135,8 @@ void    SecurityElements::updateData  (bool b_from_dialog)
             m_bShred = false;
         //
         m_strSchredCommandLine  = m_ptrEditShredderCmdLine->text();
+        //
+        m_strBackupCommandLine = m_ptrEditBackup->text();
         //
         if (m_ptrMarkCryptByDefault->checkState() == Qt::Checked)
             m_bMarkCryptByDefault = true;
@@ -158,6 +164,8 @@ void    SecurityElements::updateData  (bool b_from_dialog)
         };
         //
         m_ptrEditShredderCmdLine->setText(m_strSchredCommandLine);
+        //
+        m_ptrEditBackup->setText(m_strBackupCommandLine);
         //
         if (true == m_bMarkCryptByDefault)
         {

@@ -71,6 +71,7 @@ private:
     //--------------------------------------------------
     QLabel*         m_ptrBackupLabel;
     QLineEdit*      m_ptrEditBackup;
+    QString         m_strBackupCommandLine;
 
     QGroupBox*      m_ptrProtectionGroupBox;
     QGridLayout*    m_ptrProtectionGrid;
