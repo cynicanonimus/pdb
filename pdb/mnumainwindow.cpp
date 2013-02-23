@@ -19,7 +19,11 @@
 #include "mainwindow.h"
 #include "treeleaf.h"
 #include "servicescfg.h"
+//
+#include "../CommonInclude/pdb/pdb_style.h"
+//
 #include <QMenuBar>
+#include <QSettings>
 
 MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     QObject(parent)
@@ -743,14 +747,26 @@ void MnuMainWindow::createProtectionMenu()
 
 void MnuMainWindow::createTreeControlMenu()
 {
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    QString str_backup_cmd = settings.value(g_str_SEC_BACKUP).value<QString>();
+
     //for the m_ptrTreeControlMenu
     //
     m_ptrBackupDatabase = new QAction(tr("Backup database"), this);
+
     m_ptrBackupDatabase  ->setIconVisibleInMenu(true);
     m_ptrBackupDatabase  ->setIcon(QIcon(":/images/images/data_disk.png"));
     m_ptrBackupDatabase  ->setShortcut(QKeySequence (Qt::Key_F5));
-    m_ptrBackupDatabase  ->setStatusTip(tr("Immediately backup database"));
-    m_ptrBackupDatabase  ->setEnabled(true);
+    if ( str_backup_cmd.length() > 0 )
+    {
+        m_ptrBackupDatabase  ->setStatusTip(tr("Immediately backup database"));
+        m_ptrBackupDatabase  ->setEnabled(true);
+    }else
+    {
+        m_ptrBackupDatabase  ->setStatusTip(tr("Database backup not possible: command line not defined."));
+        m_ptrBackupDatabase  ->setEnabled(false);
+    };
+    //m_ptrBackupDatabase  ->setToolTip("tooltip");
     //
     m_ptrCreateNewTree  = new QAction(tr("Create new tree"), this);
     m_ptrCreateNewTree  ->setIconVisibleInMenu(true);
