@@ -38,9 +38,6 @@ SecurityElements::SecurityElements(QGroupBox *ptr_parent_frame, QGridLayout *ptr
     //
     m_ptrProtectionByDefault    = NULL;
     //
-    m_ptrBackupLabel            = NULL;
-    m_ptrEditBackup             = NULL;
-    //
     readData();
     //
     createLayout();
@@ -92,8 +89,6 @@ void SecurityElements::writeData()
     settings.setValue(g_str_SEC_SCHRED,     m_bShred);
     settings.setValue(g_str_SEC_SCHRED_CMD, m_strSchredCommandLine);
     //
-    settings.setValue(g_str_SEC_BACKUP,     m_strBackupCommandLine);
-    //
     settings.setValue(g_str_SEC_TEC_CODE,   m_uiEncryptMode);
     //
 
@@ -113,12 +108,10 @@ void SecurityElements::readData()
     m_bShred                = settings.value(g_str_SEC_SCHRED).value<bool>();
     m_strSchredCommandLine  = settings.value(g_str_SEC_SCHRED_CMD).value<QString>();
     //
-    m_strBackupCommandLine  = settings.value(g_str_SEC_BACKUP).value<QString>();
-    //
     m_bMarkCryptByDefault   = settings.value(g_str_SEC_MARK_CRYPT).value<bool>();
 }
 
-void    SecurityElements::updateData  (bool b_from_dialog)
+void SecurityElements::updateData  (bool b_from_dialog)
 {
     if (b_from_dialog)
     {
@@ -135,8 +128,6 @@ void    SecurityElements::updateData  (bool b_from_dialog)
             m_bShred = false;
         //
         m_strSchredCommandLine  = m_ptrEditShredderCmdLine->text();
-        //
-        m_strBackupCommandLine = m_ptrEditBackup->text();
         //
         if (m_ptrMarkCryptByDefault->checkState() == Qt::Checked)
             m_bMarkCryptByDefault = true;
@@ -164,8 +155,6 @@ void    SecurityElements::updateData  (bool b_from_dialog)
         };
         //
         m_ptrEditShredderCmdLine->setText(m_strSchredCommandLine);
-        //
-        m_ptrEditBackup->setText(m_strBackupCommandLine);
         //
         if (true == m_bMarkCryptByDefault)
         {
@@ -214,7 +203,7 @@ void    SecurityElements::createLayout()
     //
     i_row++;
     //
-    m_ptrProtectionGroupBox     = new QGroupBox( tr("Protecting attachments and backup") );
+    m_ptrProtectionGroupBox     = new QGroupBox( tr("Protecting attachments") );
     m_ptrProtectionGrid         = new QGridLayout(m_ptrProtectionGroupBox);
     m_ptrProtectionGroupBox->setLayout(m_ptrProtectionGrid);
     addAndRegisterElement(m_ptrProtectionGroupBox, i_row,0,1,4);
@@ -225,14 +214,6 @@ void    SecurityElements::createLayout()
     m_ptrProtectionByDefault= new QCheckBox( tr("Protect attachment by default") );
     m_ptrProtectionByDefault->setToolTip("Protects attachments from unintetional deletion");
     m_ptrProtectionGrid->addWidget(m_ptrProtectionByDefault, i_protection_row,0,1,4);
-    i_protection_row++;
-    //
-    m_ptrBackupLabel = new QLabel(tr("DB backup command:"));
-    m_ptrProtectionGrid->addWidget(m_ptrBackupLabel, i_protection_row,0,1,1);
-    //
-    m_ptrEditBackup = new QLineEdit();
-    m_ptrEditBackup->setToolTip("batch_file %dir \n '%dir' is mandatory part of the command");
-    m_ptrProtectionGrid->addWidget(m_ptrEditBackup, i_protection_row,1,1,3);
     //-----------------------------------------------------------------------------
     i_row++;
     //

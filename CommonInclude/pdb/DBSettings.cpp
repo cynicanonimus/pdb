@@ -86,11 +86,12 @@ void DBSettings::setNextAsCurrent()
 void DBSettings::delCurrentPage ()
 {
     m_NameofSet.removeAt(m_iCurrentPage);
-    m_DbTypes.removeAt(m_iCurrentPage);
-    m_DbHosts.removeAt(m_iCurrentPage);
-    m_DbNames.removeAt(m_iCurrentPage);
+    m_DbTypes.  removeAt(m_iCurrentPage);
+    m_DbHosts.  removeAt(m_iCurrentPage);
+    m_DbNames.  removeAt(m_iCurrentPage);
     m_UserNames.removeAt(m_iCurrentPage);
     m_Passwords.removeAt(m_iCurrentPage);
+    m_Backups.  removeAt(m_iCurrentPage);
     m_Ports.erase( m_Ports.begin() + m_iCurrentPage);
     m_ConnNumbers.erase( m_ConnNumbers.begin() + m_iCurrentPage);
     //
@@ -108,6 +109,7 @@ void  DBSettings::addDefaultPage(const QString& str_default_driver_name)
     m_DbNames<<"Define database name";
     m_UserNames<<"Define user of database";
     m_Passwords<<"DB access password";
+    m_Backups<<"";
     m_Ports.push_back(3306);
     m_ConnNumbers.push_back(5);
     //

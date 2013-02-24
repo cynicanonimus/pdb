@@ -98,6 +98,9 @@ public:
     QLabel*         m_pLabelConnAmount;
     QLineEdit*      m_pLineEditConnAmount;
     //
+    QLabel*         m_ptrBackupLabel;
+    QLineEdit*      m_ptrEditBackup;
+    //
     QCheckBox*      m_pcheckMakeTunnel;
     QLabel*         m_pLabelMakeTunnel;
     QLineEdit*      m_pLineMakeTunnel;

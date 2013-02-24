@@ -31,6 +31,7 @@ QDataStream& operator<<(QDataStream& out, const DBSettings& player)
     out << player.m_DbNames;
     out << player.m_UserNames;
     out << player.m_Passwords;
+    out << player.m_Backups;
     //
     int  i_port_size = player.m_Ports.size();
     //
@@ -80,6 +81,7 @@ QDataStream& operator>>(QDataStream& in, DBSettings& player)
     in >> player.m_DbNames;
     in >> player.m_UserNames;
     in >> player.m_Passwords;
+    in >> player.m_Backups;
     //
     int i_port_size = 0;
     in >> i_port_size;

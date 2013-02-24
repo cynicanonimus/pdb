@@ -124,7 +124,6 @@ void DBGraficElements::readData ()
     {
         m_stDBSettings.m_TunnelList<<"";
     };
-
     //
     return;
 }
@@ -167,7 +166,6 @@ void DBGraficElements::onTestBtnClick()
         //
         bool b_make_tunnel = ( m_pcheckMakeTunnel->checkState() == Qt::Checked );
         //
-        //
         if (b_make_tunnel)
         {
             m_bTunnelIsActiveNow = true;
@@ -195,6 +193,7 @@ void DBGraficElements::onTestBtnClick()
             QString str_msg = err.text();
             qDebug() << err;
             box.setText(str_msg);
+            box.exec();
         }else
         {
             QStringList str_existing_tables;
@@ -389,34 +388,6 @@ bool DBGraficElements::createDBTables ( QSqlDatabase* ptr_db )
     };
     //
     //end transaction
-    //
-   /*
-    if (b_support_transaction)
-    {
-        if (b_exec_sql)
-        {
-            b_exec_sql = qry.exec("COMMIT;");
-            //
-            if (false == b_exec_sql)
-            {
-                QString str_err = QString("can not execute 'COMMIT;' Stop.");
-                QMessageBox::critical(NULL,"Error during table creation", str_err, QMessageBox::Ok);
-                return false;
-            };
-        }
-        else
-        {
-            b_exec_sql = qry.exec("ROLLBACK;");
-            //
-            if (false == b_exec_sql)
-            {
-                QString str_err = QString("can not execute 'ROLLBACK;' Stop.");
-                QMessageBox::critical(NULL,"Error during table creation", str_err, QMessageBox::Ok);
-            };
-            return false;
-        };
-    };
-    */
     //
     return true;
 }
@@ -661,6 +632,16 @@ void DBGraficElements::createLayout()
     addAndRegisterElement(m_pLineEditConnAmount,i_row,2,1,2);
     //
     i_row++;
+    m_ptrBackupLabel    = new QLabel( m_pParentFrame );
+    m_ptrBackupLabel    ->setText( QObject::trUtf8("DB backup command:") );
+    m_ptrBackupLabel    ->setFixedSize(i_edit_width,i_edit_height);
+    addAndRegisterElement(m_ptrBackupLabel,i_row,0,1,2);
+    //
+    m_ptrEditBackup = new QLineEdit( m_pParentFrame );
+    m_ptrEditBackup->setAlignment(Qt::AlignRight);
+    addAndRegisterElement(m_ptrEditBackup,i_row,2,1,2);
+    //
+    i_row++;
     m_pcheckMakeTunnel = new QCheckBox( tr("Create SSH tunnel before connecting to server") );
     addAndRegisterElement(m_pcheckMakeTunnel,i_row,0,1,3);
     //
@@ -696,10 +677,11 @@ void DBGraficElements::updateData (bool b_from_dialog)
         const QString str_driver = v_combo_data.toString();
         //
         m_stDBSettings.m_DbTypes    [m_stDBSettings.getCurrentPage()] = str_driver;
-        m_stDBSettings.m_DbNames    [m_stDBSettings.getCurrentPage()] = m_pLineEditDBName->text();
+        m_stDBSettings.m_DbNames    [m_stDBSettings.getCurrentPage()] = m_pLineEditDBName   ->text();
         m_stDBSettings.m_UserNames  [m_stDBSettings.getCurrentPage()] = m_pLineEditUserName->text();
-        m_stDBSettings.m_Passwords  [m_stDBSettings.getCurrentPage()] = m_pLineEditPwd->text();
-        m_stDBSettings.m_Ports      [m_stDBSettings.getCurrentPage()] = m_pLineEditPort->text().toInt();
+        m_stDBSettings.m_Passwords  [m_stDBSettings.getCurrentPage()] = m_pLineEditPwd      ->text();
+        m_stDBSettings.m_Backups    [m_stDBSettings.getCurrentPage()] = m_ptrEditBackup     ->text();
+        m_stDBSettings.m_Ports      [m_stDBSettings.getCurrentPage()] = m_pLineEditPort     ->text().toInt();
         m_stDBSettings.m_ConnNumbers[m_stDBSettings.getCurrentPage()] = m_pLineEditConnAmount->text().toInt();
         //checkbox
         if (m_pcheckMakeTunnel->checkState() == Qt::Checked)
@@ -730,9 +712,10 @@ void DBGraficElements::updateData (bool b_from_dialog)
         };
         // m_pDatabaseType- later, when have mroe db types
         //
-        m_pLineEditDBName   ->setText( m_stDBSettings.m_DbNames[m_stDBSettings.getCurrentPage()] );
+        m_pLineEditDBName   ->setText( m_stDBSettings.m_DbNames  [m_stDBSettings.getCurrentPage()] );
         m_pLineEditUserName ->setText( m_stDBSettings.m_UserNames[m_stDBSettings.getCurrentPage()] );
         m_pLineEditPwd      ->setText( m_stDBSettings.m_Passwords[m_stDBSettings.getCurrentPage()] );
+        m_ptrEditBackup     ->setText( m_stDBSettings.m_Backups  [m_stDBSettings.getCurrentPage()] );
         m_pLineEditPort     ->setText( QString::number( m_stDBSettings.m_Ports[m_stDBSettings.getCurrentPage()] ) );
         m_pLineEditConnAmount->setText ( QString::number( m_stDBSettings.m_ConnNumbers[m_stDBSettings.getCurrentPage()] ) );
         //

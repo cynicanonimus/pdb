@@ -285,6 +285,8 @@ void  MainWindow::onBackupDatabaseNow()
     box.setText("Not ready yet, sorry");
     box.exec();
 
+
+
 }
 
 

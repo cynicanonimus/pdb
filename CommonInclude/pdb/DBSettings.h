@@ -34,6 +34,7 @@ struct DBSettings
     QStringList m_DbNames;
     QStringList m_UserNames;
     QStringList m_Passwords;
+    QStringList m_Backups;
     //
     std::vector<int>  m_Ports;
     std::vector<int>  m_ConnNumbers;
@@ -48,6 +49,7 @@ struct DBSettings
     int  getCurrentPage     () const;
     void setCurrentPage     (int i_current_page);
     void setCurrentPageAsActive();
+    //
     int  getPagesAmount     () const;
     bool isCurrentPageTheLast() const;
     bool isCurrentPageTheFirst() const;

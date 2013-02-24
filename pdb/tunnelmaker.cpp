@@ -82,7 +82,7 @@ void TunnelMaker::destroyTunnel ()
         //
         QTime dieTime= QTime::currentTime().addSecs(3);
         while( QTime::currentTime() < dieTime )
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
         //
         delete m_ptrTunnelProcess;
         m_ptrTunnelProcess = NULL;        
