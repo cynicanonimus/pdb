@@ -220,7 +220,7 @@ void NodesAndAttachmentsGraficeElements::writeData()
     //
     settings.setValue( g_str_TMP_DELETE,         m_bDelTmpOnExit         );
     settings.setValue( g_str_ATTACH_DELETE,      m_bDelAttachOnExit );
-    settings.setValue( g_str_ATTACH_DELETE,      m_bDelAttachAndNodesOnExit );
+    settings.setValue( g_str_ATTACH_NODE_DELETE, m_bDelAttachAndNodesOnExit );
     settings.setValue( g_str_DELETE_AFTER_UPLOAD, m_bDeleteAfterAttach );
     //
 };
