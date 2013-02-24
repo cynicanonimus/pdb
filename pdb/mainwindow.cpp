@@ -232,10 +232,13 @@ void MainWindow::connectSignalsAndSlots ()
     QObject::connect(m_pMainMenu->m_ptrDelTree,         SIGNAL(triggered()),  &m_G_TreeActions, SLOT ( onDeleteTree         () ));
     QObject::connect(m_pMainMenu->m_ptrRenameTree,      SIGNAL(triggered()),  &m_G_TreeActions, SLOT ( onRenameCurrentTree  () ));
     QObject::connect(m_pMainMenu->m_ptrInfoTree,        SIGNAL(triggered()),  &m_G_TreeActions, SLOT ( onInfoAboutTree      () ));
+    //
+    //save node descriptor before start the search
+    QObject::connect(m_pMainMenu->m_ptrSearchInTree,    SIGNAL(triggered()), this,              SLOT(saveCurrentNodeDescriptor ()   ));
     //search
-    QObject::connect(m_pMainMenu->m_ptrSearchInTree,    SIGNAL(triggered()), this,              SLOT ( onSearch()              ));
+    QObject::connect(m_pMainMenu->m_ptrSearchInTree,    SIGNAL(triggered()), this,              SLOT ( onSearch()                   ));
     //backup
-    QObject::connect(m_pMainMenu->m_ptrBackupDatabase, SIGNAL(triggered()),  this,              SLOT ( onBackupDatabaseNow()   ));
+    QObject::connect(m_pMainMenu->m_ptrBackupDatabase, SIGNAL(triggered()),  this,              SLOT ( onBackupDatabaseNow()        ));
     //exit
     QObject::connect(m_pMainMenu->m_ptrExitApp,         SIGNAL(triggered()), this,              SLOT (  close   () ));
     //enable-disable "Save Description" menu item

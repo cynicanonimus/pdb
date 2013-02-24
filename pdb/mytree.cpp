@@ -389,6 +389,8 @@ void MyTree::onImportAttach ()
         ptr_actual_item->addAttachments(file_list, m_bDeleteFilesAfterAttachment, m_bProtectAttachment, ui_encrypt_type);
         setCursor(Qt::ArrowCursor);
     };
+    //
+    emit treeSelectionChanged(ptr_actual_item, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
 }
 
 void MyTree::onCurrentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
@@ -631,6 +633,8 @@ void MyTree::onInsertNewItem ()
 
 void MyTree::leafAttachmentUpdated (TreeLeaf* ptr_to_leaf, bool b_result, QString str_attachment_name)
 {
+    QMutexLocker locker (&m_UpdateAttachmentInfoLocker);
+    //
     TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
     //
     if (ptr_to_leaf != ptr_actual_item)
@@ -639,11 +643,15 @@ void MyTree::leafAttachmentUpdated (TreeLeaf* ptr_to_leaf, bool b_result, QStrin
     //emit signal for updating the list of attachments
     //
     if (b_result)
+    {
         emit updateAttachmentList ();
+        emit treeSelectionChanged(ptr_actual_item, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
+    }
     else
     {
         QMessageBox box;
-        box.setText("Can not apdate attachment " + str_attachment_name);
+        box.setText("Can not update attachment " + str_attachment_name);
+        box.exec();
     };
 }
 
