@@ -24,8 +24,9 @@
 #include <QIcon>
 #include <QPixmap>
 #include <QLabel>
-#include <qsplitter.h>
+#include <QProcess>
 //
+#include <qsplitter.h>
 #include "abstractdatabaseobject.h"
 #include "notificationdialog.h"
 #include "passworddlg.h"
@@ -72,6 +73,10 @@ private slots:
     void saveCurrentNodeDescriptor  ();
     void onClickAbout               ();
     void onBackupDatabaseNow        ();
+    //
+    void onStartBackup              ();
+    void onErrorBackup              (QProcess::ProcessError);
+    void onFinishBackup             (int);
 
 private:
     Ui::MainWindow* ui;
@@ -97,6 +102,8 @@ private:
     unsigned int        m_uiConnectionsInUse;
     QPixmap*            m_ptrDbInUseIcon;
     QLabel*             m_ptrDbInUseLabel;
+    //
+    QProcess*           m_ptrBackupProcess;
 private:
     //
     // init graphic elements of the main window
@@ -113,6 +120,8 @@ private:
     void restoreWindowParams            ();
     void saveWindowParams               ();
     void connectSignalsAndSlots         ();
+    //
+    void showInterfaceElements          (bool b_show = true);
 
     //
 };

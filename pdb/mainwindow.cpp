@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //
     m_Tunnel.makeTunnel();
     //
+    m_ptrBackupProcess      = NULL;
     m_bEditorTextChanged    = false;
     m_uiConnectionsInUse    = 0;
     m_bIsDBUsageIconVisible = false;
@@ -281,14 +282,72 @@ void MainWindow::connectSignalsAndSlots ()
 
 void  MainWindow::onBackupDatabaseNow()
 {
-    QMessageBox box;
-    box.setText("Not ready yet, sorry");
-    box.exec();
-
-
-
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    QVariant var = settings.value(g_str_DB_SETTINGS);
+    //
+    DBSettings db_settings = var.value<DBSettings>();
+    const QString str_backup_cmd = db_settings.m_Backups [db_settings.getCurrentPage()];
+    //
+    if (NULL == m_ptrBackupProcess)
+        m_ptrBackupProcess = new QProcess (this);
+    //
+    QObject::connect(m_ptrBackupProcess, SIGNAL(started()),                     this, SLOT(onStartBackup()                          ));
+    QObject::connect(m_ptrBackupProcess, SIGNAL(finished(int)),                 this, SLOT(onFinishBackup(int)                      ));
+    QObject::connect(m_ptrBackupProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(onErrorBackup(QProcess::ProcessError)    ));
+    //
+    m_ptrBackupProcess->start(str_backup_cmd);
+    //
+    //QMessageBox box;
+    //box.setText("Backup not ready yet, sorry");
+    //box.exec();
 }
 
+void MainWindow::onStartBackup ()
+{
+    statusBar()->showMessage(tr("Begin database backup..."));
+    showInterfaceElements(false);
+    return;
+}
+
+void MainWindow::MainWindow::onErrorBackup  (QProcess::ProcessError err)
+{
+    QString str_message = QString("Backup did not finish successfuly! Error code: %1").arg(err);
+    QMessageBox::critical(NULL, "Backup status", str_message, QMessageBox::Ok);
+    //
+    showInterfaceElements(true);
+    return;
+}
+
+void MainWindow::MainWindow::onFinishBackup (int i_finish_code)
+{
+    statusBar()->showMessage(tr("Database backup finished."));
+    if (0 != i_finish_code)
+    {
+        QString str_message = QString("Backup did not finish successfuly! Error code: %1").arg(i_finish_code);
+        QMessageBox::critical(NULL, "Backup status", str_message, QMessageBox::Ok);
+    }else
+        QMessageBox::information(NULL, "Backup status", "Backup finish successfuly!", QMessageBox::Ok);
+    showInterfaceElements(true);
+    return;
+}
+
+void MainWindow::showInterfaceElements          (bool b_show)
+{
+    ui->m_TreeOfNodes->setEnabled   ( b_show );
+    ui->m_DBNameList->setEnabled    ( b_show );
+    ui->m_textEditor->setEnabled    ( b_show );
+    ui->m_Service_Tab->setEnabled   ( b_show );
+    //
+    m_pMainMenu->m_ptrNodeToolBar->setEnabled       ( b_show );
+    m_pMainMenu->m_ptrAttachmentToolBar->setEnabled ( b_show );
+    m_pMainMenu->m_ptrTreeToolBar->setEnabled       ( b_show );
+    //
+    m_pMainMenu->m_ptrTreeControlMenu->setEnabled( b_show );
+    m_pMainMenu->m_ptrNodeControlMenu->setEnabled( b_show );
+    m_pMainMenu->m_ptrAttachmentMenu->setEnabled( b_show );
+    m_pMainMenu->m_ptrSecurity->setEnabled( b_show );
+    m_pMainMenu->m_ptrHelpMenu->setEnabled( b_show );
+}
 
 void  MainWindow::onCreateChangePassword ()
 {

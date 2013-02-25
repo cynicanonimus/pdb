@@ -21,6 +21,7 @@
 #include "servicescfg.h"
 //
 #include "../CommonInclude/pdb/pdb_style.h"
+#include "../CommonInclude/pdb/DBSettings.h"
 //
 #include <QMenuBar>
 #include <QSettings>
@@ -748,8 +749,9 @@ void MnuMainWindow::createProtectionMenu()
 void MnuMainWindow::createTreeControlMenu()
 {
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
-    QString str_backup_cmd = settings.value(g_str_SEC_BACKUP).value<QString>();
-
+    QVariant var = settings.value(g_str_DB_SETTINGS);
+    DBSettings db_settings = var.value<DBSettings>();
+    const QString str_backup_cmd = db_settings.m_Backups [db_settings.getCurrentPage()];
     //for the m_ptrTreeControlMenu
     //
     m_ptrBackupDatabase = new QAction(tr("Backup database"), this);
