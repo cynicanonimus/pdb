@@ -41,13 +41,15 @@ public:
     explicit MnuMainWindow                  (MainWindow* parent);
     virtual ~MnuMainWindow                  ();
     
+public:
+    void syncToolbarsVisibilityAndMenu      ();
+
 signals:
     
 public slots:
     void onTreeComboBoxChanged              (int index);
     void onSelectedNodeChanged              (TreeLeaf* ptr_to_current, bool has_cutting_node, bool has_cutting_attach);
     void onSelectedAttachmentChanged        (Attachment::AttachmentsList);
-    //void enableSaveNodeDescriptor           (bool);
     //
     void showRightClickPopupNodeMenu        ();
     void showRightClickPopupAttachMenu      ();
@@ -56,6 +58,11 @@ public slots:
     void onChangeDescription                ();
     //
     void onCheckPassword                    ( bool);
+    //
+private slots:
+    void onTriggerTreeToolBox               ();
+    void onTriggerNodeToolBox               ();
+    void onTriggerAttachmentToolBox         ();
 
 private:
     void        analyseAttachmentsStatus        ( const Attachment::AttachmentsList&    v_attachment, AttachStatusChecker& checker );
@@ -67,6 +74,7 @@ private:
     void        createAttachmentControlMenu ();
     void        createProtectionMenu        ();
     void        createSecurityMenu          ();
+    void        createToolBarSubMenu        ();
     void        createCryptograficMenu      ();
     void        createHelpMenu              ();
     //
@@ -81,6 +89,8 @@ private:
     void        assemblyAttachMenu              ( QMenu* ptr_node_menu );
     void        assemblyAttachProtectionSubMenu ( QMenu* ptr_node_menu );
     void        assemblyAttachCryptographySubMenu( QMenu* ptr_node_menu );
+    //
+    void        assemblyViewMenu                ( QMenu* ptr_node_menu );
     //
     void        assemblySecurityMenu            ( QMenu* ptr_node_menu );
     //
@@ -159,7 +169,15 @@ public:
     //
     QAction*    m_ptrProtectSelectedAttachments;    //for all currently selected attachments
     QAction*    m_ptrUn_ProtectSelectedAttachments; //for all currently selected attachments
-    //----------------------------- security - submenu of the Attach menu  -----------------------------
+    //----------------------------- View - main menu  -----------------------------
+    QMenu*      m_ptrViewMenu;
+    QMenu*      m_ptrToolbarsMenu;
+    //
+    QAction*    m_ptrMnuNodeToolBar;
+    QAction*    m_ptrMnuAttachmentToolBar;
+    QAction*    m_ptrMnuTreeToolBar;
+
+    //----------------------------- security - main menu  -----------------------------
     QMenu*      m_ptrSecurity;
     QAction*    m_ptrCreateChangePassword;
     //----------------------------- protection - submenu of the Attach menu  -----------------------------

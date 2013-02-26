@@ -68,8 +68,10 @@ MainWindow::MainWindow(QWidget *parent) :
     //
     addToolBar(Qt::LeftToolBarArea,     m_pMainMenu->m_ptrNodeToolBar);
     addToolBar(Qt::RightToolBarArea,    m_pMainMenu->m_ptrAttachmentToolBar);
-    //
     addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrTreeToolBar);
+    //
+    //m_pMainMenu->m_ptrTreeToolBar->isVisible()
+
     //
     statusBar()->addPermanentWidget(m_ptrDbInUseLabel);
     //
@@ -280,6 +282,13 @@ void MainWindow::connectSignalsAndSlots ()
 
 }
 
+void MainWindow::showEvent (QShowEvent* e)
+{
+    QMainWindow::showEvent(e);
+    //
+    m_pMainMenu->syncToolbarsVisibilityAndMenu();
+}
+
 void  MainWindow::onBackupDatabaseNow()
 {
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
@@ -333,6 +342,8 @@ void MainWindow::MainWindow::onFinishBackup (int i_finish_code)
 
 void MainWindow::showInterfaceElements          (bool b_show)
 {
+    //m_pMainMenu->m_ptrNodeToolBar->hide();
+
     ui->m_TreeOfNodes->setEnabled   ( b_show );
     ui->m_DBNameList->setEnabled    ( b_show );
     ui->m_textEditor->setEnabled    ( b_show );

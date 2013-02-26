@@ -52,6 +52,7 @@ public:
     ~MainWindow();
     //
     void closeEvent(QCloseEvent *e);
+    void showEvent (QShowEvent *);
 
 
 public slots:

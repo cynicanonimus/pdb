@@ -43,10 +43,15 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     createAttachmentControlMenu ();
     createCryptograficMenu      ();
     createProtectionMenu        ();
+    createToolBarSubMenu        ();
     createSecurityMenu          ();
     createHelpMenu              ();
     //
     assemblyAllMenus            ();
+    //
+    QObject::connect(m_ptrMnuTreeToolBar,       SIGNAL(triggered()), this, SLOT (onTriggerTreeToolBox()       ));
+    QObject::connect(m_ptrMnuNodeToolBar,       SIGNAL(triggered()), this, SLOT (onTriggerNodeToolBox()       ));
+    QObject::connect(m_ptrMnuAttachmentToolBar, SIGNAL(triggered()), this, SLOT (onTriggerAttachmentToolBox() ));
 }
 
 MnuMainWindow::~MnuMainWindow()
@@ -99,8 +104,44 @@ MnuMainWindow::~MnuMainWindow()
 
 }
 
-void enableSaveNodeDescriptor           (bool);
+void MnuMainWindow::onTriggerTreeToolBox ()
+{
+    if ( m_ptrTreeToolBar->isVisible() )
+    {
+        m_ptrTreeToolBar->hide();
+        m_ptrMnuTreeToolBar->setChecked(false);
+    }else
+    {
+        m_ptrTreeToolBar->show();
+        m_ptrMnuTreeToolBar->setChecked(true);
+    };
+}
 
+void MnuMainWindow::onTriggerNodeToolBox()
+{
+    if ( m_ptrNodeToolBar->isVisible() )
+    {
+        m_ptrNodeToolBar->hide();
+        m_ptrMnuNodeToolBar->setChecked(false);
+    }else
+    {
+        m_ptrNodeToolBar->show();
+        m_ptrMnuNodeToolBar->setChecked(true);
+    };
+}
+
+void MnuMainWindow::onTriggerAttachmentToolBox()
+{
+    if ( m_ptrAttachmentToolBar->isVisible() )
+    {
+        m_ptrAttachmentToolBar->hide();
+        m_ptrMnuAttachmentToolBar->setChecked(false);
+    }else
+    {
+        m_ptrAttachmentToolBar->show();
+        m_ptrMnuAttachmentToolBar->setChecked(true);
+    };
+}
 //-------------------------- signal processing begin  ----------------------------------------
 void  MnuMainWindow::onCheckPassword ( bool b_password_exist )
 {
@@ -653,7 +694,19 @@ void MnuMainWindow::createSecurityMenu()
     //m_ptrCreateChangePassword      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrCreateChangePassword      ->setStatusTip(tr("Create password for encrypt/decrypt attachments"));
     m_ptrCreateChangePassword      ->setEnabled(true);
-};
+}
+
+void MnuMainWindow::createToolBarSubMenu()
+{
+    m_ptrMnuNodeToolBar  = new QAction("Node toolbar", this);
+    m_ptrMnuNodeToolBar  ->setCheckable(true);
+    //
+    m_ptrMnuTreeToolBar = new QAction("Tree toolbar", this);
+    m_ptrMnuTreeToolBar ->setCheckable(true);
+    //
+    m_ptrMnuAttachmentToolBar = new QAction("Attachment toolbar", this);
+    m_ptrMnuAttachmentToolBar ->setCheckable(true);
+}
 
 void MnuMainWindow::createCryptograficMenu ()
 {
@@ -1051,6 +1104,19 @@ void MnuMainWindow::assemblyAttachCryptographySubMenu ( QMenu* ptr_node_menu )
     ptr_node_menu->addAction(m_ptrDecryptSelectedAttachments);
 }
 
+void MnuMainWindow::assemblyViewMenu( QMenu* ptr_node_menu )
+{
+    m_ptrToolbarsMenu = ptr_node_menu->addMenu("Toolbars");
+    //
+    m_ptrToolbarsMenu->addAction(m_ptrMnuTreeToolBar);
+    m_ptrToolbarsMenu->addSeparator();
+    //
+    m_ptrToolbarsMenu->addAction(m_ptrMnuNodeToolBar);
+    m_ptrToolbarsMenu->addSeparator();
+    //
+    m_ptrToolbarsMenu->addAction(m_ptrMnuAttachmentToolBar);
+}
+
 void MnuMainWindow::assemblySecurityMenu( QMenu* ptr_node_menu )
 {
     ptr_node_menu->addAction(m_ptrCreateChangePassword);
@@ -1093,6 +1159,10 @@ void MnuMainWindow::assemblyAllMenus()
     //
     assemblyAttachProtectionSubMenu(m_ptrAttachProtectionSubMenu);
     //--------
+    m_ptrViewMenu = m_ptrParent->menuBar()->addMenu(tr("View"));
+    //
+    assemblyViewMenu(m_ptrViewMenu);
+    //--------
     m_ptrSecurity = m_ptrParent->menuBar()->addMenu(tr("Security"));
     //
     assemblySecurityMenu(m_ptrSecurity);
@@ -1101,4 +1171,18 @@ void MnuMainWindow::assemblyAllMenus()
     //
     m_ptrHelpMenu = m_ptrParent->menuBar()->addMenu(tr("&Help"));
     assemblyHelpMenu();
-};
+}
+
+void MnuMainWindow::syncToolbarsVisibilityAndMenu ()
+{
+    if ( m_ptrTreeToolBar )
+        m_ptrTreeToolBar->isVisible() ? m_ptrMnuTreeToolBar->setChecked(true) : m_ptrMnuTreeToolBar->setChecked(false);
+    //
+    if ( m_ptrNodeToolBar )
+        m_ptrNodeToolBar->isVisible() ? m_ptrMnuNodeToolBar->setChecked(true) : m_ptrMnuNodeToolBar->setChecked(false);
+    //
+    if ( m_ptrAttachmentToolBar )
+        m_ptrAttachmentToolBar->isVisible() ? m_ptrMnuAttachmentToolBar->setChecked(true) : m_ptrMnuAttachmentToolBar->setChecked(false);
+    //
+    return;
+}

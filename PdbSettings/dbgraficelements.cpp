@@ -184,8 +184,9 @@ void DBGraficElements::onTestBtnClick()
         db.setUserName        ( m_pLineEditUserName->text() );      // the name of my database user
         db.setPassword        ( m_pLineEditPwd->text()      );      // the password of my database user. DO NOT use ONLY from notebook
         //
-        if ( m_pLineEditPort->text().toInt() != 0 )
-            db.setPort            ( m_pLineEditPort->text().toInt() );
+        const int i_port_number = m_pLineEditPort->text().toInt();
+        if ( 0 != i_port_number )
+            db.setPort ( i_port_number );
         //
         if ( !db.open() )
         {
