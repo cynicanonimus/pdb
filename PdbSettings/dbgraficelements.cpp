@@ -639,7 +639,7 @@ void DBGraficElements::createLayout()
     addAndRegisterElement(m_ptrBackupLabel,i_row,0,1,2);
     //
     m_ptrEditBackup = new QLineEdit( m_pParentFrame );
-    m_ptrEditBackup->setAlignment(Qt::AlignRight);
+    m_ptrEditBackup->setAlignment(Qt::AlignLeft);
     addAndRegisterElement(m_ptrEditBackup,i_row,2,1,2);
     //
     i_row++;

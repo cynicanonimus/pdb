@@ -156,7 +156,7 @@ void NodesAndAttachmentsGraficeElements::onClickDeleteAfterAttach (int i_state)
         m_bDeleteAfterAttach   = false;
     };
     //
-    updateData(false);
+    updateData(true);
 };
 
 void NodesAndAttachmentsGraficeElements::onClickDeleteTmpOnExit (int i_state)
