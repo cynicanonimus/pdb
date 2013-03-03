@@ -64,7 +64,7 @@ void TunnelMaker::makeTunnel      ()
     //
     m_ptrTunnelProcess->start(program, arguments);
     //
-    QTime dieTime= QTime::currentTime().addSecs(3);
+    QTime dieTime= QTime::currentTime().addSecs(5);
     while( QTime::currentTime() < dieTime )
     QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }

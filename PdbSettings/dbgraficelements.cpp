@@ -405,6 +405,7 @@ void DBGraficElements::makeTunnel()
     m_ptrTunnelProcess = new QProcess(this);
     //
     QObject::connect(m_ptrTunnelProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(onTunnelError(QProcess::ProcessError)) );
+    //QObject::connect(m_ptrTunnelProcess, SIGNAL(started())
 
     m_ptrTunnelProcess->start(program, arguments);
     //

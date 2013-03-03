@@ -63,6 +63,19 @@ DBConnection::ConnectionStatus DBConnection::init(const QString& str_db_type,
             QSqlError err = m_DB.lastError();
             QString str_msg = err.text();
             //
+            str_msg += "\nConnection params:";
+            str_msg += "\nDatabase type: ";
+            str_msg += str_db_type;
+            str_msg += "\nHost name: ";
+            str_msg += str_host;
+            str_msg += "\nUser: ";
+            str_msg += str_db_user;
+            str_msg += "\nPassword: ";
+            str_msg += str_db_pwd;
+            str_msg += "\nPort N: ";
+            str_msg += QString::number(i_port);
+            str_msg += "\n";
+            //
             Logger::getInstance().logIt(en_LOG_ERRORS, str_msg);
             setStatus (CONN_FAIL);
         }else
