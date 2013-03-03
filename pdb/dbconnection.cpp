@@ -80,12 +80,31 @@ DBConnection::ConnectionStatus DBConnection::init(const QString& str_db_type,
             setStatus (CONN_FAIL);
         }else
         {
-            setStatus (CONN_SUCCESS);
+            bool b_res = true;
+
+            if ( str_db_type.compare("QSQLITE", Qt::CaseInsensitive) == 0 )
+            {
+                b_res = adjustSqliteDB();
+            };
+            if (b_res)
+                setStatus (CONN_SUCCESS);
+            else
+                setStatus (CONN_FAIL);
+            //
+
         };
       };
     };
     //
     return getStatus();
+}
+
+bool DBConnection::adjustSqliteDB()
+{
+    QSqlQuery qry(m_DB);
+    //
+    bool b_res = qry.exec("PRAGMA foreign_keys = ON;");
+    return b_res;
 }
 
 QString DBConnection::getDBName   () const

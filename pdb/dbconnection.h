@@ -72,6 +72,8 @@ private:
     void                relase()        {  m_DBMutex.unlock();}
 
     void                setStatus(ConnectionStatus e_status);
+    //
+    bool                adjustSqliteDB();
 private: //members
     //
     QSqlDatabase            m_DB;

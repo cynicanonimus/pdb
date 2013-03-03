@@ -136,6 +136,37 @@ void ServicesCfg::getServiceTableData_DB ( bool& b_another_instance_active, QStr
         return;
     //
     QSqlQuery qry(*ptr_db);
+    //-----------------------------------------------------------------------------------------
+/*
+    QString str_req = "select name from sqlite_master where type='table';";
+    //
+    bool b_sql = qry.prepare( str_req );
+    //
+    if ( false == b_sql )
+    {
+        QString str_message = QString("Can't parse query '%1' ").arg(str_req);
+        QMessageBox::critical(NULL,"Error in syntax?",str_message, QMessageBox::Ok);
+        return; //nothing to do in this situation, no reason to try to create tables
+    };
+    //
+    b_sql = qry.exec();
+    //
+    if( false == b_sql )
+    {
+        QString str_message = QString("Can't execute query '%1' ").arg(str_req);
+        QMessageBox::critical(NULL,"Error in syntax?",str_message, QMessageBox::Ok);
+        return; //nothing to do in this situation, no reason to try to create tables
+    };
+    //
+    QStringList str_exist_tables;
+    //
+    while( qry.next() )
+    {
+        QString     str_table_name   = qry.value(0).toString();
+        str_exist_tables<<str_table_name ;
+    };
+*/
+    //-----------------------------------------------------------------------------------------
     //
     QString str_select_str = "select is_already_in_use, password from service_tbl;";
     //

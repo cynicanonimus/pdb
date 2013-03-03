@@ -47,9 +47,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //
     linkSignalsAndSlots();
     //
+    /*
     bool ok;
     QFont font = QFontDialog::getFont(&ok, QFont("Times", 12), this);
     QString str_font = font.toString();
+    */
     return;
 }
 

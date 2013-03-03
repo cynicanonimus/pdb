@@ -266,11 +266,12 @@ bool DBGraficElements::isDBTablesOK ( QSqlDatabase* ptr_db, QStringList& already
     //
     QSqlQuery qry(*ptr_db);
     //
-    bool b_sql = qry.prepare( ptr_db_descriptor->getShowTablesRequest() );
+    const QString str_query = ptr_db_descriptor->getShowTablesRequest();
+    bool b_sql = qry.prepare( str_query );
     //
     if ( false == b_sql )
     {
-        QString str_message = QString("Can't parse query '%1' ").arg(ptr_db_descriptor->getShowTablesRequest());
+        QString str_message = QString("Can't parse query '%1' ").arg( str_query );
         QMessageBox::critical(NULL,"Error in syntax?",str_message, QMessageBox::Ok);
         return true; //nothing to do in this situation, no reason to try to create tables
     };
@@ -279,7 +280,7 @@ bool DBGraficElements::isDBTablesOK ( QSqlDatabase* ptr_db, QStringList& already
     //
     if( false == b_sql )
     {
-        QString str_message = QString("Can't execute query '%1' ").arg(ptr_db_descriptor->getShowTablesRequest());
+        QString str_message = QString("Can't execute query '%1' ").arg( str_query );
         QMessageBox::critical(NULL,"Error in syntax?",str_message, QMessageBox::Ok);
         return true; //nothing to do in this situation, no reason to try to create tables
     };
