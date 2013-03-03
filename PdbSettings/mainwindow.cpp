@@ -21,8 +21,9 @@
 #include "../CommonInclude/pdb/VariantPtr.h"
 
 #include <QSqlDatabase>
-//
 #include <QMessageBox>
+#include <QFont>
+#include <QFontDialog>
 //
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -46,6 +47,10 @@ MainWindow::MainWindow(QWidget *parent) :
     //
     linkSignalsAndSlots();
     //
+    bool ok;
+    QFont font = QFontDialog::getFont(&ok, QFont("Times", 12), this);
+    QString str_font = font.toString();
+    return;
 }
 
 MainWindow::~MainWindow()
