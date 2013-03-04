@@ -123,86 +123,61 @@ void ServicesCfg::setInstanceInUse_DB()
 
 void ServicesCfg::getServiceTableData_DB ( bool& b_another_instance_active, QString& str_password_hash )
 {
-    DBAcccessSafe   db_safe;
-    QMessageBox     box;
     bool            b_record_exist      = false;
-    int             id_already_in_use   = 0;
-    //
-    b_another_instance_active   =   false;
-    //
-    QSqlDatabase* ptr_db = db_safe.getDB();
-    Q_ASSERT(ptr_db);
-    if (NULL == ptr_db)
-        return;
-    //
-    QSqlQuery qry(*ptr_db);
-    //-----------------------------------------------------------------------------------------
-/*
-    QString str_req = "select name from sqlite_master where type='table';";
-    //
-    bool b_sql = qry.prepare( str_req );
-    //
-    if ( false == b_sql )
-    {
-        QString str_message = QString("Can't parse query '%1' ").arg(str_req);
-        QMessageBox::critical(NULL,"Error in syntax?",str_message, QMessageBox::Ok);
-        return; //nothing to do in this situation, no reason to try to create tables
-    };
-    //
-    b_sql = qry.exec();
-    //
-    if( false == b_sql )
-    {
-        QString str_message = QString("Can't execute query '%1' ").arg(str_req);
-        QMessageBox::critical(NULL,"Error in syntax?",str_message, QMessageBox::Ok);
-        return; //nothing to do in this situation, no reason to try to create tables
-    };
-    //
-    QStringList str_exist_tables;
-    //
-    while( qry.next() )
-    {
-        QString     str_table_name   = qry.value(0).toString();
-        str_exist_tables<<str_table_name ;
-    };
-*/
-    //-----------------------------------------------------------------------------------------
-    //
-    QString str_select_str = "select is_already_in_use, password from service_tbl;";
-    //
-    bool b_sql_result = qry.prepare( str_select_str );
-    //
-    if (false == b_sql_result)
-    {
-        box.setText( "Unable to get prepare the query. "+ qry.lastError().text() );
-        box.exec();
-        const QString str_msg = QString("Unable prepare query %1").arg( qry.lastError().text() );
-        Logger::getInstance().logIt(en_LOG_ERRORS,str_msg);
-        return;
-    };
-    //
-    b_sql_result = qry.exec();
-    //
-    if( false == b_sql_result )
-    {
-        box.setText( "Unable to get exec the query. " + qry.lastError().text() );
-        box.exec();
-        const QString str_msg = QString("Unable exec query %1").arg( qry.lastError().text() );
-        Logger::getInstance().logIt(en_LOG_ERRORS,str_msg);
-        return;
-    };
-    //
-    while( qry.next() )
-    {
-        b_record_exist = true;
+
+    { // use this brackets because 1 connection is locked here and can not be used in the
+      // createRecord_DB and setInstanceInUse_DB functions
+      //
+        DBAcccessSafe   db_safe;
+        QMessageBox     box;
+        int             id_already_in_use   = 0;
         //
-        id_already_in_use    = qry.value(0).toInt();
-        str_password_hash    = qry.value(1).toString();
+        b_another_instance_active   =   false;
         //
-        if (id_already_in_use == 1)
-            b_another_instance_active = true;
-    }; // while( qry.next() )
-    //
+        QSqlDatabase* ptr_db = db_safe.getDB();
+        Q_ASSERT(ptr_db);
+        if (NULL == ptr_db)
+            return;
+        //
+        QSqlQuery qry(*ptr_db);
+        //-----------------------------------------------------------------------------------------
+        QString str_select_str = "select is_already_in_use, password from service_tbl;";
+        //
+        bool b_sql_result = qry.prepare( str_select_str );
+        //
+        if (false == b_sql_result)
+        {
+            box.setText( "Unable to get prepare the query. "+ qry.lastError().text() );
+            box.exec();
+            const QString str_msg = QString("Unable prepare query %1").arg( qry.lastError().text() );
+            Logger::getInstance().logIt(en_LOG_ERRORS,str_msg);
+            return;
+        };
+        //
+        b_sql_result = qry.exec();
+        //
+        if( false == b_sql_result )
+        {
+            box.setText( "Unable to get exec the query. " + qry.lastError().text() );
+            box.exec();
+            const QString str_msg = QString("Unable exec query %1").arg( qry.lastError().text() );
+            Logger::getInstance().logIt(en_LOG_ERRORS,str_msg);
+            return;
+        };
+        //
+        while( qry.next() )
+        {
+            b_record_exist = true;
+            //
+            id_already_in_use    = qry.value(0).toInt();
+            str_password_hash    = qry.value(1).toString();
+            //
+            if (id_already_in_use == 1)
+                b_another_instance_active = true;
+        }; // while( qry.next() )
+        //
+    }
+
     if (false == b_record_exist)
     {
         createRecord_DB();
