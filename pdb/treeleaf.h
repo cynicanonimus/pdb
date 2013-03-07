@@ -89,7 +89,7 @@ public:
     bool                    restoreSubtree              ();
     //
     const QTextDocument&    getDescriptor               () const            {return m_docDescriptor;}
-    void                    setDescriptor               (const QString& str_html_descriptor);
+    void                    setDescriptor               ( const QString& str_descriptor, bool b_is_html);
     //
     bool                    isActualStateIsExpand       () const            {return m_bIsExpandedActually;}
     void                    setActualExpandState        (bool b_is_expanded){m_bIsExpandedActually = b_is_expanded;}
@@ -165,6 +165,19 @@ private:
     void                    getAttachments_DB       ();
     //CHANGE IT, make restore-delete
     void                    deleteAllAttachments_DB ();
+    //
+    // incoming params:
+    // directory_content - list of files, content of directory
+    // str_node_name - name of the actual node
+    // output params:
+    // str_descriptor_name - file name like "node_name.txt or node_name.htm or node_name.html" if exists
+    // is_html - true if it is html-descriptor, false - if text
+    // return result: index of founded file
+    //
+    int                    findDescriptorFile      ( const QStringList&    directory_content,
+                                                     const QString&        str_node_name,
+                                                     QString&              str_descriptor_name,
+                                                     bool&                 is_html);
     //
 private:
     //

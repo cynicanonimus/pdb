@@ -482,7 +482,7 @@ void MainWindow::saveTextOfDescription          (TreeLeaf* ptr_to_node)
     if (false == m_bEditorTextChanged)
         return;
     //
-    ptr_to_node->setDescriptor( ui->m_textEditor->toHtml() );
+    ptr_to_node->setDescriptor( ui->m_textEditor->toHtml(), true );
     //
     setTextChangeSignal(false);
 }

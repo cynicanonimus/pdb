@@ -249,6 +249,8 @@ void  MyTree::onImportNode ()
     QString str_msg;
     QMessageBox box;
     //
+    //import under deleted node is not allowed
+    //
     if (AbstractDatabaseObject::OBJECT_DELETED == ptr_actual_item->getObjectStatus())
     {
         str_msg = "Current node deleted. Can not create new child for this node";

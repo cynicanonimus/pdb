@@ -219,57 +219,69 @@ bool TreeLeaf::isPossibleToExportNode() const
     };
     //
     return true;
-};
+}
+
+//
+// This import uses as incoming structure structure of directories and files created by Windows TreePad
+//
 
 bool TreeLeaf::importNode ( const QString& str_directory_path, bool b_recursive_import )
 {
     //get name of created node
     QDir income_dir (str_directory_path);
     //QString str_new_node_name       = income_dir.dirName();
-    QStringList str_list_of_dirs    = income_dir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot|QDir::Readable|QDir::NoSymLinks);
-    QStringList str_list_of_files   = income_dir.entryList(QDir::Files|QDir::Readable|QDir::NoSymLinks);
-
+    const QStringList str_list_of_dirs  = income_dir.entryList(QDir::AllDirs|QDir::NoDotAndDotDot|QDir::Readable|QDir::NoSymLinks);
+    QStringList str_list_of_files       = income_dir.entryList(QDir::Files|QDir::Readable|QDir::NoSymLinks);
+    //
+    //remove file "index.txt" from the list of imported files
+    //
     int i_rem_index = str_list_of_files.indexOf("index.txt",0);
     if (-1 != i_rem_index)
         str_list_of_files.removeAt(i_rem_index);
+    //
     //check all list of dirs, extract "dir name" add ".txt"
+    //
     QStringList::const_iterator itr = str_list_of_dirs.begin();
     for (; itr != str_list_of_dirs.end(); ++itr)
     {
         QDir current_dir (*itr);
-        QString str_new_node_name = current_dir.dirName();
-        QString str_descriptor_file_name = str_new_node_name + tr(".txt");
+        const QString str_new_node_name = current_dir.dirName();
+        //
+        QString str_descriptor_file_name;
+        bool b_is_html = false;
         //call search in file list here
-        int i_file_index = str_list_of_files.indexOf(str_descriptor_file_name);
+        const int i_file_index = findDescriptorFile( str_list_of_files, str_new_node_name, str_descriptor_file_name, b_is_html);
         //
-        QString str_new_node_descriptor;
+        QString str_descriptor_read_buffer;
         //
-        if (-1 != i_file_index)
+        if ( -1 != i_file_index )
         {
             QFile f (str_directory_path + g_strPATH_DELIMETER + str_descriptor_file_name);
+            //
             if ( f.open(QIODevice::ReadOnly) )
             {
                 QTextStream stream( &f );
                 //
-                //int i = 1;
                 while ( !stream.atEnd() )
                 {
-                    str_new_node_descriptor += stream.readLine(); // line of text excluding '\n'
-                    str_new_node_descriptor += tr("\n");
+                    str_descriptor_read_buffer += stream.readLine(); // line of text excluding '\n'
+                    str_descriptor_read_buffer += tr("\n");
                 };
                 //
                 f.close();
-                //
                 str_list_of_files.removeAt(i_file_index);
             };
-        };
-        // create child node here using str_new_node_name , str_new_node_descriptor
+        }; // if ( -1 != i_file_index )
+
+        // create child node here using str_new_node_name , str_descriptor_read_buffer
         TreeLeaf* ptr_new_node = new TreeLeaf(this,
                                               -1,
                                               this->getTreeID(),
                                               str_new_node_name,
                                               m_ptrParentTree );
-        ptr_new_node->setDescriptor(str_new_node_descriptor);
+        //
+        if (str_descriptor_read_buffer.length() > 0)
+            ptr_new_node->setDescriptor(str_descriptor_read_buffer, b_is_html);
         // if b_recursive_import
         if (true == b_recursive_import)
         {
@@ -278,7 +290,7 @@ bool TreeLeaf::importNode ( const QString& str_directory_path, bool b_recursive_
         // call import for this node, pass str_directory_path + "/" + str_new_node_name
         continue;
     };
-    //all nodes created, the rest in the str_list_of_files is attachments.
+    //all nodes created, the rest in the str_list_of_files are attachments.
     QStringList str_attachments;
     //
     QStringList::const_iterator itr_files = str_list_of_files.begin();
@@ -295,7 +307,44 @@ bool TreeLeaf::importNode ( const QString& str_directory_path, bool b_recursive_
         this->addAttachments(str_attachments,false, false, false);
     //
     return true;
-};
+}
+
+int TreeLeaf::findDescriptorFile ( const QStringList&    directory_content,
+                                   const QString&        str_node_name,
+                                   QString&              str_descriptor_name,
+                                   bool&                 is_html)
+{
+    int i_res = -1;
+    QStringList str_list_possible_extensions;
+    //
+    str_list_possible_extensions<<".txt"<<".html"<<".htm";
+    //
+    QStringList::const_iterator itr = str_list_possible_extensions.begin();
+    //
+    for (; itr != str_list_possible_extensions.end(); ++itr)
+    {
+        QString str_desc_file_name = str_node_name + (*itr);
+        //
+        i_res = directory_content.indexOf(str_desc_file_name);
+        //
+        if (-1 != i_res)
+        {
+            is_html = ((*itr).contains(".htm", Qt::CaseInsensitive) == true); //we know is it html or not
+            str_descriptor_name = str_desc_file_name; //assing the name
+            break;
+        };
+    };
+    //if nothing found
+    if (
+            ( -1 == i_res )                  &&
+            ( str_node_name.length() > 0)
+       )
+    {
+        str_descriptor_name="";
+    };
+    //
+    return i_res;
+}
 
 void TreeLeaf::setInitialSettings(int i_parent_id, const QString &str_name, int i_tree_id)
 {
@@ -418,16 +467,23 @@ bool TreeLeaf::rename_it (const QString &str_name)
     return true;
 }
 
-void  TreeLeaf::setDescriptor  (const QString& str_html_descriptor)
+void  TreeLeaf::setDescriptor  (const QString& str_descriptor, bool b_is_html)
 {
-    if (str_html_descriptor == m_docDescriptor.toHtml())
-        return;
-    //
+    if ( true == b_is_html )
     {
+        if (str_descriptor == m_docDescriptor.toHtml())
+            return;
         //bug in Qt, this code is NOT useless.
-        m_docDescriptor.setHtml(str_html_descriptor);
+        m_docDescriptor.setHtml(str_descriptor);
         QString str_original_html = m_docDescriptor.toHtml();
-    }
+        //
+    }else //it is text - file (using for import only right now
+    {
+        if ( str_descriptor == m_docDescriptor.toPlainText() )
+            return;
+        //
+        m_docDescriptor.setPlainText(str_descriptor);
+    };
     //
     setObjectStatus(OBJECT_DESCRIPTOR_UPDATING);
     //
