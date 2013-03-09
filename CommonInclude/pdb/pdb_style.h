@@ -110,6 +110,8 @@ enum LogNotificationCodes
     en_LOG_CREATE_TREE,
     en_LOG_DELETE_TREE,
     en_LOG_RENAME_TREE,
+    //--------------------------------------------
+    en_LOG_TUNNELING,
     //------- all new flags - after this line -------------------
     //------- all new flags - before this line -------------------
     en_BITARRAY_SIZE

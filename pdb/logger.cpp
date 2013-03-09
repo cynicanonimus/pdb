@@ -157,6 +157,8 @@ void Logger::logIt(unsigned int ui_err_code, const QString &str_message)
         return;
     //
     (*m_ptrOutStream)<<"\n"<<QDateTime::currentDateTime().toString()<<" "<<getLogString(ui_err_code)<<": "<<str_message;
+    //
+    m_ptrOutStream->flush();
 }
 
 QString Logger::getLogString (unsigned int ui_err_code) const
@@ -220,6 +222,9 @@ QString Logger::getLogString (unsigned int ui_err_code) const
         break;
     case  en_LOG_DELETE_TREE:
         str_ret = tr (" Delete tree");
+        break;
+    case en_LOG_TUNNELING:
+        str_ret = tr (" SSH tunnel");
         break;
     default:
         str_ret = tr (" Unknown message");

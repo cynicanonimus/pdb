@@ -75,7 +75,28 @@ void TunnelMaker::makeTunnel      ()
             break;
     };
     //
-//    Logger::getInstance().logIt(en_LOG_ERRORS, "tunnel created");
+    QString str_message = "SSH tunnel created. Command is: '";
+    str_message += program;
+    QStringList::const_iterator itr = str_split_list.begin();
+    //
+    for (; itr != str_split_list.end(); ++itr)
+    {
+        str_message += " ";
+        str_message += (*itr);
+    };
+    //
+    str_message += "'";
+    //
+    Logger::getInstance().logIt(en_LOG_TUNNELING, str_message);
+    //
+    //wait 2 sec. more
+    //
+    dieTime= QTime::currentTime().addSecs(2);
+    while( QTime::currentTime() < dieTime )
+    {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    };
+    //
     return;
 }
 
@@ -104,7 +125,7 @@ void TunnelMaker::destroyTunnel ()
 void TunnelMaker::onTunnelFinish(int)
 {
     setTunnelActive(false);
-//    Logger::getInstance().logIt(en_LOG_ERRORS, "tunnel destroyed");
+    Logger::getInstance().logIt(en_LOG_TUNNELING, "tunnel destroyed");
 }
 
 void TunnelMaker::onTunnelStart ()

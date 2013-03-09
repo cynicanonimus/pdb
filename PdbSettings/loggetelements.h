@@ -66,7 +66,8 @@ private:
     QString         m_strLogPath;
     //
     QCheckBox*      m_ptrLogErrors;
-    bool            m_bLogErrors;
+    QCheckBox*      m_ptrLogSSHTunnel;
+    //bool            m_bLogErrors;
     //--------------------------------------------
     QGroupBox*      m_ptrNodeGroupBox;
     QGridLayout*    m_ptrNodeGridbox;

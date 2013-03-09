@@ -24,13 +24,14 @@
 LoggetElements::LoggetElements(QGroupBox *ptr_parent_frame, QGridLayout *ptr_layout) :
     AbstractGraficeElements(ptr_parent_frame, ptr_layout, 0)
 {
-    m_ptrEnableLog   = NULL;
+    m_ptrEnableLog      = NULL;
     //
-    m_pLabelLogPath  = NULL;
-    m_pLineLogPath   = NULL;
-    m_pLogPathChoose = NULL;
+    m_pLabelLogPath     = NULL;
+    m_pLineLogPath      = NULL;
+    m_pLogPathChoose    = NULL;
     //
-    m_ptrLogErrors  = NULL;
+    m_ptrLogErrors      = NULL;
+    m_ptrLogSSHTunnel   = NULL;
     //
     m_bInitialLoadFlag = true;
     //
@@ -87,6 +88,7 @@ void LoggetElements::createLinks ()
     //
     QObject::connect(m_ptrEnableLog,    SIGNAL(stateChanged(int)),  this, SLOT ( onClickEnableLog(int) ) );     //en_ENABLE_LOG
     QObject::connect(m_ptrLogErrors,    SIGNAL(stateChanged(int)),  this, SLOT ( onClickAllCheckboxes() ) );    //en_LOG_ERRORS
+    QObject::connect(m_ptrLogSSHTunnel, SIGNAL(stateChanged(int)),  this, SLOT ( onClickAllCheckboxes() ) );    //
     //
     QObject::connect(m_ptrLogCreateNode,    SIGNAL(stateChanged(int)),  this, SLOT ( onClickAllCheckboxes() ) );
     QObject::connect(m_ptrLogUpdateNode,    SIGNAL(stateChanged(int)),  this, SLOT ( onClickAllCheckboxes() ) );
@@ -129,6 +131,8 @@ void LoggetElements::createLayout()
     i_row++;
     m_ptrLogErrors = new QCheckBox(tr("Log any error"));
     addAndRegisterElement(m_ptrLogErrors, i_row,0,1,4);
+    m_ptrLogSSHTunnel= new QCheckBox(tr("Log SSH tunneling"));
+    addAndRegisterElement(m_ptrLogSSHTunnel, i_row,2,1,4);
     //================================================
     i_row++;
     //
@@ -287,6 +291,7 @@ void    LoggetElements::updateFlags (bool b_from_dialog)
        m_bitFlags.setBit( en_LOG_DELETE_TREE,       m_ptrLogTreeDel->checkState() );
        m_bitFlags.setBit( en_LOG_RENAME_TREE,       m_ptrLogTreeRename->checkState() );
        //--------------------------------------------
+       m_bitFlags.setBit( en_LOG_TUNNELING,         m_ptrLogSSHTunnel->checkState() );
 
     }else
     {
@@ -384,6 +389,11 @@ void    LoggetElements::updateFlags (bool b_from_dialog)
         else
             m_ptrLogTreeRename->setCheckState(Qt::Unchecked);
         //--------------------------------------------
+        if ( m_bitFlags[ en_LOG_TUNNELING] )
+            m_ptrLogSSHTunnel->setCheckState(Qt::Checked);
+        else
+            m_ptrLogSSHTunnel->setCheckState(Qt::Unchecked);
+        //
         m_bInitialLoadFlag = false;
     };
 }
@@ -407,6 +417,8 @@ void LoggetElements::onClickEnableLog(int i_state)
 
 void LoggetElements::enableInterface(bool b_enable)
 {
+    m_ptrLogSSHTunnel->setEnabled(b_enable);
+    //
     m_pLineLogPath->setEnabled(b_enable);
     m_pLogPathChoose->setEnabled(b_enable);
     m_ptrLogErrors->setEnabled(b_enable);

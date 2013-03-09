@@ -95,6 +95,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_TreeOfNodes->setStatusBar( statusBar() );
     ui->m_Service_Tab->setStatusBar( statusBar() );
     //
+//    QMessageBox dbg_box;
+  //  dbg_box.setText("before the check");
+    //dbg_box.exec();
+
     if (ConnectionManager::getInstance().getManagerStatus() == ConnectionManager::STATE_OK)
     {
         QString str_header = tr("Pdb: host: [");
