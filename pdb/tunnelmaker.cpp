@@ -15,6 +15,7 @@
     along with pdb.  If not, see <http://www.gnu.org/licenses/>.
 */
 //
+#include "logger.h"
 #include "tunnelmaker.h"
 #include "../CommonInclude/pdb/pdb_style.h"
 #include "../CommonInclude/pdb/DBSettings.h"
@@ -28,8 +29,7 @@ TunnelMaker::TunnelMaker(QObject *parent) :
     QObject(parent)
 {
     m_ptrTunnelProcess      = NULL;
-    m_bTunnelIsActiveNow    = false;
-    m_bTunnelNeedToCreate   = false;
+    setTunnelActive(false);
     //
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
@@ -60,13 +60,23 @@ void TunnelMaker::makeTunnel      ()
     //
     m_ptrTunnelProcess = new QProcess(this);
     //
-    QObject::connect(m_ptrTunnelProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(onTunnelError(QProcess::ProcessError)) );
+    QObject::connect(m_ptrTunnelProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT( onTunnelError  ( QProcess::ProcessError)  ));
+    QObject::connect(m_ptrTunnelProcess, SIGNAL(started()),                     this, SLOT( onTunnelStart  ()                         ));
+    QObject::connect(m_ptrTunnelProcess, SIGNAL(finished(int)),                 this, SLOT( onTunnelFinish (int)                      ));
     //
     m_ptrTunnelProcess->start(program, arguments);
     //
-    QTime dieTime= QTime::currentTime().addSecs(5);
+    QTime dieTime= QTime::currentTime().addSecs(3);
     while( QTime::currentTime() < dieTime )
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        //
+        if ( true == getTunnelActive() )  //tunnel is active now
+            break;
+    };
+    //
+//    Logger::getInstance().logIt(en_LOG_ERRORS, "tunnel created");
+    return;
 }
 
 void TunnelMaker::destroyTunnel ()
@@ -76,23 +86,37 @@ void TunnelMaker::destroyTunnel ()
     //
     if (m_ptrTunnelProcess)
     {
-        m_bTunnelIsActiveNow = false;
+        setTunnelActive(false);
         m_ptrTunnelProcess->terminate();
         m_ptrTunnelProcess->kill();
         //
         QTime dieTime= QTime::currentTime().addSecs(3);
         while( QTime::currentTime() < dieTime )
+        {
             QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        };
         //
         delete m_ptrTunnelProcess;
         m_ptrTunnelProcess = NULL;        
     };
 }
 
+void TunnelMaker::onTunnelFinish(int)
+{
+    setTunnelActive(false);
+//    Logger::getInstance().logIt(en_LOG_ERRORS, "tunnel destroyed");
+}
+
+void TunnelMaker::onTunnelStart ()
+{
+    setTunnelActive(true);
+}
+
 void TunnelMaker::onTunnelError ( QProcess::ProcessError err)
 {
-    if (false == m_bTunnelIsActiveNow) //because when we terminate the task, we always get the error
+    if ( false == getTunnelActive() ) //because when we terminate the task, we always get the error
         return;
+    //
     //
     QString str_msg;
     QMessageBox box;
@@ -121,4 +145,22 @@ void TunnelMaker::onTunnelError ( QProcess::ProcessError err)
     //
     box.setText(str_msg);
     box.exec();
+}
+
+void TunnelMaker::setTunnelActive ( bool b_active )
+{
+    QMutexLocker locker ( &m_TunnelStatusLocker );
+    m_bTunnelIsActiveNow = b_active;
+}
+
+bool TunnelMaker::getTunnelActive ()
+{
+    bool b_active_status = false;
+    //
+    {
+        QMutexLocker locker ( &m_TunnelStatusLocker );
+        b_active_status = m_bTunnelIsActiveNow;
+    };
+    //
+    return b_active_status;
 }

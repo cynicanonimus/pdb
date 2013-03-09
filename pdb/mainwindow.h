@@ -93,7 +93,7 @@ private:
     GlobalTreeOperationsHandler m_G_TreeActions;
     //
     NotificationDialog  m_dlgWaiting;
-    PasswordDlg         m_PwdDlg;
+    PasswordDlg*        m_ptrPwdDlg;
     TreeSearchDlg*      m_ptrSearchDlg;
     //ServicesCfg         m_ServiceCfg;
     TunnelMaker         m_Tunnel;

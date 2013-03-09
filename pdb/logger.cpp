@@ -23,6 +23,7 @@
 #include <QMutexLocker>
 #include <QDateTime>
 
+Logger* p_instance = NULL;
 
 Logger::Logger(QObject *parent) :
     QObject(parent)
@@ -52,9 +53,10 @@ void Logger::stopLog()
 
 Logger& Logger::getInstance()
 {
-    static Logger instance;
-
-    return instance;
+    if (NULL == p_instance)
+        p_instance = new Logger();
+    //
+    return (*p_instance);
 }
 
 void Logger::readSettings()
@@ -99,11 +101,6 @@ void Logger::writeBeginLog()
 {
     if (m_ptrOutStream)
         return;  //do it only once
-    //
- //   if ( isLogCodeActive() == false )
- //       return;
-    //
-    QMutexLocker locker (&m_FileLocker);
     //
     if (
             ( m_strLogPath[m_strLogPath.length() - 1] != '/' ) &&
@@ -152,12 +149,12 @@ void Logger::logIt(unsigned int ui_err_code, const QString &str_message)
     if ( isLogCodeActive(ui_err_code) == false )
         return;
     //
+    QMutexLocker locker (&m_FileLocker);
+    //
     writeBeginLog(); //it is happens only once
     //
     if ( NULL == m_ptrOutStream )
         return;
-    //
-    QMutexLocker locker (&m_FileLocker);
     //
     (*m_ptrOutStream)<<"\n"<<QDateTime::currentDateTime().toString()<<" "<<getLogString(ui_err_code)<<": "<<str_message;
 }

@@ -48,9 +48,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(QObject::trUtf8("Personal database"));
     //
     //make SSH tunnel, if need
-    //
     m_Tunnel.makeTunnel();
     //
+    m_ptrPwdDlg             = NULL;
     m_ptrBackupProcess      = NULL;
     m_bEditorTextChanged    = false;
     m_uiConnectionsInUse    = 0;
@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ptrDbInUseLabel->setPixmap(*m_ptrDbInUseIcon);
     m_ptrDbInUseLabel->setToolTip(tr("Database in use now"));
     //
-    m_ptrSearchDlg = new TreeSearchDlg();
+
     //
     // create menu object
     //
@@ -91,9 +91,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_G_TreeActions.setPtrToTree(ui->m_TreeOfNodes);
     m_G_TreeActions.setPtrToStatusBar(statusBar());
     //
-    m_ptrSearchDlg->setPtrToComboBox(ui->m_DBNameList);
-    m_ptrSearchDlg->setPtrToTree(ui->m_TreeOfNodes);
-    //
     //pass pointer on the status bar into the tree
     ui->m_TreeOfNodes->setStatusBar( statusBar() );
     ui->m_Service_Tab->setStatusBar( statusBar() );
@@ -114,6 +111,12 @@ MainWindow::MainWindow(QWidget *parent) :
         box.exec();
         return;
     };
+    //move it here because hidden sql-query to database is inside
+    m_ptrSearchDlg = new TreeSearchDlg();
+    m_ptrSearchDlg->setPtrToComboBox(ui->m_DBNameList);
+    m_ptrSearchDlg->setPtrToTree(ui->m_TreeOfNodes);
+    //
+    m_ptrPwdDlg = new PasswordDlg();
     //
     //for enabling menu after initial restore tree
     QObject::connect( ui->m_TreeOfNodes,                SIGNAL( endOfInit           ( int )), m_pMainMenu,       SLOT( onTreeComboBoxChanged(int) ) );
@@ -160,6 +163,8 @@ MainWindow::~MainWindow()
     if ( m_ptrDbInUseLabel  ) delete m_ptrDbInUseLabel;
     //
     if ( m_ptrSearchDlg     ) delete m_ptrSearchDlg;
+    //
+    if ( m_ptrPwdDlg        ) delete m_ptrPwdDlg;
     //
 }
 
@@ -272,13 +277,13 @@ void MainWindow::connectSignalsAndSlots ()
     QObject::connect( &(ConnectionManager::getInstance()), SIGNAL(takeConn()),   this,              SLOT(onTakeConn()       ));
     QObject::connect( &(ConnectionManager::getInstance()), SIGNAL(releaseConn()),this,              SLOT(onReleaseConn()    ));
     //if user does not type password buc click "cancel"
-    QObject::connect( &m_PwdDlg,                        SIGNAL(Shutdown()),      this,              SLOT(close()            ));
+    QObject::connect( m_ptrPwdDlg,                        SIGNAL(Shutdown()),      this,              SLOT(close()            ));
     //security menu item
     QObject::connect(m_pMainMenu->m_ptrCreateChangePassword, SIGNAL(triggered()), this, SLOT(onCreateChangePassword()       ));
     //change password stuff
-    QObject::connect(&m_PwdDlg,                              SIGNAL(DropAttachments()), ui->m_TreeOfNodes, SLOT(onDropAttachments() ));
+    QObject::connect(m_ptrPwdDlg,                            SIGNAL(DropAttachments()), ui->m_TreeOfNodes, SLOT(onDropAttachments() ));
     //
-    QObject::connect(&m_PwdDlg,                              SIGNAL(ReencryptFinished()), ui->m_Service_Tab, SLOT(onAttachmentUpdated()) );
+    QObject::connect(m_ptrPwdDlg,                            SIGNAL(ReencryptFinished()), ui->m_Service_Tab, SLOT(onAttachmentUpdated()) );
 
 }
 
@@ -362,22 +367,24 @@ void MainWindow::showInterfaceElements          (bool b_show)
 
 void  MainWindow::onCreateChangePassword ()
 {
+    if (NULL == m_ptrPwdDlg)
+        Q_ASSERT(FALSE);
     //
-    m_PwdDlg.setDbCombobox(ui->m_DBNameList); //for iterating list of nodes and attachments
+    m_ptrPwdDlg->setDbCombobox(ui->m_DBNameList); //for iterating list of nodes and attachments
     //
     //if (ServicesCfg::getInstance().getPasswordHash().length() == 0) //we create new password
     if (ServicesCfg::getInstance().getPasswordHash().length() == 0) //we create new password
     {
-        m_PwdDlg.setDlgMode(PasswordDlg::CREATE_PASSWORD);
+        m_ptrPwdDlg->setDlgMode(PasswordDlg::CREATE_PASSWORD);
     }else
     {
         if (ServicesCfg::getInstance().getPassword().length() > 0)
-            m_PwdDlg.setDlgMode(PasswordDlg::CHANGE_PASSWORD); // we change existings password
+            m_ptrPwdDlg->setDlgMode(PasswordDlg::CHANGE_PASSWORD); // we change existings password
         else
-            m_PwdDlg.setDlgMode(PasswordDlg::ENTER_PASSWORD);  // we enter password
+            m_ptrPwdDlg->setDlgMode(PasswordDlg::ENTER_PASSWORD);  // we enter password
     };
     //
-    m_PwdDlg.exec();
+    m_ptrPwdDlg->exec();
     //
     return;
 }
@@ -386,8 +393,8 @@ void MainWindow::onCheckPassword (bool b_password_exist)
 {
     if (b_password_exist)
     {
-        m_PwdDlg.setDlgMode(PasswordDlg::ENTER_PASSWORD);
-        m_PwdDlg.exec();
+        m_ptrPwdDlg->setDlgMode(PasswordDlg::ENTER_PASSWORD);
+        m_ptrPwdDlg->exec();
     };
 }
 
@@ -580,12 +587,11 @@ void MainWindow::closeEvent(QCloseEvent *e)
     //
     m_dlgWaiting.hide();
     //
+    statusBar()->showMessage(tr("destroy tunnel..."));
+    m_Tunnel.destroyTunnel();
+    //
     statusBar()->showMessage(tr("Stop logging...."));
     Logger::getInstance().stopLog();
-    //
-    statusBar()->showMessage(tr("destroy tunnel..."));
-    //
-    m_Tunnel.destroyTunnel();
     //
     //setCursor(Qt::ArrowCursor);
     statusBar()->showMessage(tr("End."));

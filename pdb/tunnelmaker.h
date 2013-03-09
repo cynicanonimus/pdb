@@ -22,7 +22,11 @@
 //
 #include <QObject>
 #include <QProcess>
-
+#include <QMutex>
+#include <QMutexLocker>
+//
+//
+//
 class TunnelMaker : public QObject
 {
     Q_OBJECT
@@ -39,13 +43,20 @@ public slots:
 
 private slots:
     void            onTunnelError       ( QProcess::ProcessError );
+    void            onTunnelStart       ();
+    void            onTunnelFinish      (int);
 
+private:
+    void            setTunnelActive     (bool b_active);
+    bool            getTunnelActive     ();
 private:
 
     QProcess*       m_ptrTunnelProcess;
     QString         m_strRawCommand;
     bool            m_bTunnelIsActiveNow;
     bool            m_bTunnelNeedToCreate;
+    //
+    QMutex          m_TunnelStatusLocker;
     
 };
 

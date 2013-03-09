@@ -74,6 +74,7 @@ DBConnection::ConnectionStatus DBConnection::init(const QString& str_db_type,
             str_msg += str_db_pwd;
             str_msg += "\nPort N: ";
             str_msg += QString::number(i_port);
+
             str_msg += "\n";
             //
             Logger::getInstance().logIt(en_LOG_ERRORS, str_msg);
