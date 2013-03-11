@@ -17,6 +17,8 @@
 //
 #include "logger.h"
 #include "tunnelmaker.h"
+#include "waiter.h"
+//
 #include "../CommonInclude/pdb/pdb_style.h"
 #include "../CommonInclude/pdb/DBSettings.h"
 //
@@ -47,10 +49,10 @@ TunnelMaker::~TunnelMaker ()
     destroyTunnel();
 }
 
-void TunnelMaker::makeTunnel      ()
+bool TunnelMaker::makeTunnel()
 {
     if (false == m_bTunnelNeedToCreate)
-        return;
+        return true;
     //
     QStringList str_split_list = m_strRawCommand.split(" ",QString::SkipEmptyParts);
     //
@@ -66,15 +68,21 @@ void TunnelMaker::makeTunnel      ()
     //
     m_ptrTunnelProcess->start(program, arguments);
     //
-    QTime dieTime= QTime::currentTime().addSecs(3);
-    while( QTime::currentTime() < dieTime )
+    Waiter::wait(1);
+    //
+    for (unsigned int i_counter = 0; i_counter < 10; +i_counter) //max wait time - 10 sek
     {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-        //
         if ( true == getTunnelActive() )  //tunnel is active now
             break;
+        //
+        Waiter::wait(1);
     };
     //
+    if ( false == getTunnelActive() )
+    {
+        QMessageBox::critical(NULL, "Tunnel status", "Can not create tunnel, see the log", QMessageBox::Ok);
+        return false;
+    };
     QString str_message = "SSH tunnel created. Command is: '";
     str_message += program;
     QStringList::const_iterator itr = str_split_list.begin();
@@ -90,14 +98,9 @@ void TunnelMaker::makeTunnel      ()
     Logger::getInstance().logIt(en_LOG_TUNNELING, str_message);
     //
     //wait 2 sec. more
+    Waiter::wait(2);
     //
-    dieTime= QTime::currentTime().addSecs(2);
-    while( QTime::currentTime() < dieTime )
-    {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-    };
-    //
-    return;
+    return true;
 }
 
 void TunnelMaker::destroyTunnel ()

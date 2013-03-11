@@ -34,7 +34,7 @@ public:
     explicit        TunnelMaker     ( QObject *parent = 0 );
                     ~TunnelMaker    ();
     //
-    void            makeTunnel      ();
+    bool            makeTunnel      ();
     void            destroyTunnel   ();
     //
 signals:

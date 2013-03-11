@@ -50,7 +50,8 @@ SOURCES += main.cpp\
     askchangesdetailsdlg.cpp \
     cryptothread.cpp \
     ../CommonInclude/pdb/DBSettings.cpp \
-    ../CommonInclude/pdb/cryptosupport.cpp
+    ../CommonInclude/pdb/cryptosupport.cpp \
+    waiter.cpp
 
 HEADERS  += mainwindow.h \
     GDefinitions.h \
@@ -87,7 +88,8 @@ HEADERS  += mainwindow.h \
     ../CommonInclude/pdb/DBSettingsStream.h \
     ../CommonInclude/pdb/DBSettings.h \
     ../CommonInclude/pdb/cryptosupport.h \
-    ../CommonInclude/pdb/VariantPtr.h
+    ../CommonInclude/pdb/VariantPtr.h \
+    waiter.h
 
 FORMS    += mainwindow.ui \
     notificationdialog.ui \

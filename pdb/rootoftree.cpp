@@ -23,6 +23,7 @@
 #include "GDefinitions.h"
 #include "treeleaf.h"
 #include "logger.h"
+#include "waiter.h"
 #include "../CommonInclude/pdb/pdb_style.h"
 //
 RootOfTree::RootOfTree(const QString&      str_root_name,
@@ -89,10 +90,12 @@ bool RootOfTree::delete_it (bool b_silence)
     {
         while (m_ptrTopLeaf->isPossibleToDeleteNode(true, true) == false) //because in the another thread we can make upload right now
         {
-
+            Waiter::wait(1);
+/*
             QTime dieTime= QTime::currentTime().addSecs(1);
             while( QTime::currentTime() < dieTime )
             QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+*/
         };
         //make force delete
         b_res = m_ptrTopLeaf->force_delete_it();

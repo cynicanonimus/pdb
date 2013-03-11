@@ -24,6 +24,7 @@
 #include "dbacccesssafe.h"
 #include "logger.h"
 #include "../CommonInclude/pdb/pdb_style.h"
+#include "waiter.h"
 //
 #include <QKeyEvent>
 #include <QTableWidgetItem>
@@ -84,11 +85,15 @@ TreeSearchDlg::~TreeSearchDlg()
     m_Searcher.terminate();
     m_Searcher.wait();
     //
+    Waiter::wait(1);
     while( !m_Searcher.isFinished() )
     {
+        Waiter::wait(1);
+/*
         QTime dieTime= QTime::currentTime().addSecs(1);
         while( QTime::currentTime() < dieTime )
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+*/
     };
     //
     delete ui;
