@@ -35,7 +35,7 @@ public:
     virtual ~NodesAndAttachmentsGraficeElements();
 public:
 
-void            writeData();
+void            writeData           ();
 
 signals:
     
@@ -53,7 +53,7 @@ void onClickDeleteTmpOnExit     (int i_state);
 private:
     void            createLayout    ();
     void            readData        ();
-    void            updateData      (bool b_from_dialog);   //exchange between dialog and variables
+    void            updateData      (bool b_from_dialog, bool b_data_changed = true);   //exchange between dialog and variables
     void            createLinks     ();
     QString         getActualAppPath() const;
     void            normalizePath   (QString& str_path) const;

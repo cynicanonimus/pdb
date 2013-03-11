@@ -18,6 +18,7 @@
 */
 //
 #include <QMainWindow>
+//#include <QEvent>
 #include <QTreeWidgetItem>
 //
 #include "dbgraficelements.h"
@@ -37,7 +38,9 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
+    //
+    void closeEvent(QCloseEvent* e);
+    //
 signals:
     void saveDBSettings();
 

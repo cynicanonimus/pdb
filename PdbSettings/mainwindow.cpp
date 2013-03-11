@@ -21,6 +21,7 @@
 #include "../CommonInclude/pdb/VariantPtr.h"
 
 #include <QSqlDatabase>
+#include <QCloseEvent>
 #include <QMessageBox>
 #include <QFont>
 #include <QFontDialog>
@@ -37,9 +38,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ptrLogger     = NULL;
     m_ptrSecurity   = NULL;
     //
-#define QT_DEBUG_PLUGINS = 1;
-    QStringList str_list = QCoreApplication::libraryPaths ();
-    QStringList str_drv_list = QSqlDatabase::drivers ();
+//#define QT_DEBUG_PLUGINS = 1;
+//    QStringList str_list = QCoreApplication::libraryPaths ();
+//    QStringList str_drv_list = QSqlDatabase::drivers ();
     //
     createGraficeElements();
     //
@@ -148,12 +149,14 @@ void MainWindow::createGraficeElements ()
     //
     m_pNodesAndAttachmentsGrafic = new NodesAndAttachmentsGraficeElements(ui->m_groupBoxDB, m_pGridLayout);
     m_pNodesAndAttachmentsGrafic->show(false);
+    m_pNodesAndAttachmentsGrafic->resetFlagChanged();
     //
     m_ptrLogger = new LoggetElements(ui->m_groupBoxDB, m_pGridLayout);
     m_ptrLogger->show(false);
     //
     m_ptrSecurity = new SecurityElements(ui->m_groupBoxDB, m_pGridLayout);
     m_ptrSecurity->show(false);
+    m_ptrSecurity->resetFlagChanged();
     //
     ui->m_groupBoxDB->setLayout(m_pGridLayout);
     //
@@ -204,4 +207,49 @@ void MainWindow::createSettingsTree()
     ptr_att_security->setData(1,0,security_page);
     //
     ui->m_TreeOfSettings->addTopLevelItem(ptr_att_security);
-};
+}
+
+void MainWindow::closeEvent(QCloseEvent* e)
+{
+    const unsigned short ush_top_level_items = ui->m_TreeOfSettings->topLevelItemCount();
+    bool b_close_app = true;
+    //
+    for (unsigned short ush_item = 0; ush_item < ush_top_level_items; ush_item++)
+    {
+        QTreeWidgetItem* ptr_item = ui->m_TreeOfSettings->topLevelItem(ush_item);
+        //
+        QVariant v_page  = ptr_item->data(1,0);
+        AbstractGraficeElements* ptr_page = VariantPtr<AbstractGraficeElements>::asPtr( v_page );
+        //
+        if(ptr_page)
+        {
+            if (ptr_page->isSettingsChanged() == true)
+            {
+                const int i_res = QMessageBox::warning(NULL,
+                                                 trUtf8("WARNING!") ,
+                                                 "Settigns were changed but not saved. Are you really want to close application?",
+                                                 QMessageBox::Yes|QMessageBox::No,
+                                                 QMessageBox::No
+                                                );
+                if (QMessageBox::Yes == i_res)
+                {
+                    b_close_app = true;
+                }else
+                {
+                    b_close_app = false;
+                };
+                //
+                break; //we do not need to check the rest
+            };
+        };
+    };
+    //
+    if( b_close_app )
+    {
+        e->accept();
+        exit(0);
+    }else
+    {
+        e->ignore();
+    };
+}

@@ -44,6 +44,9 @@ public:
     void            deleteElementsOnExit    (bool b_del = true);
     void            addAndRegisterElement   (QWidget* ptr_widget, int row, int column, int rowSpan, int columnSpan, Qt::Alignment = 0);
     void            addAndRegisterElement   (QWidget* ptr_widget, int row, int column, Qt::Alignment = 0);
+    bool            isSettingsChanged       () const {return m_bChanged;} //changed to false in WriteData of every class
+    //because we call OnClick... when initialize the page with checkboxes
+    void            resetFlagChanged    (){ m_bChanged = false;}
 
 public:
     virtual void    writeData() = 0;
@@ -55,13 +58,15 @@ public slots:
 protected:
      virtual void   createLayout() = 0;
     virtual void    readData    ()    = 0;
-    virtual void    updateData  (bool b_from_dialog) = 0;   //exchange between dialog and variables
+    virtual void    updateData  (bool b_from_dialog, bool b_data_changed = true) = 0;   //exchange between dialog and variables
 
     QGroupBox*          m_pParentFrame;
     QGridLayout*        m_pGridLayout;
     //
     GraficCollection    m_vGraficObjectsArray;
     QString             m_strFrameName;
+    //
+    bool                m_bChanged;
     //
 private:
     void                registerElement         (QWidget* ptr_grafic_element);

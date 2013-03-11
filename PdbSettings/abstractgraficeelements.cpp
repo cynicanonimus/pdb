@@ -23,6 +23,7 @@ AbstractGraficeElements::AbstractGraficeElements(QGroupBox *ptr_parent_frame, QG
     m_pParentFrame      = ptr_parent_frame;
     m_pGridLayout       = ptr_layout;
     m_bDelObjectOnExit  = false;
+    m_bChanged          = false;
 }
 
 AbstractGraficeElements::~AbstractGraficeElements()

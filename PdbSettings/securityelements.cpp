@@ -44,7 +44,7 @@ SecurityElements::SecurityElements(QGroupBox *ptr_parent_frame, QGridLayout *ptr
     //
     createLinks();
     //
-    updateData(false);
+    updateData(false, false);
     //
     onClickShred();
 }
@@ -66,6 +66,7 @@ void SecurityElements::onEncryptModeChanged(int index)
     if (CryptoSupport::TRIPLEDES_CBC == index)
         m_ptrEncryptMode->setCurrentIndex(CryptoSupport::BLOWFISH_OFB);
     //
+    m_bChanged = true;
     return;
 }
 
@@ -75,6 +76,8 @@ void SecurityElements::onClickShred()
         m_ptrEditShredderCmdLine->setEnabled(true);
     else
         m_ptrEditShredderCmdLine->setEnabled(false);
+    //
+    m_bChanged = true;
 }
 
 void SecurityElements::writeData()
@@ -91,8 +94,9 @@ void SecurityElements::writeData()
     //
     settings.setValue(g_str_SEC_TEC_CODE,   m_uiEncryptMode);
     //
-
     settings.setValue(g_str_SEC_MARK_CRYPT, m_bMarkCryptByDefault);
+    //
+    m_bChanged = false;
 }
 
 void SecurityElements::readData()
@@ -111,7 +115,7 @@ void SecurityElements::readData()
     m_bMarkCryptByDefault   = settings.value(g_str_SEC_MARK_CRYPT).value<bool>();
 }
 
-void SecurityElements::updateData  (bool b_from_dialog)
+void SecurityElements::updateData  (bool b_from_dialog, bool b_data_changed)
 {
     if (b_from_dialog)
     {
@@ -164,6 +168,9 @@ void SecurityElements::updateData  (bool b_from_dialog)
             m_ptrMarkCryptByDefault->setChecked(false);
         };
     };
+    //
+    if (b_data_changed)
+        m_bChanged = true;
 }
 
 void    SecurityElements::createLayout()

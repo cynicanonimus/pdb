@@ -60,7 +60,7 @@ NodesAndAttachmentsGraficeElements::NodesAndAttachmentsGraficeElements(QGroupBox
     //
     createLinks();
     //
-    updateData(false);
+    updateData(false,false);
 }
 
 NodesAndAttachmentsGraficeElements::~NodesAndAttachmentsGraficeElements()
@@ -86,13 +86,11 @@ void NodesAndAttachmentsGraficeElements::onChooseTmpPath ()
                                                              m_strTmpPath,
                                                              QFileDialog::ShowDirsOnly|QFileDialog::DontResolveSymlinks
                                                              );
-
-
-
-    if (str_dir_name.length() > 0 )
-        m_strTmpPath = str_dir_name;
     //
-    updateData(false);
+    if (str_dir_name.length() > 0 )
+        if ( m_strTmpPath.compare(str_dir_name) != 0 )
+            updateData(false);
+    //
     return;
 }
 
@@ -103,13 +101,9 @@ void NodesAndAttachmentsGraficeElements::onChooseExportPath()
                                                              m_strDefaultExportPath,
                                                              QFileDialog::ShowDirsOnly|QFileDialog::DontResolveSymlinks
                                                              );
-
-
-
     if (str_dir_name.length() > 0 )
-        m_strDefaultExportPath = str_dir_name;
-    //
-    updateData(false);
+        if ( m_strDefaultExportPath.compare(str_dir_name) != 0 )
+            updateData(false);
     return;
 };
 
@@ -120,13 +114,9 @@ void NodesAndAttachmentsGraficeElements::onChooseImportPath()
                                                              m_strDefaultImportPath,
                                                              QFileDialog::ShowDirsOnly|QFileDialog::DontResolveSymlinks
                                                              );
-
-
-
     if (str_dir_name.length() > 0 )
-        m_strDefaultImportPath = str_dir_name;
-    //
-    updateData(false);
+        if ( m_strDefaultImportPath.compare(str_dir_name) != 0 )
+            updateData(false);
     return;
 };
 
@@ -223,7 +213,8 @@ void NodesAndAttachmentsGraficeElements::writeData()
     settings.setValue( g_str_ATTACH_NODE_DELETE, m_bDelAttachAndNodesOnExit );
     settings.setValue( g_str_DELETE_AFTER_UPLOAD, m_bDeleteAfterAttach );
     //
-};
+    m_bChanged = false;
+}
 
 void NodesAndAttachmentsGraficeElements::readData()
 {
@@ -245,7 +236,7 @@ void NodesAndAttachmentsGraficeElements::readData()
     m_bDeleteAfterAttach        = settings.value( g_str_DELETE_AFTER_UPLOAD ).toBool();
 };
 
-void NodesAndAttachmentsGraficeElements::updateData (bool b_from_dialog)
+void NodesAndAttachmentsGraficeElements::updateData (bool b_from_dialog, bool b_data_changed)
 {
     if(b_from_dialog)
     {
@@ -288,6 +279,9 @@ void NodesAndAttachmentsGraficeElements::updateData (bool b_from_dialog)
         else
             m_ptrDeleteAfterAttach->setCheckState(Qt::Unchecked);
     };
+    //
+    if (b_data_changed)
+        m_bChanged = true;
 };
 
 void NodesAndAttachmentsGraficeElements::createLayout()

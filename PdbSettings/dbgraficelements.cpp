@@ -79,16 +79,22 @@ DBGraficElements::DBGraficElements(QGroupBox* ptr_parent_frame, QGridLayout* ptr
     createLayout();
     //
     if (m_bDBCreatorIsOK)
+    {
         createLinks();
-    //
-    if (m_bDBCreatorIsOK)
-        updateData(false);
-    //
-    if (m_bDBCreatorIsOK)
+        updateData(false,false);
         setNavButtonsState();
+        onTunnelCheckboxClick();
+    }
+/*
     //
     if (m_bDBCreatorIsOK)
-        onTunnelCheckboxClick();
+
+    //
+    if (m_bDBCreatorIsOK)
+
+    //
+    if (m_bDBCreatorIsOK)
+*/
 }
 
 DBGraficElements::~DBGraficElements()
@@ -135,11 +141,12 @@ void DBGraficElements::writeData()
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
     settings.setValue(g_str_DB_SETTINGS, qVariantFromValue(m_stDBSettings));
+    //
+    m_bChanged = false;
 }
 
 void DBGraficElements::createLinks()
 {
-//    QObject::connect(ui->m_TreeOfSettings, SIGNAL( currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(onTreeCurrentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)) );
     QObject::connect(m_pTestDbConnButton,       SIGNAL(clicked()), this, SLOT( onTestBtnClick()   ) );
     QObject::connect(m_pSetCurrentCgfDefault,   SIGNAL(clicked()), this, SLOT(onDefaultBtnClick() ) );
     //
@@ -468,24 +475,25 @@ void DBGraficElements::onDefaultBtnClick()
 {
     m_stDBSettings.setCurrentPageAsActive();
     setNavButtonsState();
+    m_bChanged = true;
 }
 
 void DBGraficElements::onPrevClick ()
 {
-    updateData(true);
+    updateData(true, false);
     m_stDBSettings.setPreviousAsCurrent();
     setNavButtonsState();
-    updateData(false);
+    updateData(false, false);
     //set right status oftunnel string
     onTunnelCheckboxClick();
 }
 
 void DBGraficElements::onNextClick ()
 {
-    updateData(true); //remember old
+    updateData(true, false); //remember old
     m_stDBSettings.setNextAsCurrent();
     setNavButtonsState();
-    updateData(false); //set new
+    updateData(false, false); //set new
     //set right status oftunnel string
     onTunnelCheckboxClick();
 }
@@ -668,7 +676,7 @@ void DBGraficElements::createLayout()
 
 };
 
-void DBGraficElements::updateData (bool b_from_dialog)
+void DBGraficElements::updateData (bool b_from_dialog, bool b_data_changed)
 {
     if (b_from_dialog) //from dialog to class members
     {
@@ -734,6 +742,9 @@ void DBGraficElements::updateData (bool b_from_dialog)
         //
         m_pLineMakeTunnel->setText( m_stDBSettings.m_TunnelList[m_stDBSettings.getCurrentPage()] );
     };
+    //
+    if (b_data_changed)
+        m_bChanged = true;
 }
 
 void DBGraficElements::setNavButtonsState()

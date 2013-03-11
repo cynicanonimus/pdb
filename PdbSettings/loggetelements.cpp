@@ -52,7 +52,7 @@ LoggetElements::LoggetElements(QGroupBox *ptr_parent_frame, QGridLayout *ptr_lay
     //
     createLinks();
     //
-    updateData(false);
+    updateData(false,false);
 }
 
 LoggetElements::~LoggetElements()
@@ -231,7 +231,9 @@ void    LoggetElements::writeData()
     //
     QVariant flags(m_bitFlags);
     settings.setValue(g_str_LOG_FLAGS, flags);
-};
+    //
+    m_bChanged = false;
+}
 
 void    LoggetElements::readData()
 {
@@ -249,7 +251,7 @@ void    LoggetElements::readData()
     };
 };
 
-void LoggetElements::updateData  (bool b_from_dialog)
+void LoggetElements::updateData  (bool b_from_dialog, bool b_data_changed)
 {
     if(b_from_dialog)
     {
@@ -261,7 +263,10 @@ void LoggetElements::updateData  (bool b_from_dialog)
     };
     //
     updateFlags(b_from_dialog);
-};
+    //
+    if (b_data_changed)
+        m_bChanged = true;
+}
 
 void    LoggetElements::updateFlags (bool b_from_dialog)
 {

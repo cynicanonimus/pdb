@@ -57,7 +57,7 @@ ColorGraficElements::ColorGraficElements(QGroupBox* ptr_parent_frame, QGridLayou
     createLayout();
     createLinks();
     //
-    updateData(false);
+    updateData(false, false);
 }
 
 ColorGraficElements::~ColorGraficElements()
@@ -339,8 +339,6 @@ void ColorGraficElements::createLayout()
 
 void ColorGraficElements::writeData()
 {
-    //updateData(true); do not need it, because already saved directly into variable, when change it
-    //
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
     settings.setValue(g_str_CLR_NORNAL_FG, m_cl_NormalTreeElementFront);
@@ -360,6 +358,8 @@ void ColorGraficElements::writeData()
     //
     settings.setValue(g_str_CLR_ATTACH_FAIL_FG, m_cl_FailAttachmentElementFront );
     settings.setValue(g_str_CLR_ATTACH_FAIL_BG, m_cl_FailAttachmentElementBack );
+    //
+    m_bChanged = false;
 };
 
 void ColorGraficElements::readData ()
@@ -402,7 +402,7 @@ void ColorGraficElements::readData ()
     m_cl_FailAttachmentElementBack      = actual_color.isValid() ? actual_color : white_color;
 }
 
-void ColorGraficElements::updateData (bool b_from_dialog)
+void ColorGraficElements::updateData (bool b_from_dialog, bool b_data_changed)
 {
     if(b_from_dialog)
     {
@@ -472,4 +472,7 @@ void ColorGraficElements::updateData (bool b_from_dialog)
                                                    str_end_style);
 
     };
+    //
+    if (b_data_changed)
+        m_bChanged = true;
 };

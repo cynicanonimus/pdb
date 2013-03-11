@@ -65,7 +65,7 @@ protected:
 private:
 //
     void        readData        ();
-    void        updateData      (bool b_from_dialog); //exchange between dialog and variables
+    void        updateData      (bool b_from_dialog, bool b_data_changed = true); //exchange between dialog and variables
     void        createLinks     ();
     void        createLayout    ();
     bool        getDialogColor  (QColor& t_color);

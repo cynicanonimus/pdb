@@ -15,10 +15,11 @@
     along with pdb.  If not, see <http://www.gnu.org/licenses/>.
 */
 //
+#include "../CommonInclude/pdb/pdb_style.h"
+#include "../CommonInclude/pdb/VariantPtr.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "treeleaf.h"
-#include "../CommonInclude/pdb/pdb_style.h"
 //
 #include "connectionmanager.h"
 #include "mnumainwindow.h"
@@ -28,13 +29,12 @@
 #include "tmpfilecleaner.h"
 #include "treesearchdlg.h"
 #include "servicescfg.h"
-//
-#include "../CommonInclude/pdb/VariantPtr.h"
-//
 #include "logger.h"
+//
 #include <QMessageBox>
 #include <QtSql/QSqlDatabase>
 #include <QtSql>
+#include <QCloseEvent>
 #include <QDir>
 #include <QtDebug>
 #include <QMutexLocker>
