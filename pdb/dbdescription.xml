@@ -56,7 +56,7 @@
 			  `tree_name` varchar(255) NOT NULL,
 			  `last_change` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			  `active` tinyint(1) NOT NULL DEFAULT '1',
-			  `current` tinyint(1) NOT NULL DEFAULT '0',
+			  `current_active` tinyint(1) NOT NULL DEFAULT '0',
 			  PRIMARY KEY (`id_tree`),
 			  UNIQUE KEY `tree_name_UNIQUE` (`tree_name`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;

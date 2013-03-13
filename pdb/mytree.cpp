@@ -963,7 +963,7 @@ int MyTree::getLastUsedRootID_DB    () const
     //
     QSqlQuery qry(*ptr_db);
     //
-    QString str_query = "SELECT id_tree FROM root_tbl where active = 1 AND current = 1;";
+    QString str_query = "SELECT id_tree FROM root_tbl where active = 1 AND current_active = 1;";
     //
     if ( !qry.prepare( str_query ) )
     {
@@ -1007,8 +1007,8 @@ bool MyTree::setLastUsedRootID_DB   () const
     //
     QSqlQuery qry(*ptr_db);
     //
-    QString str_query_1 = QString ("UPDATE root_tbl  SET current = 0 WHERE id_tree <> %1;").arg( ptr_root->getID() );
-    QString str_query_2 = QString ("UPDATE root_tbl  SET current = 1 WHERE id_tree = %1;").arg( ptr_root->getID() );
+    QString str_query_1 = QString ("UPDATE root_tbl  SET current_active = 0 WHERE id_tree <> %1;").arg( ptr_root->getID() );
+    QString str_query_2 = QString ("UPDATE root_tbl  SET current_active = 1 WHERE id_tree = %1;").arg( ptr_root->getID() );
     //
     if ( ptr_db->driver()->hasFeature(QSqlDriver::Transactions) )
         ptr_db->driver()->beginTransaction();
@@ -1041,7 +1041,7 @@ bool  MyTree::getRootsFromDatabase_DB()
         //
         QSqlQuery qry(*ptr_db);
         //
-        QString str_query = "SELECT id_tree, tree_name, last_change, active FROM root_tbl where active = 1;";
+        QString str_query = "SELECT id_tree, tree_name, last_change, active FROM root_tbl where current_active = 1;";
         //
         if ( !qry.prepare( str_query ) )
         {

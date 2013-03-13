@@ -1,0 +1,9 @@
+list of changes in te project pdb. 
+
+Date 		CommitID		Changes
+
+13.03.2013	13.03.2013-01		rename column 'current' in the table 'root_tbl'.
+					Made is because 'current' is reserved in Oracle.
+					Also made appropriate changes in the c++ code and script.
+						
+					"alter table root_tbl change current current_active tinyint(1);"

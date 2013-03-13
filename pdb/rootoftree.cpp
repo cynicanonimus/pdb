@@ -124,7 +124,7 @@ void RootOfTree::setActiveStatus_DB  (bool b_active)
     if (b_active)
         i_status = 1;
     //
-    QString str_update_string = QString("update root_tbl set active = %1 WHERE id_tree = %2;").arg( i_status ).arg(m_iID);
+    QString str_update_string = QString("update root_tbl set current_active = %1 WHERE id_tree = %2;").arg( i_status ).arg(m_iID);
     //
     qry.prepare( str_update_string );
     //
