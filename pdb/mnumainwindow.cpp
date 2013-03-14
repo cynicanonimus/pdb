@@ -359,6 +359,9 @@ void MnuMainWindow::analyseAttachmentsStatus (const Attachment::AttachmentsList&
 
 void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cutting_node, bool has_cutting_attach)
 {
+    if (NULL == ptr_to_current)
+        return;
+    //
     AbstractDatabaseObject::DB_OBJECT_STATUS node_state = ptr_to_current->getObjectStatus();
     bool b_is_root_node    = (ptr_to_current->getParentID() == 0);
     //
@@ -1070,6 +1073,8 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrNodeToolBar->addAction(m_ptrExpandSubtree);
     m_ptrNodeToolBar->addSeparator();
     m_ptrNodeToolBar->addAction(m_ptrCollapseSubtree);
+    //
+    m_ptrNodeToolBar->setWindowTitle(tr("Operations with nodes"));
 }
 
 void MnuMainWindow::assemblyTreeMenu(QMenu* ptr_node_menu)
