@@ -11,4 +11,5 @@ Date 		CommitID		Changes
 14.03.2013	14.03.2013-01		Add "expand/collapse all" functionality to the tree
                 14.03.2013-02           Fix wrong SQL-query
 		14.03.2013-03		Fix Problem with the NULL pointer crash
+		14.03.2013-04		Increase process of menu status checking
 

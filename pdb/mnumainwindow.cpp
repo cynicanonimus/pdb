@@ -517,7 +517,9 @@ void MnuMainWindow::adjustGlobalProtectionMenu  ( TreeLeaf* ptr_to_current, Atta
     const Attachment::AttachmentsList& attachments =  ptr_to_current->getAttachments();
     //analyse attachments
     analyseAttachmentsStatus(attachments,  checker);
-
+    //do not analyse the rest
+    if ( checker.m_bAtLeastOneAttachmentOKAndProtected && checker.m_bAtLeastOneAttachmentOKAndUnprotected )
+        return;
     //request child nodes attachment info
     if ( (false == checker.m_bAtLeastOneAttachmentOKAndProtected) ||
          (false == checker.m_bAtLeastOneAttachmentOKAndUnprotected)
@@ -527,8 +529,7 @@ void MnuMainWindow::adjustGlobalProtectionMenu  ( TreeLeaf* ptr_to_current, Atta
         for (unsigned int i = 0; i < childs.size(); i++)
         {
             adjustGlobalProtectionMenu(childs[i], checker);
-        }
-       // ptr_to_current->get
+        };
     };
     //set menu status
     if (checker.m_bAtLeastOneAttachmentOKAndProtected)
@@ -540,6 +541,7 @@ void MnuMainWindow::adjustGlobalProtectionMenu  ( TreeLeaf* ptr_to_current, Atta
         m_ptrProtectAttachmentsOfAllNodes->setEnabled(true);
     else
         m_ptrProtectAttachmentsOfAllNodes->setEnabled(false);
+    //
 }
 
 void MnuMainWindow::adjustGlobalCryptographyMenu( TreeLeaf* ptr_to_current, AttachStatusChecker& checker)
@@ -555,7 +557,9 @@ void MnuMainWindow::adjustGlobalCryptographyMenu( TreeLeaf* ptr_to_current, Atta
     const Attachment::AttachmentsList& attachments =  ptr_to_current->getAttachments();
     //analyse attachments
     analyseAttachmentsStatus(attachments,  checker);
-
+    //do not analyse the rest
+    if ( checker.m_bAtLeastOneAttachmentOKAndEncrypted && checker.m_bAtLeastOneAttachmentOKAndDecrypted )
+        return;
     //request child nodes attachment info
     if ( (false == checker.m_bAtLeastOneAttachmentOKAndEncrypted) ||
          (false == checker.m_bAtLeastOneAttachmentOKAndDecrypted)
