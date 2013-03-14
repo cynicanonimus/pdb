@@ -61,8 +61,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ptrDbInUseLabel->setPixmap(*m_ptrDbInUseIcon);
     m_ptrDbInUseLabel->setToolTip(tr("Database in use now"));
     //
-
-    //
     // create menu object
     //
     m_pMainMenu = new MnuMainWindow( this );

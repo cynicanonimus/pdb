@@ -1081,7 +1081,7 @@ bool  MyTree::getRootsFromDatabase_DB()
         //
         QSqlQuery qry(*ptr_db);
         //
-        QString str_query = "SELECT id_tree, tree_name, last_change, active FROM root_tbl where current_active = 1;";
+        QString str_query = "SELECT id_tree, tree_name, last_change, active FROM root_tbl where active = 1;";
         //
         if ( !qry.prepare( str_query ) )
         {

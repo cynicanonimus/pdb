@@ -9,3 +9,4 @@ Date 		CommitID		Changes
 					"alter table root_tbl change current current_active tinyint(1);"
 --------------------------------------------------------------------------------------------------------
 14.03.2013	14.03.2013-01		Add "expand/collapse all" functionality to the tree
+14.03.2013      14.03.2013-02           Fix wrong SQL-query
