@@ -191,6 +191,9 @@ void MainWindow::connectSignalsAndSlots ()
     //
     QObject::connect( m_pMainMenu->m_ptrSaveNodeDescriptor,             SIGNAL(triggered()), this,              SLOT(saveCurrentNodeDescriptor()    ));
     //
+    QObject::connect( m_pMainMenu->m_ptrExpandSubtree,                  SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT(onCascadeExpand          ()    ));
+    QObject::connect( m_pMainMenu->m_ptrCollapseSubtree,                SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT(onCascadeCollapse        ()    ));
+    //
     //attachments menu status change
     //
     QObject::connect( ui->m_Service_Tab,                SIGNAL(selectionChanged(Attachment::AttachmentsList)), m_pMainMenu, SLOT (onSelectedAttachmentChanged(Attachment::AttachmentsList) ));

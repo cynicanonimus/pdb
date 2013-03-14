@@ -82,6 +82,9 @@ MnuMainWindow::~MnuMainWindow()
     if ( m_ptrUn_ProtectAttachmentsOfAllNodes)  delete  m_ptrUn_ProtectAttachmentsOfAllNodes;
     //
     if ( m_ptrSaveNodeDescriptor ) delete m_ptrSaveNodeDescriptor;
+    //
+    if ( m_ptrExportNode  ) delete m_ptrExportNode;
+    if ( m_ptrImportNode  ) delete m_ptrImportNode;
     //---
     if ( m_ptrRestoreAttach ) delete  m_ptrRestoreAttach;
     if ( m_ptrDeleteAttach  ) delete  m_ptrDeleteAttach;
@@ -365,6 +368,14 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     m_ptrProtectAttachmentsOfAllNodes       ->setEnabled(false);
     m_ptrUn_ProtectAttachmentsOfAllNodes    ->setEnabled(false);
     //
+    bool b_allow_expand     = false;
+    bool b_allow_collapse   = false;
+    //
+    adjustExpandCollapseMenus( ptr_to_current, b_allow_expand, b_allow_collapse );
+    //
+    m_ptrExpandSubtree  ->setEnabled(b_allow_expand);
+    m_ptrCollapseSubtree->setEnabled(b_allow_collapse);
+    //
     switch(node_state)
     {
     case AbstractDatabaseObject::OBJECT_NOT_DEFINED:
@@ -461,6 +472,41 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     };
 }
 //-------------------------- signal processing end ---------------------------------------------
+
+void MnuMainWindow::adjustExpandCollapseMenus (TreeLeaf* ptr_to_current, bool& b_allow_expand, bool& b_allow_collapse )
+{
+    if (NULL == ptr_to_current)
+    {
+        b_allow_expand      = false;
+        b_allow_collapse    = false;
+        return;
+    };
+    //
+    TreeLeaf::ChildList childs = ptr_to_current->getChildList();
+    //
+    if (childs.size() > 0 )
+    {
+        if ( ptr_to_current->isExpanded() )
+            b_allow_collapse = true;
+        else
+            b_allow_expand  = true;
+    }else
+        return; //no child - no interest
+    //
+    if (b_allow_collapse && b_allow_expand)
+        return; //nothing more to check.
+    //
+    for (unsigned int i = 0; i < childs.size(); i++)
+    {
+        TreeLeaf* ptr_current = (TreeLeaf*) childs[i];
+        //check nested elements
+        adjustExpandCollapseMenus( ptr_current, b_allow_expand, b_allow_collapse );
+        //
+        if (b_allow_collapse && b_allow_expand)
+            return; //nothing more to check.
+    };
+    //
+}
 
 void MnuMainWindow::adjustGlobalProtectionMenu  ( TreeLeaf* ptr_to_current, AttachStatusChecker &checker)
 {
@@ -975,6 +1021,20 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrSaveNodeDescriptor     ->setStatusTip(tr("Save changed node descriptor"));
     m_ptrSaveNodeDescriptor     ->setEnabled(false);
     //
+    m_ptrExpandSubtree      = new QAction(tr("Expand subtree"), this);
+    m_ptrExpandSubtree      ->setIconVisibleInMenu(true);
+    m_ptrExpandSubtree      ->setIcon(QIcon(":/images/images/expand_subtree.png"));
+    //m_ptrPasteNode      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrExpandSubtree      ->setStatusTip(tr("Expand this element and all childs"));
+    m_ptrExpandSubtree      ->setEnabled(false);
+    //
+    m_ptrCollapseSubtree      = new QAction(tr("Collapse subtree"), this);
+    m_ptrCollapseSubtree      ->setIconVisibleInMenu(true);
+    m_ptrCollapseSubtree      ->setIcon(QIcon(":/images/images/collapse_subtree.png"));
+    //m_ptrPasteNode      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrCollapseSubtree      ->setStatusTip(tr("Collapse this element and all childs"));
+    m_ptrCollapseSubtree      ->setEnabled(false);
+    //
     m_ptrNodeToolBar    = new QToolBar;
     //
     m_ptrNodeToolBar->addAction(m_ptrInsertNewNode);
@@ -1005,6 +1065,11 @@ void MnuMainWindow::createNodeControlMenu()
     //-------
     m_ptrNodeToolBar->addSeparator();
     m_ptrNodeToolBar->addAction(m_ptrSaveNodeDescriptor);
+    //-------
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrExpandSubtree);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrCollapseSubtree);
 }
 
 void MnuMainWindow::assemblyTreeMenu(QMenu* ptr_node_menu)
@@ -1044,10 +1109,13 @@ void MnuMainWindow::assemblyNodeMenu(QMenu* ptr_node_menu)
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrImportNode);
     //
-
-    //
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrSaveNodeDescriptor);
+    //
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrExpandSubtree);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrCollapseSubtree);
 }
 
 void MnuMainWindow::assemblyAttachMenu( QMenu* ptr_node_menu )

@@ -42,5 +42,7 @@
         <file>images/disk_green.png</file>
         <file>images/replace.png</file>
         <file>images/data_disk.png</file>
+        <file>images/expand_subtree.png</file>
+        <file>images/collapse_subtree.png</file>
     </qresource>
 </RCC>

@@ -345,7 +345,11 @@ void MyTree::onTreeItemExpanded     (QTreeWidgetItem* ptr_item)
         TreeLeaf* ptr_leaf = (TreeLeaf*) ptr_item;
         ptr_leaf->setActualExpandState(true);
     };
-
+    //
+    //it is for expand-collapse
+    //
+    TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
+    emit treeSelectionChanged(ptr_actual_item, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
 }
 
 void MyTree::onTreeItemCollapsed    (QTreeWidgetItem* ptr_item)
@@ -354,6 +358,42 @@ void MyTree::onTreeItemCollapsed    (QTreeWidgetItem* ptr_item)
     {
         TreeLeaf* ptr_leaf = (TreeLeaf*) ptr_item;
         ptr_leaf->setActualExpandState(false);
+    };
+    //
+    TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
+    emit treeSelectionChanged(ptr_actual_item, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
+}
+
+void MyTree::onCascadeExpand ()
+{
+    TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
+    //
+    cascadeExpand (ptr_actual_item, true);
+    //
+    emit treeSelectionChanged(ptr_actual_item, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
+}
+
+void MyTree::onCascadeCollapse ()
+{
+    TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
+    //
+    cascadeExpand (ptr_actual_item, false);
+    //
+    emit treeSelectionChanged(ptr_actual_item, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
+}
+
+void MyTree::cascadeExpand ( TreeLeaf* ptr_node, bool b_expand )
+{
+    if (NULL == ptr_node)
+        return;
+    //
+    ptr_node->setExpanded(b_expand);
+    //
+    TreeLeaf::ChildList childs = ptr_node->getChildList();
+    //
+    for (unsigned int i = 0; i < childs.size(); i++)
+    {
+        cascadeExpand( childs[i], b_expand );
     };
 }
 

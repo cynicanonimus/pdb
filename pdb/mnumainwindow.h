@@ -102,8 +102,10 @@ private:
     void        adjustCryptoMenuForSelectedAttacments       ( const AttachStatusChecker& checker );//
     void        adjustCryptographyMenuForAllAttacmentsOfNode( TreeLeaf* ptr_parent );               //
     //
-    void        adjustGlobalProtectionMenu  ( TreeLeaf* ptr_to_current, AttachStatusChecker& checker);
-    void        adjustGlobalCryptographyMenu( TreeLeaf* ptr_to_current, AttachStatusChecker& checker);
+    void        adjustGlobalProtectionMenu                  ( TreeLeaf* ptr_to_current, AttachStatusChecker& checker);
+    void        adjustGlobalCryptographyMenu                ( TreeLeaf* ptr_to_current, AttachStatusChecker& checker);
+    //
+    void        adjustExpandCollapseMenus                   ( TreeLeaf* ptr_to_current, bool& b_allow_expand, bool& b_allow_collapse  );
 public:
     //----------------------------- tree menu -----------------------------
     QMenu*      m_ptrTreeControlMenu;
@@ -142,6 +144,8 @@ public:
     QAction*    m_ptrProtectAttachmentsOfAllNodes;       //global
     QAction*    m_ptrUn_ProtectAttachmentsOfAllNodes;    //global
     //
+    QAction*    m_ptrExpandSubtree;
+    QAction*    m_ptrCollapseSubtree;
     //
     QAction*    m_ptrSaveNodeDescriptor;
     //

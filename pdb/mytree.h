@@ -103,6 +103,9 @@ public slots:
     void OnDecryptAttachmentsGlobal   ();
     //
     void onDropAttachments      ();
+    //
+    void onCascadeExpand        ();
+    void onCascadeCollapse      ();
 
 
 private slots:
@@ -177,6 +180,8 @@ private:
     // create encrypt-decrypt thread and link it by request
     //
     void        initOnDemand                ();
+    //
+    void        cascadeExpand               ( TreeLeaf* ptr_node, bool b_expand );
 
 
 private:
