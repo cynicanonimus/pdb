@@ -68,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     addToolBar(Qt::LeftToolBarArea,     m_pMainMenu->m_ptrNodeToolBar);
     addToolBar(Qt::RightToolBarArea,    m_pMainMenu->m_ptrAttachmentToolBar);
     addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrTreeToolBar);
+    addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrEditorToolBar);
     //
     //m_pMainMenu->m_ptrTreeToolBar->isVisible()
 
@@ -359,6 +360,7 @@ void MainWindow::showInterfaceElements          (bool b_show)
     m_pMainMenu->m_ptrNodeToolBar->setEnabled       ( b_show );
     m_pMainMenu->m_ptrAttachmentToolBar->setEnabled ( b_show );
     m_pMainMenu->m_ptrTreeToolBar->setEnabled       ( b_show );
+    m_pMainMenu->m_ptrEditorToolBar->setEnabled     ( b_show );
     //
     m_pMainMenu->m_ptrTreeControlMenu->setEnabled( b_show );
     m_pMainMenu->m_ptrNodeControlMenu->setEnabled( b_show );

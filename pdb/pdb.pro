@@ -51,7 +51,8 @@ SOURCES += main.cpp\
     cryptothread.cpp \
     ../CommonInclude/pdb/DBSettings.cpp \
     ../CommonInclude/pdb/cryptosupport.cpp \
-    waiter.cpp
+    waiter.cpp \
+    myeditor.cpp
 
 HEADERS  += mainwindow.h \
     GDefinitions.h \
@@ -89,7 +90,8 @@ HEADERS  += mainwindow.h \
     ../CommonInclude/pdb/DBSettings.h \
     ../CommonInclude/pdb/cryptosupport.h \
     ../CommonInclude/pdb/VariantPtr.h \
-    waiter.h
+    waiter.h \
+    myeditor.h
 
 FORMS    += mainwindow.ui \
     notificationdialog.ui \

@@ -12,4 +12,5 @@ Date 		CommitID		Changes
                 14.03.2013-02           Fix wrong SQL-query
 		14.03.2013-03		Fix Problem with the NULL pointer crash
 		14.03.2013-04		Increase process of menu status checking
-
+--------------------------------------------------------------------------------------------------------
+16.03.2013      16.03.2013-1		Implement more detailed errors log, make editor toolbox (not finished yet)

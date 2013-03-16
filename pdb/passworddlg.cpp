@@ -396,12 +396,12 @@ bool PasswordDlg::requestEncryptedAttachmentsList (Attachment::AttachmentsList& 
     //
     if (!qry.prepare( str_select_str ))
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_select_str );
         return false;
 
     } else if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_select_str );
         return false;
     }
     //
@@ -446,7 +446,7 @@ bool PasswordDlg::requestEncryptedAttachmentsInfo_DB(double& d_bytes_amount)
     if (false == b_sql_result)
     {
         const QString str_msg = QString("Unable prepare query %1").arg( qry.lastError().text() );
-        Logger::getInstance().logIt(en_LOG_ERRORS,str_msg);
+        Logger::getInstance().logIt(en_LOG_ERRORS,str_msg, &str_select_str );
         return false;
     };
     //
@@ -455,7 +455,7 @@ bool PasswordDlg::requestEncryptedAttachmentsInfo_DB(double& d_bytes_amount)
     if( false == b_sql_result )
     {
         const QString str_msg = QString("Unable exec query %1").arg( qry.lastError().text() );
-        Logger::getInstance().logIt(en_LOG_ERRORS,str_msg);
+        Logger::getInstance().logIt(en_LOG_ERRORS,str_msg, &str_select_str );
         return false;
     };
     //

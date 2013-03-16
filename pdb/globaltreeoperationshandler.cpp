@@ -173,13 +173,13 @@ void GlobalTreeOperationsHandler::requestTreeInfo_DB (unsigned int& node_amount,
     if (!qry.prepare( str_select_str ))
     {
         const QString str_err = qry.lastError().text();
-        Logger::getInstance().logIt( en_LOG_ERRORS, str_err );
+        Logger::getInstance().logIt( en_LOG_ERRORS, str_err, &str_select_str );
         return;
 
     } else if( !qry.exec() )
     {
         const QString str_err = qry.lastError().text();
-        Logger::getInstance().logIt( en_LOG_ERRORS, str_err );
+        Logger::getInstance().logIt( en_LOG_ERRORS, str_err, &str_select_str );
         return;
     }else
     {
@@ -196,13 +196,13 @@ void GlobalTreeOperationsHandler::requestTreeInfo_DB (unsigned int& node_amount,
     if (!qry.prepare( str_select_str ))
     {
         const QString str_err = qry.lastError().text();
-        Logger::getInstance().logIt( en_LOG_ERRORS, str_err );
+        Logger::getInstance().logIt( en_LOG_ERRORS, str_err, &str_select_str );
         return;
 
     } else if( !qry.exec() )
     {
         const QString str_err = qry.lastError().text();
-        Logger::getInstance().logIt( en_LOG_ERRORS, str_err );
+        Logger::getInstance().logIt( en_LOG_ERRORS, str_err, &str_select_str );
         return;
     }else
     {

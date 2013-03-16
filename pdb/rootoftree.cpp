@@ -130,7 +130,7 @@ void RootOfTree::setActiveStatus_DB  (bool b_active)
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
     };
 };
 //
@@ -148,7 +148,7 @@ bool RootOfTree::updateName_DB ()
     //
     if( !qry.prepare( str_update_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     }
     //
@@ -157,7 +157,7 @@ bool RootOfTree::updateName_DB ()
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     return true;
@@ -177,7 +177,7 @@ int RootOfTree::insertTo_DB() //
     //
     if( !qry.prepare( str_insert_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_insert_string );
         return -1;
     };
     //
@@ -185,7 +185,7 @@ int RootOfTree::insertTo_DB() //
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_insert_string );
         return -1;
     };
     //

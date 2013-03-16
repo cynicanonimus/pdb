@@ -63,6 +63,7 @@ private slots:
     void onTriggerTreeToolBox               ();
     void onTriggerNodeToolBox               ();
     void onTriggerAttachmentToolBox         ();
+    void onTriggerEditToolBox               ();
 
 private:
     void        analyseAttachmentsStatus        ( const Attachment::AttachmentsList&    v_attachment, AttachStatusChecker& checker );
@@ -72,6 +73,7 @@ private:
     void        createTreeControlMenu       ();
     void        createNodeControlMenu       ();
     void        createAttachmentControlMenu ();
+    void        createEditorMenu            ();
     void        createProtectionMenu        ();
     void        createSecurityMenu          ();
     void        createToolBarSubMenu        ();
@@ -85,6 +87,8 @@ private:
     void        assemblyNodeMenu                ( QMenu* ptr_node_menu );
     void        assemblyNodeCryptoSubMenu       ( QMenu* ptr_menu      );
     void        assemblyNodeProtectSubMenu      ( QMenu* ptr_menu      );
+    //
+    void        assemblyEditorMenu              ( QMenu* ptr_node_menu );
     //
     void        assemblyAttachMenu              ( QMenu* ptr_node_menu );
     void        assemblyAttachProtectionSubMenu ( QMenu* ptr_node_menu );
@@ -147,9 +151,37 @@ public:
     QAction*    m_ptrExpandSubtree;
     QAction*    m_ptrCollapseSubtree;
     //
+    QToolBar*    m_ptrNodeToolBar;
+    //------------------------------- editor menu -------------------------------
+    QMenu*      m_ptrEditorMenu;
+    //
+    QAction*    m_ptrLoadFromFile;
+    QAction*    m_ptrSaveToFile;
+    //
     QAction*    m_ptrSaveNodeDescriptor;
     //
-    QToolBar*    m_ptrNodeToolBar;
+    QAction*    m_ptrUndo;
+    QAction*    m_ptrRedo;
+    //
+    QAction*    m_ptrPrint;
+    QAction*    m_ptrPrintPreview;
+    QAction*    m_ptrPrintPdf;
+    //
+    QAction*    m_ptrBold;
+    QAction*    m_ptrUnderline;
+    QAction*    m_ptrTextItalic;
+    //
+    QAction*    m_ptrTextAlignLeft;
+    QAction*    m_ptrTextAlignRight;
+    QAction*    m_ptrTextAlignCenter;
+    QAction*    m_ptrTextAlignJustify;
+    //
+    //QAction*    m_ptrFamily;
+    QAction*    m_ptrTextSize;
+    QAction*    m_ptrTextStyle;
+    QAction*    m_ptrTextColor;
+    //
+    QToolBar*    m_ptrEditorToolBar;
     //----------------------------- attachment menu -----------------------------
     QMenu*      m_ptrAttachmentMenu;
     //
@@ -165,6 +197,7 @@ public:
     QAction*    m_ptrViewAttach;
     //
     QToolBar*    m_ptrAttachmentToolBar;
+
     //----------------------------- protection - submenu of the Attach menu  -----------------------------
     QMenu*      m_ptrAttachProtectionSubMenu;
     //
@@ -180,6 +213,7 @@ public:
     QAction*    m_ptrMnuNodeToolBar;
     QAction*    m_ptrMnuAttachmentToolBar;
     QAction*    m_ptrMnuTreeToolBar;
+    QAction*    m_ptrMnuEditorToolBar;
 
     //----------------------------- security - main menu  -----------------------------
     QMenu*      m_ptrSecurity;

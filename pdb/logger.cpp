@@ -144,7 +144,7 @@ void Logger::writeBeginLog()
     (*m_ptrOutStream)<<" ====";
 }
 
-void Logger::logIt(unsigned int ui_err_code, const QString &str_message)
+void Logger::logIt(unsigned int ui_err_code, const QString &str_message, const QString* ptr_str_query)
 {
     if ( isLogCodeActive(ui_err_code) == false )
         return;
@@ -156,10 +156,18 @@ void Logger::logIt(unsigned int ui_err_code, const QString &str_message)
     if ( NULL == m_ptrOutStream )
         return;
     //
-    (*m_ptrOutStream)<<"\n"<<QDateTime::currentDateTime().toString()<<" "<<getLogString(ui_err_code)<<": "<<str_message;
+    if ( ptr_str_query )
+    {
+        (*m_ptrOutStream)<<"\n"<<QDateTime::currentDateTime().toString()<<"Query: "<<(*ptr_str_query)<<" Error: "<<str_message;
+    }else
+    {
+        (*m_ptrOutStream)<<"\n"<<QDateTime::currentDateTime().toString()<<" "<<getLogString(ui_err_code)<<": "<<str_message;
+    };
     //
     m_ptrOutStream->flush();
 }
+
+
 
 QString Logger::getLogString (unsigned int ui_err_code) const
 {

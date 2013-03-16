@@ -150,7 +150,7 @@ void ServicesCfg::getServiceTableData_DB ( bool& b_another_instance_active, QStr
             box.setText( "Unable to get prepare the query. "+ qry.lastError().text() );
             box.exec();
             const QString str_msg = QString("Unable prepare query %1").arg( qry.lastError().text() );
-            Logger::getInstance().logIt(en_LOG_ERRORS,str_msg);
+            Logger::getInstance().logIt(en_LOG_ERRORS,str_msg, &str_select_str);
             return;
         };
         //
@@ -161,7 +161,7 @@ void ServicesCfg::getServiceTableData_DB ( bool& b_another_instance_active, QStr
             box.setText( "Unable to get exec the query. " + qry.lastError().text() );
             box.exec();
             const QString str_msg = QString("Unable exec query %1").arg( qry.lastError().text() );
-            Logger::getInstance().logIt(en_LOG_ERRORS,str_msg);
+            Logger::getInstance().logIt(en_LOG_ERRORS,str_msg, &str_select_str);
             return;
         };
         //

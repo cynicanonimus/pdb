@@ -34,7 +34,7 @@ public:
                             ~Logger     ();
     static      Logger&    getInstance  ();
     //init function
-    void                    logIt       (unsigned int ui_err_code, const QString& str_message);
+    void                    logIt       (unsigned int ui_err_code,  const QString& str_message, const QString *ptr_str_query = NULL);
     void                    stopLog();
 
 private:

@@ -395,7 +395,7 @@ bool Attachment::replaceBlob_DB ()
     //
     if ( !qry.prepare( str_update_string  ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         m_ByteArray.clear();
         return false;
     };
@@ -406,7 +406,7 @@ bool Attachment::replaceBlob_DB ()
     //
     if ( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         m_ByteArray.clear();
         return -1;
     };
@@ -432,7 +432,7 @@ int Attachment::insertTo_DB()
     //
     if ( !qry.prepare( str_insert_string  ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_insert_string );
         m_iSize = 0;
         m_ByteArray.clear();
         return -1;
@@ -457,7 +457,7 @@ int Attachment::insertTo_DB()
     //
     if ( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_insert_string );
         m_iSize = 0;
         m_ByteArray.clear();
         return -1;
@@ -541,13 +541,13 @@ bool Attachment::protect_it_DB(bool b_protection)
     //
     if (!qry.prepare( str_update_string ))
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     //
@@ -572,12 +572,12 @@ void Attachment::setActiveStatus_DB (bool b_active)
     //
     if (!qry.prepare( str_update_string ))
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return;
     };
     //
     if( !qry.exec() )
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
 };
 
 bool Attachment::updateName_DB()
@@ -594,7 +594,7 @@ bool Attachment::updateName_DB()
     //
     if (!qry.prepare( str_update_string ))
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     //
@@ -603,7 +603,7 @@ bool Attachment::updateName_DB()
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string  );
         return false;
     };
     //
@@ -627,13 +627,13 @@ bool Attachment::updateParent_DB ()
     //
     if ( !qry.prepare( str_update_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     //
@@ -774,7 +774,7 @@ bool Attachment::extractBlobToByteArray_DB()
         box.exec();
         //
         const QString str_message = QString("Unable to get file from database, error - '%1'").arg( qry.lastError().text() );
-        Logger::getInstance().logIt(en_LOG_ERRORS, str_message );
+        Logger::getInstance().logIt( en_LOG_ERRORS, str_message, &str_select_str );
         return false;
     };
     //
@@ -782,10 +782,10 @@ bool Attachment::extractBlobToByteArray_DB()
     //
     if( false == b_sql_res )
     {
-        box.setText( tr("Unable to get file from database. \n ") + qry.lastError().text() );
+        box.setText( tr( "Unable to get file from database. \n ") + qry.lastError().text());
         box.exec();
         const QString str_message = QString("Unable to get file from database, error - '%1'").arg( qry.lastError().text() );
-        Logger::getInstance().logIt(en_LOG_ERRORS, str_message );
+        Logger::getInstance().logIt(en_LOG_ERRORS, str_message, &str_select_str  );
         return false;
     };
     //

@@ -60,13 +60,13 @@ bool DatabaseCleaner::clearTrees()
     //
     if( !qry.prepare( str_clear_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_clear_string );
         return false;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_clear_string );
         return false;
     };
     //
@@ -87,13 +87,13 @@ bool DatabaseCleaner::clearAttachments()
     //
     if (! qry.prepare( str_clear_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_clear_string );
         return false;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_clear_string );
         return false;
     };
     //
@@ -114,13 +114,13 @@ bool DatabaseCleaner::clearNodes()
     //
     if( !qry.prepare( str_clear_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_clear_string );
         return false;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_clear_string );
         return false;
     };
     //

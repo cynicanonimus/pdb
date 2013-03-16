@@ -37,9 +37,11 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     m_ptrTreeToolBar        = NULL;
     m_ptrAttachmentToolBar  = NULL;
     m_ptrNodeToolBar        = NULL;
+    m_ptrEditorToolBar      = NULL;
     //
     createTreeControlMenu       ();
     createNodeControlMenu       ();
+    createEditorMenu            ();
     createAttachmentControlMenu ();
     createCryptograficMenu      ();
     createProtectionMenu        ();
@@ -52,6 +54,7 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     QObject::connect(m_ptrMnuTreeToolBar,       SIGNAL(triggered()), this, SLOT (onTriggerTreeToolBox()       ));
     QObject::connect(m_ptrMnuNodeToolBar,       SIGNAL(triggered()), this, SLOT (onTriggerNodeToolBox()       ));
     QObject::connect(m_ptrMnuAttachmentToolBar, SIGNAL(triggered()), this, SLOT (onTriggerAttachmentToolBox() ));
+    QObject::connect(m_ptrMnuEditorToolBar,     SIGNAL(triggered()), this, SLOT (onTriggerEditToolBox      () ));
 }
 
 MnuMainWindow::~MnuMainWindow()
@@ -145,6 +148,20 @@ void MnuMainWindow::onTriggerAttachmentToolBox()
         m_ptrMnuAttachmentToolBar->setChecked(true);
     };
 }
+
+void MnuMainWindow::onTriggerEditToolBox ()
+{
+    if ( m_ptrEditorToolBar->isVisible() )
+    {
+        m_ptrEditorToolBar->hide();
+        m_ptrMnuEditorToolBar->setChecked(false);
+    }else
+    {
+        m_ptrEditorToolBar->show();
+        m_ptrMnuEditorToolBar->setChecked(true);
+    };
+}
+
 //-------------------------- signal processing begin  ----------------------------------------
 void  MnuMainWindow::onCheckPassword ( bool b_password_exist )
 {
@@ -609,7 +626,7 @@ void MnuMainWindow::adjustProtectionMenuForAllAttacmentsOfNode  ( TreeLeaf* ptr_
     AttachStatusChecker checker;
     analyseAttachmentsStatus(attachments,  checker);
 
-    if ( 0 == checker.m_iAttachmentsAmount ) //nothing attached to this node TODO
+    if ( 0 == checker.m_iAttachmentsAmount ) //nothing attached to this node
     {
         m_ptrProtectAllAttachmentsOfNode  ->setEnabled(false);
         m_ptrUn_ProtectAllAttachmentsOfNode->setEnabled(false);
@@ -759,6 +776,9 @@ void MnuMainWindow::createToolBarSubMenu()
     //
     m_ptrMnuAttachmentToolBar = new QAction("Attachment toolbar", this);
     m_ptrMnuAttachmentToolBar ->setCheckable(true);
+    //
+    m_ptrMnuEditorToolBar = new QAction("Editor toolbar", this);
+    m_ptrMnuEditorToolBar ->setCheckable(true);
 }
 
 void MnuMainWindow::createCryptograficMenu ()
@@ -1021,13 +1041,6 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrUn_ProtectAttachmentsOfAllNodes     ->setStatusTip(tr("Protect all attachments of the node (with childs optionally"));
     m_ptrUn_ProtectAttachmentsOfAllNodes     ->setEnabled(false);
     //
-    m_ptrSaveNodeDescriptor     = new QAction(tr("Save node descriptor"), this);
-    m_ptrSaveNodeDescriptor     ->setIconVisibleInMenu(true);
-    m_ptrSaveNodeDescriptor     ->setIcon(QIcon(":/images/images/disk_green.png"));
-    m_ptrSaveNodeDescriptor     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_S));
-    m_ptrSaveNodeDescriptor     ->setStatusTip(tr("Save changed node descriptor"));
-    m_ptrSaveNodeDescriptor     ->setEnabled(false);
-    //
     m_ptrExpandSubtree      = new QAction(tr("Expand subtree"), this);
     m_ptrExpandSubtree      ->setIconVisibleInMenu(true);
     m_ptrExpandSubtree      ->setIcon(QIcon(":/images/images/expand_subtree.png"));
@@ -1071,9 +1084,6 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrNodeToolBar->addAction(m_ptrUn_ProtectAttachmentsOfAllNodes);
     //-------
     m_ptrNodeToolBar->addSeparator();
-    m_ptrNodeToolBar->addAction(m_ptrSaveNodeDescriptor);
-    //-------
-    m_ptrNodeToolBar->addSeparator();
     m_ptrNodeToolBar->addAction(m_ptrExpandSubtree);
     m_ptrNodeToolBar->addSeparator();
     m_ptrNodeToolBar->addAction(m_ptrCollapseSubtree);
@@ -1081,8 +1091,158 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrNodeToolBar->setWindowTitle(tr("Operations with nodes"));
 }
 
+void MnuMainWindow::createEditorMenu()
+{
+    m_ptrLoadFromFile      = new QAction(tr("Load from file"), this);
+    m_ptrLoadFromFile      ->setIconVisibleInMenu(true);
+    m_ptrLoadFromFile      ->setIcon(QIcon(":/images/images/hand_paper.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrLoadFromFile      ->setStatusTip(tr("Load node descriptor from file"));
+    m_ptrLoadFromFile      ->setEnabled(false);
+    //
+    m_ptrSaveToFile      = new QAction(tr("Save to file"), this);
+    m_ptrSaveToFile      ->setIconVisibleInMenu(true);
+    m_ptrSaveToFile      ->setIcon(QIcon(":/images/images/save_as.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrSaveToFile      ->setStatusTip(tr("Save node descriptor to file"));
+    m_ptrSaveToFile      ->setEnabled(false);
+    //
+    m_ptrSaveNodeDescriptor     = new QAction(tr("Save node descriptor"), this);
+    m_ptrSaveNodeDescriptor     ->setIconVisibleInMenu(true);
+    m_ptrSaveNodeDescriptor     ->setIcon(QIcon(":/images/images/disk_green.png"));
+    m_ptrSaveNodeDescriptor     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_S));
+    m_ptrSaveNodeDescriptor     ->setStatusTip(tr("Save changed node descriptor"));
+    m_ptrSaveNodeDescriptor     ->setEnabled(false);
+    //
+    m_ptrUndo      = new QAction(tr("Undo"), this);
+    m_ptrUndo      ->setIconVisibleInMenu(true);
+    m_ptrUndo      ->setIcon(QIcon(":/images/images/undo.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrUndo      ->setStatusTip(tr("Undo last action"));
+    m_ptrUndo      ->setEnabled(false);
+    //
+    m_ptrRedo      = new QAction(tr("Redo"), this);
+    m_ptrRedo      ->setIconVisibleInMenu(true);
+    m_ptrRedo      ->setIcon(QIcon(":/images/images/redo.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrRedo      ->setStatusTip(tr("Redo last action"));
+    m_ptrRedo      ->setEnabled(false);
+    //
+    m_ptrPrint      = new QAction(tr("Print"), this);
+    m_ptrPrint      ->setIconVisibleInMenu(true);
+    m_ptrPrint      ->setIcon(QIcon(":/images/images/printer.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrPrint      ->setStatusTip(tr("Print node descriptor"));
+    m_ptrPrint      ->setEnabled(false);
+    //
+    m_ptrPrintPreview      = new QAction(tr("Print preview"), this);
+    m_ptrPrintPreview      ->setIconVisibleInMenu(true);
+    m_ptrPrintPreview      ->setIcon(QIcon(":/images/images/printer_view.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrPrintPreview      ->setStatusTip(tr("Print preview for node descriptor"));
+    m_ptrPrintPreview      ->setEnabled(false);
+    //
+    m_ptrPrintPdf      = new QAction(tr("Export to PDF"), this);
+    m_ptrPrintPdf      ->setIconVisibleInMenu(true);
+    m_ptrPrintPdf      ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrPrintPdf      ->setStatusTip(tr("Export node descriptor to PDF file"));
+    m_ptrPrintPdf      ->setEnabled(false);
+    //
+    m_ptrBold      = new QAction(tr("Make bold"), this);
+    m_ptrBold      ->setIconVisibleInMenu(true);
+    m_ptrBold      ->setIcon(QIcon(":/images/images/textbold.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrBold      ->setStatusTip(tr("Make text bold"));
+    m_ptrBold      ->setEnabled(false);
+    //
+    m_ptrUnderline      = new QAction(tr("Make underline"), this);
+    m_ptrUnderline      ->setIconVisibleInMenu(true);
+    m_ptrUnderline      ->setIcon(QIcon(":/images/images/textunder.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrUnderline      ->setStatusTip(tr("Make text underline"));
+    m_ptrUnderline      ->setEnabled(false);
+    //
+    m_ptrTextItalic      = new QAction(tr("Make italic"), this);
+    m_ptrTextItalic      ->setIconVisibleInMenu(true);
+    m_ptrTextItalic      ->setIcon(QIcon(":/images/images/textitalic.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrTextItalic      ->setStatusTip(tr("Make text italic"));
+    m_ptrTextItalic      ->setEnabled(false);
+    //
+    m_ptrTextAlignLeft      = new QAction(tr("Left"), this);
+    m_ptrTextAlignLeft      ->setIconVisibleInMenu(true);
+    m_ptrTextAlignLeft      ->setIcon(QIcon(":/images/images/textleft.png"));
+    //m_ptrTextAlignLeft      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrTextAlignLeft      ->setStatusTip(tr("Align text left"));
+    m_ptrTextAlignLeft      ->setEnabled(false);
+    //
+    m_ptrTextAlignRight      = new QAction(tr("Right"), this);
+    m_ptrTextAlignRight      ->setIconVisibleInMenu(true);
+    m_ptrTextAlignRight      ->setIcon(QIcon(":/images/images/textright.png"));
+    //m_ptrTextAlignRight      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrTextAlignRight      ->setStatusTip(tr("Align text right"));
+    m_ptrTextAlignRight      ->setEnabled(false);
+    //
+    m_ptrTextAlignCenter      = new QAction(tr("Center"), this);
+    m_ptrTextAlignCenter      ->setIconVisibleInMenu(true);
+    m_ptrTextAlignCenter      ->setIcon(QIcon(":/images/images/textcenter.png"));
+    //m_ptrTextAlignRight      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrTextAlignCenter      ->setStatusTip(tr("Align text center"));
+    m_ptrTextAlignCenter      ->setEnabled(false);
+    //
+    m_ptrTextAlignJustify      = new QAction(tr("Justify"), this);
+    m_ptrTextAlignJustify      ->setIconVisibleInMenu(true);
+    m_ptrTextAlignJustify      ->setIcon(QIcon(":/images/images/textjustify.png"));
+    //m_ptrTextAlignJustify      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrTextAlignJustify      ->setStatusTip(tr("Align text center"));
+    m_ptrTextAlignJustify      ->setEnabled(false);
+    //TODO
+    m_ptrEditorToolBar = new QToolBar();
+    //
+    m_ptrEditorToolBar->addAction(m_ptrLoadFromFile);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrSaveToFile);
+    m_ptrEditorToolBar->addSeparator();
+    //
+    m_ptrEditorToolBar->addAction(m_ptrSaveNodeDescriptor);
+    m_ptrEditorToolBar->addSeparator();
+    //
+    m_ptrEditorToolBar->addAction(m_ptrUndo);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrRedo);
+    //
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrPrint);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrPrintPreview);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrPrintPdf);
+    //
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrBold);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrUnderline);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrTextItalic);
+    //
+    //TODO: Make submenu, add this actions in
+    //
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrTextAlignLeft);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrTextAlignRight);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrTextAlignCenter);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrTextAlignJustify);
+}
+
 void MnuMainWindow::assemblyTreeMenu(QMenu* ptr_node_menu)
 {
+    if (NULL == ptr_node_menu)
+        return;
+    //
     ptr_node_menu->addAction(m_ptrCreateNewTree);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrRenameTree);
@@ -1102,6 +1262,9 @@ void MnuMainWindow::assemblyTreeMenu(QMenu* ptr_node_menu)
 
 void MnuMainWindow::assemblyNodeMenu(QMenu* ptr_node_menu)
 {
+    if (NULL == ptr_node_menu)
+        return;
+    //
     ptr_node_menu->addAction(m_ptrInsertNewNode);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrDelNode);
@@ -1119,9 +1282,6 @@ void MnuMainWindow::assemblyNodeMenu(QMenu* ptr_node_menu)
     ptr_node_menu->addAction(m_ptrImportNode);
     //
     ptr_node_menu->addSeparator();
-    ptr_node_menu->addAction(m_ptrSaveNodeDescriptor);
-    //
-    ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrExpandSubtree);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrCollapseSubtree);
@@ -1129,6 +1289,9 @@ void MnuMainWindow::assemblyNodeMenu(QMenu* ptr_node_menu)
 
 void MnuMainWindow::assemblyAttachMenu( QMenu* ptr_node_menu )
 {
+    if (NULL == ptr_node_menu)
+        return;
+    //
     ptr_node_menu->addAction(m_ptrRestoreAttach);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrDeleteAttach);
@@ -1147,6 +1310,9 @@ void MnuMainWindow::assemblyAttachMenu( QMenu* ptr_node_menu )
 
 void MnuMainWindow::assemblyNodeCryptoSubMenu(QMenu* ptr_menu)
 {
+    if (NULL == ptr_menu)
+        return;
+    //
     ptr_menu->addAction(m_ptrEncryptAttachmentsOfAllNodes);
     ptr_menu->addSeparator();
     ptr_menu->addAction(m_ptrDecryptAttachmentsOfAllNodes);
@@ -1154,6 +1320,9 @@ void MnuMainWindow::assemblyNodeCryptoSubMenu(QMenu* ptr_menu)
 
 void MnuMainWindow::assemblyNodeProtectSubMenu (QMenu* ptr_menu)
 {
+    if (NULL == ptr_menu)
+        return;
+    //
     ptr_menu->addAction(m_ptrProtectAttachmentsOfAllNodes);
     ptr_menu->addSeparator();
     ptr_menu->addAction(m_ptrUn_ProtectAttachmentsOfAllNodes);
@@ -1161,6 +1330,9 @@ void MnuMainWindow::assemblyNodeProtectSubMenu (QMenu* ptr_menu)
 
 void MnuMainWindow::assemblyAttachProtectionSubMenu( QMenu* ptr_node_menu )
 {
+    if (NULL == ptr_node_menu)
+        return;
+    //
     ptr_node_menu->addAction(m_ptrProtectAllAttachmentsOfNode);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrUn_ProtectAllAttachmentsOfNode);
@@ -1172,6 +1344,9 @@ void MnuMainWindow::assemblyAttachProtectionSubMenu( QMenu* ptr_node_menu )
 
 void MnuMainWindow::assemblyAttachCryptographySubMenu ( QMenu* ptr_node_menu )
 {
+    if (NULL == ptr_node_menu)
+        return;
+    //
     ptr_node_menu->addAction(m_ptrEncryptAllAttachmentsOfNode);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrDecryptAllAttachmentsOfNode);
@@ -1192,6 +1367,9 @@ void MnuMainWindow::assemblyViewMenu( QMenu* ptr_node_menu )
     m_ptrToolbarsMenu->addSeparator();
     //
     m_ptrToolbarsMenu->addAction(m_ptrMnuAttachmentToolBar);
+    m_ptrToolbarsMenu->addSeparator();
+    //
+    m_ptrToolbarsMenu->addAction(m_ptrMnuEditorToolBar);
 }
 
 void MnuMainWindow::assemblySecurityMenu( QMenu* ptr_node_menu )
@@ -1204,6 +1382,37 @@ void MnuMainWindow::assemblyHelpMenu()
     m_ptrHelpMenu->addAction(m_ptrAbout);
 }
 
+void MnuMainWindow::assemblyEditorMenu ( QMenu* ptr_node_menu )
+{
+    if (NULL == ptr_node_menu)
+        return;
+    //TODO
+    ptr_node_menu->addAction(m_ptrLoadFromFile);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrSaveToFile);
+    ptr_node_menu->addSeparator();
+    //
+    ptr_node_menu->addAction(m_ptrSaveNodeDescriptor);
+    ptr_node_menu->addSeparator();
+    //
+    ptr_node_menu->addAction(m_ptrUndo);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrRedo);
+    ptr_node_menu->addSeparator();
+    //
+    ptr_node_menu->addAction(m_ptrPrint);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrPrintPreview);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrPrintPdf);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrBold);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrUnderline);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrTextItalic);
+}
+
 void MnuMainWindow::assemblyAllMenus()
 {
     m_ptrTreeControlMenu = m_ptrParent->menuBar()->addMenu(tr("&Tree"));
@@ -1213,6 +1422,10 @@ void MnuMainWindow::assemblyAllMenus()
     m_ptrNodeControlMenu = m_ptrParent->menuBar()->addMenu(tr("&Node"));
     //
     assemblyNodeMenu(m_ptrNodeControlMenu);
+    //
+    m_ptrEditorMenu = m_ptrParent->menuBar()->addMenu(tr("&Editor"));
+    //
+    assemblyEditorMenu(m_ptrEditorMenu);
     //
     m_ptrNodeControlMenu->addSeparator();
     m_ptrNodeCryptoSubMenu = m_ptrNodeControlMenu->addMenu(tr("Encrypt/Decrypt..."));
@@ -1260,6 +1473,9 @@ void MnuMainWindow::syncToolbarsVisibilityAndMenu ()
     //
     if ( m_ptrAttachmentToolBar )
         m_ptrAttachmentToolBar->isVisible() ? m_ptrMnuAttachmentToolBar->setChecked(true) : m_ptrMnuAttachmentToolBar->setChecked(false);
+    //
+    if ( m_ptrEditorToolBar )
+        m_ptrEditorToolBar->isVisible() ? m_ptrMnuEditorToolBar->setChecked(true) : m_ptrMnuEditorToolBar->setChecked(false);
     //
     return;
 }

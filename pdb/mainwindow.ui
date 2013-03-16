@@ -97,7 +97,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QTextEdit" name="m_textEditor">
+   <widget class="MyEditor" name="m_textEditor">
     <property name="geometry">
      <rect>
       <x>310</x>
@@ -258,6 +258,11 @@
    <class>MyTable</class>
    <extends>QTableWidget</extends>
    <header>mytable.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyEditor</class>
+   <extends>QTextEdit</extends>
+   <header>myeditor.h</header>
   </customwidget>
  </customwidgets>
  <resources>

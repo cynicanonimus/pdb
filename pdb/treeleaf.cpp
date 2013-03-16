@@ -603,13 +603,13 @@ void TreeLeaf::deleteAllAttachments_DB()
     //
     if (! qry.prepare( str_update_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
     };
 };
 
@@ -633,7 +633,7 @@ void TreeLeaf::getAttachments_DB()
         QString str_err_txt = qry.lastError().text();
         box.setText( "Unable to get exec the query. "+ str_err_txt );
         box.exec();
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_select_str );
         return;
 
     } else if( !qry.exec() )
@@ -642,7 +642,7 @@ void TreeLeaf::getAttachments_DB()
 
         box.setText( "Unable to get exec the query. "+ str_err_txt );
         box.exec();
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_select_str  );
         return;
     }
     //
@@ -686,7 +686,7 @@ bool  TreeLeaf::updateDescriptor_DB()
     //
     if ( !qry.prepare( str_update_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     //
@@ -695,7 +695,7 @@ bool  TreeLeaf::updateDescriptor_DB()
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     //
@@ -723,13 +723,13 @@ void  TreeLeaf::updateExpandState_DB()
     //
     if (! qry.prepare( str_update_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
     };
 }
 
@@ -833,13 +833,13 @@ void TreeLeaf::updateTreeID_DB()
     //
     if (! qry.prepare( str_update_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
     };
 };
 
@@ -857,13 +857,13 @@ void TreeLeaf::updateParentInfoIn_DB()
     //
     if( !qry.prepare( str_update_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
     };
 };
 //
@@ -1228,7 +1228,7 @@ int  TreeLeaf::insertTo_DB()
     //
     if (!qry.prepare( str_insert_string ))
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_insert_string );
         return -1;
     };
     //
@@ -1248,7 +1248,7 @@ int  TreeLeaf::insertTo_DB()
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_insert_string );
         return -1;
     };
     //
@@ -1271,7 +1271,7 @@ bool TreeLeaf::updateName_DB()
     //
     if(! qry.prepare( str_update_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     //
@@ -1280,7 +1280,7 @@ bool TreeLeaf::updateName_DB()
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return false;
     };
     //
@@ -1311,12 +1311,12 @@ void TreeLeaf::setActiveStatus_DB(bool b_active)
     //
     if( !qry.prepare( str_update_string ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
         return;
     };
     //
     if( !qry.exec() )
-      Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+      Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
 };
 
 void  TreeLeaf::removeAttachment(Attachment* ptr_attachment)

@@ -1007,7 +1007,7 @@ int MyTree::getLastUsedRootID_DB    () const
     //
     if ( !qry.prepare( str_query ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_query );
         return -1;
     };
     //
@@ -1017,7 +1017,7 @@ int MyTree::getLastUsedRootID_DB    () const
         box.setText("Unable to get exec the query. Stop. ");
         box.exec();
         //
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_query );
         return -1;
     };
     //
@@ -1085,7 +1085,7 @@ bool  MyTree::getRootsFromDatabase_DB()
         //
         if ( !qry.prepare( str_query ) )
         {
-            Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+            Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_query );
             return false;
         };
         //
@@ -1095,7 +1095,7 @@ bool  MyTree::getRootsFromDatabase_DB()
             box.setText("Unable to get exec the query. Stop. ");
             box.exec();
             //
-            Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+            Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_query );
             b_res = false;
         }else
         {
@@ -1142,13 +1142,13 @@ bool MyTree::getLeafsFromDatabase_DB()
     //
     if ( !qry.prepare( str_query ) )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_query );
         return false;
     };
     //
     if( !qry.exec() )
     {
-        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text() );
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_query );
         QMessageBox box;
         box.setText("Unable to get exec the query. Stop. ");
         box.exec();
