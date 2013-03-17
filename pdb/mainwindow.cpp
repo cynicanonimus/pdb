@@ -95,6 +95,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_TreeOfNodes->setStatusBar( statusBar() );
     ui->m_Service_Tab->setStatusBar( statusBar() );
     //
+    ui->m_textEditor->passUndoRedoAction(m_pMainMenu->m_ptrUndo, m_pMainMenu->m_ptrRedo);
+    //
     if (ConnectionManager::getInstance().getManagerStatus() == ConnectionManager::STATE_OK)
     {
         QString str_header = tr("Pdb: host: [");
@@ -122,26 +124,21 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect( ui->m_TreeOfNodes,                SIGNAL( endOfInit           ( int )), m_pMainMenu,       SLOT( onTreeComboBoxChanged(int) ) );
     //
     //initialize node reading
-    //
-    ui->m_TreeOfNodes->init();
-    //move later in connectSignalsAndSlots()
-    QObject::connect( &(ServicesCfg::getInstance()),                     SIGNAL(PasswordExists(bool)),   this,         SLOT( onCheckPassword(bool) ) );
-    //if parameter is false - creation password, if true - change ppassword
-    QObject::connect( &(ServicesCfg::getInstance()),                     SIGNAL(PasswordExists(bool)),   m_pMainMenu,  SLOT( onCheckPassword(bool) ) );
-    //this one we use when password is created 1-st time, for notfication of the main menu class (change menu text)
-    QObject::connect( &(ServicesCfg::getInstance()),                     SIGNAL(PasswordCreated(bool)),  m_pMainMenu,  SLOT( onCheckPassword(bool) ) );
-    //
+    //ui->m_TreeOfNodes->init();
     //------------------------------------------------ connect signals and slots ------------------------------------------------
-    connectSignalsAndSlotsForNodes ();
-    connectSignalsAndSlotsForAttach();
-    connectSignalsAndSlotsForTree  ();
-    connectSignalsAndSlotsForDBList();
-    connectSignalsAndSlotsForConnMgr();
-    connectSignalsAndSlotsForAttachTbl();
-    connectSignalsAndSlotsForTreeMnu ();
-    connectSignalsAndSlots         ();
-    connectSignalsAndSlotsForPwd   ();
-    connectSignalsAndSlotsForEditor();
+    conSignalsAndSlotsForServiceCfg ();
+    conSignalsAndSlotsForNodes      ();
+    conSignalsAndSlotsForAttach     ();
+    conSignalsAndSlotsForTree       ();
+    conSignalsAndSlotsForDBList     ();
+    conSignalsAndSlotsForConnMgr    ();
+    conSignalsAndSlotsForAttachTbl  ();
+    conSignalsAndSlotsForTreeMnu    ();
+    conSignalsAndSlots              ();
+    conSignalsAndSlotsForPwd        ();
+    conSignalsAndSlotsForEditor     ();
+    //initialize node reading
+    ui->m_TreeOfNodes->init();
     //
     ServicesCfg::getInstance().getDataAndCheckInstance();
     //
@@ -156,13 +153,21 @@ MainWindow::~MainWindow()
     if ( m_pMainMenu        ) delete m_pMainMenu;
     if ( m_ptrDbInUseIcon   ) delete m_ptrDbInUseIcon;
     if ( m_ptrDbInUseLabel  ) delete m_ptrDbInUseLabel;
-    //
     if ( m_ptrSearchDlg     ) delete m_ptrSearchDlg;
-    //
     if ( m_ptrPwdDlg        ) delete m_ptrPwdDlg;
 }
 
-void MainWindow::connectSignalsAndSlotsForNodes ()
+void MainWindow::conSignalsAndSlotsForServiceCfg ()
+{
+    //move later in connectSignalsAndSlots()
+    QObject::connect( &(ServicesCfg::getInstance()),                     SIGNAL(PasswordExists(bool)),   this,         SLOT( onCheckPassword(bool) ) );
+    //if parameter is false - creation password, if true - change ppassword
+    QObject::connect( &(ServicesCfg::getInstance()),                     SIGNAL(PasswordExists(bool)),   m_pMainMenu,  SLOT( onCheckPassword(bool) ) );
+    //this one we use when password is created 1-st time, for notfication of the main menu class (change menu text)
+    QObject::connect( &(ServicesCfg::getInstance()),                     SIGNAL(PasswordCreated(bool)),  m_pMainMenu,  SLOT( onCheckPassword(bool) ) );
+}
+
+void MainWindow::conSignalsAndSlotsForNodes ()
 {
     QObject::connect( m_pMainMenu->m_ptrDelNode,        SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onDelCurrentItem    () ) );
     QObject::connect( m_pMainMenu->m_ptrRestoreNode,    SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onRestoreCurrentItem() ) );
@@ -187,7 +192,7 @@ void MainWindow::connectSignalsAndSlotsForNodes ()
     QObject::connect( m_pMainMenu->m_ptrCollapseSubtree,                SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT(onCascadeCollapse        ()    ));
 }
 
-void MainWindow::connectSignalsAndSlotsForAttach()
+void MainWindow::conSignalsAndSlotsForAttach()
 {
     QObject::connect(m_pMainMenu->m_ptrImportAttach,    SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onImportAttach () ) );
     QObject::connect(m_pMainMenu->m_ptrDeleteAttach,    SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onDeleteAttachment()  ));
@@ -211,7 +216,7 @@ void MainWindow::connectSignalsAndSlotsForAttach()
     QObject::connect(m_pMainMenu->m_ptrDecryptSelectedAttachments,      SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onDecryptSelected()        ));
 }
 
-void MainWindow::connectSignalsAndSlotsForTree ()
+void MainWindow::conSignalsAndSlotsForTree ()
 {
     QObject::connect( ui->m_TreeOfNodes,    SIGNAL (treeSelectionChanged(TreeLeaf*, bool, bool) ),  m_pMainMenu,        SLOT( onSelectedNodeChanged(TreeLeaf*, bool, bool) ));
     QObject::connect( ui->m_TreeOfNodes,    SIGNAL (treeSelectionChanged(TreeLeaf*, TreeLeaf*) ),   ui->m_Service_Tab,  SLOT(onSelectedNodeChanged(TreeLeaf*,TreeLeaf*) ));
@@ -220,26 +225,26 @@ void MainWindow::connectSignalsAndSlotsForTree ()
     QObject::connect( ui->m_TreeOfNodes,    SIGNAL ( showPopupMenu()    ),                          m_pMainMenu,        SLOT (showRightClickPopupNodeMenu()   ));
 }
 
-void MainWindow::connectSignalsAndSlotsForDBList()
+void MainWindow::conSignalsAndSlotsForDBList()
 {
     QObject::connect( ui->m_DBNameList, SIGNAL( currentIndexChanged ( int )), ui->m_TreeOfNodes, SLOT( onCurrentDBChanged(int) ) );
     QObject::connect( ui->m_DBNameList, SIGNAL( currentIndexChanged ( int )), m_pMainMenu,       SLOT( onTreeComboBoxChanged(int) ) );
 }
 
-void MainWindow::connectSignalsAndSlotsForConnMgr()
+void MainWindow::conSignalsAndSlotsForConnMgr()
 {
     QObject::connect( &(ConnectionManager::getInstance()), SIGNAL(takeConn()),   this,              SLOT(onTakeConn()       ));
     QObject::connect( &(ConnectionManager::getInstance()), SIGNAL(releaseConn()),this,              SLOT(onReleaseConn()    ));
 }
 
-void MainWindow::connectSignalsAndSlotsForAttachTbl()
+void MainWindow::conSignalsAndSlotsForAttachTbl()
 {
     QObject::connect( ui->m_Service_Tab,    SIGNAL( selectionChanged(Attachment::AttachmentsList)),         m_pMainMenu,        SLOT (onSelectedAttachmentChanged(Attachment::AttachmentsList) ));
     QObject::connect( ui->m_Service_Tab,    SIGNAL( attachmentForCutSelected(Attachment::AttachmentsList)), ui->m_TreeOfNodes,  SLOT (onAcceptCutAttachment(Attachment::AttachmentsList) ));
     QObject::connect( ui->m_Service_Tab,    SIGNAL( showPopupMenu()    ),                                   m_pMainMenu,        SLOT (showRightClickPopupAttachMenu() ));
 }
 
-void MainWindow::connectSignalsAndSlotsForTreeMnu ()
+void MainWindow::conSignalsAndSlotsForTreeMnu ()
 {
     QObject::connect(m_pMainMenu->m_ptrCreateNewTree,   SIGNAL(triggered()),  &m_G_TreeActions, SLOT ( onCreateNewTree      () ));
     QObject::connect(m_pMainMenu->m_ptrDelTree,         SIGNAL(triggered()),  &m_G_TreeActions, SLOT ( onDeleteTree         () ));
@@ -252,7 +257,7 @@ void MainWindow::connectSignalsAndSlotsForTreeMnu ()
     QObject::connect(m_pMainMenu->m_ptrExitApp,         SIGNAL(triggered()), this,              SLOT (  close   () ));
 }
 
-void MainWindow::connectSignalsAndSlotsForEditor ()
+void MainWindow::conSignalsAndSlotsForEditor ()
 {
     QObject::connect( ui->m_textEditor,                 SIGNAL(textChanged() ),     this,       SLOT (onEditorTextChanged()     ));
     QObject::connect( ui->m_textEditor,                 SIGNAL(textExist(bool) ),   m_pMainMenu,SLOT (onChangeEditText(bool)    ));
@@ -261,9 +266,13 @@ void MainWindow::connectSignalsAndSlotsForEditor ()
     //
     QObject::connect( m_pMainMenu->m_ptrPrintPreview,   SIGNAL(triggered()),        ui->m_textEditor, SLOT(onFilePrintPreview() ));
     QObject::connect( m_pMainMenu->m_ptrSaveToFile,     SIGNAL(triggered()),        ui->m_textEditor, SLOT(onExportToFile()     ));
+    QObject::connect( m_pMainMenu->m_ptrLoadFromFile,   SIGNAL(triggered()),        ui->m_textEditor, SLOT(onLoadFromFile()     ));
+    QObject::connect( m_pMainMenu->m_ptrUndo,           SIGNAL(triggered()),        ui->m_textEditor, SLOT(undo()               ));
+    QObject::connect( m_pMainMenu->m_ptrRedo,           SIGNAL(triggered()),        ui->m_textEditor, SLOT(redo()               ));
+
 }
 
-void MainWindow::connectSignalsAndSlots ()
+void MainWindow::conSignalsAndSlots ()
 {
     //about
     QObject::connect(m_pMainMenu->m_ptrAbout,           SIGNAL(triggered()), this,              SLOT( onClickAbout()    ) );
@@ -274,7 +283,7 @@ void MainWindow::connectSignalsAndSlots ()
     QObject::connect( &(ServicesCfg::getInstance()),    SIGNAL (DbInUse() ), this, SLOT (onDbAlreadyInUse() ));
 }
 
-void MainWindow::connectSignalsAndSlotsForPwd ()
+void MainWindow::conSignalsAndSlotsForPwd ()
 {
     QObject::connect( m_ptrPwdDlg,                           SIGNAL(Shutdown()),            this,               SLOT(close()                    ));
     QObject::connect(m_pMainMenu->m_ptrCreateChangePassword, SIGNAL(triggered()),           this,               SLOT(onCreateChangePassword()   ));

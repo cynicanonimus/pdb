@@ -43,7 +43,7 @@ DlgExportParams::~DlgExportParams()
 
 void DlgExportParams::reset()
 {
-    m_strExportPath = tr("");
+    m_strExportPath = "";
     m_enUserChoice = en_DO_NOTHING;
 };
 

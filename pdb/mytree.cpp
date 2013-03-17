@@ -333,9 +333,11 @@ void  MyTree::onCurrentDBChanged     (int index)
         this->addTopLevelItem(ptr_new_root->getChildLeaf());
     //
     expandActualTree();
-    this->repaint();
+    this->setCurrentItem(this->topLevelItem(0),0);
+    //this->repaint();
     //
-    emit treeSelectionChanged(NULL, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
+    //emit treeSelectionChanged(ptr_actual_top_leaf, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
+    //emit treeSelectionChanged(ptr_actual_top_leaf, NULL);
     //
     return;
 }
@@ -453,6 +455,7 @@ void MyTree::onCurrentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* pre
         //
         TreeLeaf* ptr_previous_item =  (TreeLeaf*) previous;
         emit treeSelectionChanged (ptr_actual_item, ptr_previous_item);
+        emit treeSelectionChanged(ptr_actual_item, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
     };
 }
 

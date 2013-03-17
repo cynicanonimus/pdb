@@ -404,6 +404,8 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     //
     m_ptrPasteAttach            ->setEnabled(false);
     //
+    m_ptrLoadFromFile           ->setEnabled(false);
+    //
     if (NULL == ptr_to_current)
         return;
     //
@@ -474,6 +476,10 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
             adjustGlobalProtectionMenu  (ptr_to_current, checker);
             adjustGlobalCryptographyMenu(ptr_to_current, checker);
         }
+        //
+        //if selected node exist, user is able to load description of this node from file
+        //
+        m_ptrLoadFromFile ->setEnabled(true);
         //
         break;
     case AbstractDatabaseObject::OBJECT_DELETED:

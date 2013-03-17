@@ -17,3 +17,4 @@ Date 		CommitID		Changes
 --------------------------------------------------------------------------------------------------------
 17.03.2013      17.03.2013-1 		Implement print preview for node description, group signal/slots in functions (not tested yet!)
 17.03.2013      17.03.2013-2		Fix availability of menu items when database changed, implement export node description to the file
+17.03.2013      17.03.2013-3            Implement load node descriptor from file, 'undo' and 'redo', fix some errors.
