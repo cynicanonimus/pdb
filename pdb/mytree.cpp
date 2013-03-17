@@ -335,6 +335,8 @@ void  MyTree::onCurrentDBChanged     (int index)
     expandActualTree();
     this->repaint();
     //
+    emit treeSelectionChanged(NULL, (m_ptrMovedItem != NULL), (m_vActualCutAtttachments.size() > 0) );
+    //
     return;
 }
 

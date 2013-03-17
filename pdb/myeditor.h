@@ -13,10 +13,14 @@ signals:
     void textExist            (bool);
 public slots:
     void onFilePrintPreview     ();
+    void onExportToFile         ();
 
 private slots:
     void onPrintPreview         (QPrinter *);
     void onTextChanged          ();
+
+private:
+    void fileSave(const QString& f_name);
 };
 
 #endif // MYEDITOR_H

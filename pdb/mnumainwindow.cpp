@@ -113,6 +113,7 @@ MnuMainWindow::~MnuMainWindow()
 void MnuMainWindow::onChangeEditText (bool b_flag)
 {
     m_ptrPrintPreview->setEnabled(b_flag);
+    m_ptrSaveToFile->setEnabled(b_flag);
     //not implemented yet
     //m_ptrPrint->setEnabled(b_flag);
     //m_ptrPrintPdf->setEnabled(b_flag);
@@ -384,17 +385,32 @@ void MnuMainWindow::analyseAttachmentsStatus (const Attachment::AttachmentsList&
 
 void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cutting_node, bool has_cutting_attach)
 {
+    m_ptrEncryptAttachmentsOfAllNodes       ->setEnabled(false);
+    m_ptrDecryptAttachmentsOfAllNodes       ->setEnabled(false);
+    //
+    m_ptrProtectAttachmentsOfAllNodes       ->setEnabled(false);
+    m_ptrUn_ProtectAttachmentsOfAllNodes    ->setEnabled(false);
+    //
+    m_ptrDelNode                ->setEnabled(false);
+    m_ptrInsertNewNode          ->setEnabled(false);
+    m_ptrImportAttach           ->setEnabled(false);
+    m_ptrRestoreNode            ->setEnabled(false);
+    m_ptrRestoreSubtree         ->setEnabled(false);
+    m_ptrExportNode             ->setEnabled(false);
+    m_ptrImportNode             ->setEnabled(false);
+    //
+    m_ptrCutNode                ->setEnabled(false);
+    m_ptrPasteNode              ->setEnabled(false);
+    //
+    m_ptrPasteAttach            ->setEnabled(false);
+    //
     if (NULL == ptr_to_current)
         return;
     //
     AbstractDatabaseObject::DB_OBJECT_STATUS node_state = ptr_to_current->getObjectStatus();
     bool b_is_root_node    = (ptr_to_current->getParentID() == 0);
     //
-    m_ptrEncryptAttachmentsOfAllNodes       ->setEnabled(false);
-    m_ptrDecryptAttachmentsOfAllNodes       ->setEnabled(false);
-        //
-    m_ptrProtectAttachmentsOfAllNodes       ->setEnabled(false);
-    m_ptrUn_ProtectAttachmentsOfAllNodes    ->setEnabled(false);
+
     //
     bool b_allow_expand     = false;
     bool b_allow_collapse   = false;

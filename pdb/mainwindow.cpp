@@ -257,7 +257,10 @@ void MainWindow::connectSignalsAndSlotsForEditor ()
     QObject::connect( ui->m_textEditor,                 SIGNAL(textChanged() ),     this,       SLOT (onEditorTextChanged()     ));
     QObject::connect( ui->m_textEditor,                 SIGNAL(textExist(bool) ),   m_pMainMenu,SLOT (onChangeEditText(bool)    ));
     //
+    //connect menu to real document actions
+    //
     QObject::connect( m_pMainMenu->m_ptrPrintPreview,   SIGNAL(triggered()),        ui->m_textEditor, SLOT(onFilePrintPreview() ));
+    QObject::connect( m_pMainMenu->m_ptrSaveToFile,     SIGNAL(triggered()),        ui->m_textEditor, SLOT(onExportToFile()     ));
 }
 
 void MainWindow::connectSignalsAndSlots ()

@@ -14,4 +14,6 @@ Date 		CommitID		Changes
 		14.03.2013-04		Increase process of menu status checking
 --------------------------------------------------------------------------------------------------------
 16.03.2013      16.03.2013-1		Implement more detailed errors log, make editor toolbox (not finished yet)
+--------------------------------------------------------------------------------------------------------
 17.03.2013      17.03.2013-1 		Implement print preview for node description, group signal/slots in functions (not tested yet!)
+17.03.2013      17.03.2013-2		Fix availability of menu items when database changed, implement export node description to the file

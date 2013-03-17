@@ -1,6 +1,8 @@
 #include "myeditor.h"
 #include <QPrinter>
 #include <QPrintPreviewDialog>
+#include <QFileDialog>
+#include <QTextDocumentWriter>
 
 MyEditor::MyEditor(QWidget *parent) :
     QTextEdit(parent)
@@ -18,8 +20,7 @@ void  MyEditor::onTextChanged ()
 
 
 }
-
-
+//---------------------------------------------------------------
 void MyEditor::onFilePrintPreview()
 {
     QPrinter printer(QPrinter::HighResolution);
@@ -35,4 +36,29 @@ void MyEditor::onPrintPreview(QPrinter* printer)
 #else
     this->print(printer);
 #endif
+}
+//---------------------------------------------------------------
+// TODO: add export to the export path
+//
+void MyEditor::onExportToFile ()
+{
+    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
+                                              QString(), tr("ODF files (*.odt);;Txt files (*.txt);;HTML-Files (*.htm *.html);;All Files (*)"));
+    if (fn.isEmpty())
+        return;
+    //
+    if (! (fn.endsWith(".odt", Qt::CaseInsensitive) ||
+           fn.endsWith(".htm", Qt::CaseInsensitive) ||
+           fn.endsWith(".html",Qt::CaseInsensitive) ||
+           fn.endsWith(".txt", Qt::CaseInsensitive) )
+       )
+        fn += ".odt"; // default
+    //
+    fileSave(fn);
+}
+
+void MyEditor::fileSave(const QString& f_name)
+{
+    QTextDocumentWriter writer(f_name);
+    writer.write(this->document());
 }
