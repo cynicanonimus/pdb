@@ -110,6 +110,14 @@ MnuMainWindow::~MnuMainWindow()
 
 }
 
+void MnuMainWindow::onChangeEditText (bool b_flag)
+{
+    m_ptrPrintPreview->setEnabled(b_flag);
+    //not implemented yet
+    //m_ptrPrint->setEnabled(b_flag);
+    //m_ptrPrintPdf->setEnabled(b_flag);
+}
+
 void MnuMainWindow::onTriggerTreeToolBox ()
 {
     if ( m_ptrTreeToolBar->isVisible() )

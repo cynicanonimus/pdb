@@ -54,10 +54,12 @@ public slots:
     void showRightClickPopupNodeMenu        ();
     void showRightClickPopupAttachMenu      ();
     //
-    void onSaveDescription                  ();
-    void onChangeDescription                ();
+    void onSaveDescription                  (); //candidates to remove
+    void onChangeDescription                (); //candidates to remove
     //
-    void onCheckPassword                    ( bool);
+    void onChangeEditText                   ( bool );
+    //
+    void onCheckPassword                    ( bool );
     //
 private slots:
     void onTriggerTreeToolBox               ();

@@ -120,7 +120,18 @@ private:
     //
     void restoreWindowParams            ();
     void saveWindowParams               ();
+    //remove it later
     void connectSignalsAndSlots         ();
+    //
+    void connectSignalsAndSlotsForNodes ();
+    void connectSignalsAndSlotsForAttach();
+    void connectSignalsAndSlotsForTree  ();
+    void connectSignalsAndSlotsForDBList();
+    void connectSignalsAndSlotsForConnMgr();
+    void connectSignalsAndSlotsForAttachTbl();
+    void connectSignalsAndSlotsForPwd   ();
+    void connectSignalsAndSlotsForTreeMnu ();
+    void connectSignalsAndSlotsForEditor ();
     //
     void showInterfaceElements          (bool b_show = true);
 
