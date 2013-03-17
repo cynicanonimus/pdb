@@ -70,7 +70,7 @@ bool TunnelMaker::makeTunnel()
     //
     Waiter::wait(1);
     //
-    for (unsigned int i_counter = 0; i_counter < 10; +i_counter) //max wait time - 10 sek
+    for (unsigned int i_counter = 0; i_counter < 10; ++i_counter) //max wait time - 10 sek
     {
         if ( true == getTunnelActive() )  //tunnel is active now
             break;
