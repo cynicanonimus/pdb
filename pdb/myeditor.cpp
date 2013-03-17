@@ -7,6 +7,14 @@
 #include <QMessageBox>
 #include <QTextCodec>
 #include <QAction>
+#include <QToolBar>
+#include <QComboBox>
+#include <QApplication>
+#include <QFontDatabase>
+#include <QTextCharFormat>
+#include <QFont>
+#include <QFontComboBox>
+#include <QColor>
 //
 #include "../CommonInclude/pdb/pdb_style.h"
 
@@ -17,12 +25,30 @@ MyEditor::MyEditor(QWidget *parent) :
     //
     m_ptrUndo   = NULL;
     m_ptrRedo   = NULL;
+    m_ptrToolBar= NULL;
+    //
+    m_ptrFontSize= NULL;
+    m_ptrFontType = NULL;
     //
     //QObject::connect( ui->m_textEditor,                 SIGNAL(textChanged() ), m_pMainMenu,SLOT (onEditorTextChanged() ));
-    QObject::connect( this,                 SIGNAL(textChanged()), this, SLOT(onTextChanged() ));
+    QObject::connect( this, SIGNAL(textChanged()),                              this, SLOT(onTextChanged()                              ));
+    //
+    QObject::connect( this, SIGNAL(currentCharFormatChanged(QTextCharFormat)),  this, SLOT(onCurrentCharFormatChanged(QTextCharFormat)  ));
+    QObject::connect( this, SIGNAL(cursorPositionChanged()),                    this, SLOT(OnCursorPositionChanged()                    ));
 }
 
-void  MyEditor::onTextChanged ()
+void MyEditor::onCurrentCharFormatChanged (const QTextCharFormat &format)
+{
+    fontChanged(format.font());
+    colorChanged(format.foreground().color());
+}
+
+void MyEditor::OnCursorPositionChanged()
+{
+    //alignmentChanged(this->alignment());
+}
+
+void MyEditor::onTextChanged ()
 {
     if ( this->document()->toPlainText().length() > 0 )
         emit textExist(true);
@@ -76,6 +102,13 @@ void MyEditor::onPrintPreview(QPrinter* printer)
 #else
     this->print(printer);
 #endif
+}
+
+void MyEditor::onTextFamily (const QString &f)
+{
+    QTextCharFormat fmt;
+    fmt.setFontFamily(f);
+    mergeFormatOnWordOrSelection(fmt);
 }
 
 void MyEditor::onExportToFile ()
@@ -138,6 +171,18 @@ void MyEditor::loadFile(const QString &f)
     return;
 }
 
+void MyEditor::onTextSize (const QString &p)
+{
+    qreal pointSize = p.toFloat();
+    //
+    if (p.toFloat() > 0)
+    {
+        QTextCharFormat fmt;
+        fmt.setFontPointSize(pointSize);
+        mergeFormatOnWordOrSelection(fmt);
+    };
+}
+
 void MyEditor::passUndoRedoAction (QAction* ptr_undo, QAction* ptr_redo)
 {
     if ( ptr_undo && (NULL == m_ptrUndo))
@@ -151,4 +196,62 @@ void MyEditor::passUndoRedoAction (QAction* ptr_undo, QAction* ptr_redo)
         m_ptrRedo  = ptr_redo;
         connect(this->document(), SIGNAL(redoAvailable(bool)), m_ptrRedo, SLOT(setEnabled(bool)));
     };
+}
+
+void MyEditor::addEditorToolBar (QToolBar* ptr_tool_bar)
+{
+    if ( (NULL == m_ptrToolBar) && (NULL != ptr_tool_bar))
+    {
+        m_ptrToolBar =  ptr_tool_bar;
+        //
+        m_ptrFontSize = new QComboBox(m_ptrToolBar);
+        m_ptrFontSize->setEditable(true);
+        QFontDatabase db;
+        foreach(int size, db.standardSizes())
+        {
+            m_ptrFontSize->addItem(QString::number(size));
+        };
+        //
+        QObject::connect(m_ptrFontSize, SIGNAL(activated(QString)),this, SLOT(onTextSize(QString)));
+        m_ptrFontSize->setCurrentIndex(m_ptrFontSize->findText(QString::number(QApplication::font().pointSize())));
+        //
+        m_ptrFontType = new QFontComboBox(m_ptrToolBar);
+        QObject::connect(m_ptrFontType, SIGNAL(activated(QString)), this, SLOT(onTextFamily(QString) ));
+        //
+        m_ptrToolBar->addWidget(m_ptrFontType);
+        m_ptrToolBar->addWidget(m_ptrFontSize);
+    };
+}
+
+void MyEditor::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
+{
+    QTextCursor cursor = this->textCursor();
+    //
+    if (!cursor.hasSelection())
+        cursor.select(QTextCursor::WordUnderCursor);
+    //
+    cursor.mergeCharFormat(format);
+    this->mergeCurrentCharFormat(format);
+}
+
+void MyEditor::fontChanged(const QFont &f)
+{
+    if (m_ptrFontType)
+        m_ptrFontType->setCurrentIndex(m_ptrFontType->findText(QFontInfo(f).family()));
+    //
+    if (m_ptrFontSize)
+        m_ptrFontSize->setCurrentIndex(m_ptrFontSize->findText(QString::number(f.pointSize())));
+    //
+    /*
+    actionTextBold->setChecked(f.bold());
+    actionTextItalic->setChecked(f.italic());
+    actionTextUnderline->setChecked(f.underline());
+    */
+}
+
+void MyEditor::colorChanged(const QColor &c)
+{
+    QPixmap pix(16, 16);
+    pix.fill(c);
+    //actionTextColor->setIcon(pix);
 }

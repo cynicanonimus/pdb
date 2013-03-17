@@ -96,6 +96,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_Service_Tab->setStatusBar( statusBar() );
     //
     ui->m_textEditor->passUndoRedoAction(m_pMainMenu->m_ptrUndo, m_pMainMenu->m_ptrRedo);
+    ui->m_textEditor->addEditorToolBar(m_pMainMenu->m_ptrEditorToolBar);
     //
     if (ConnectionManager::getInstance().getManagerStatus() == ConnectionManager::STATE_OK)
     {
@@ -119,9 +120,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_ptrSearchDlg->setPtrToTree(ui->m_TreeOfNodes);
     //
     m_ptrPwdDlg = new PasswordDlg();
-    //
-    //for enabling menu after initial restore tree
-    QObject::connect( ui->m_TreeOfNodes,                SIGNAL( endOfInit           ( int )), m_pMainMenu,       SLOT( onTreeComboBoxChanged(int) ) );
     //
     //initialize node reading
     //ui->m_TreeOfNodes->init();
@@ -218,11 +216,13 @@ void MainWindow::conSignalsAndSlotsForAttach()
 
 void MainWindow::conSignalsAndSlotsForTree ()
 {
-    QObject::connect( ui->m_TreeOfNodes,    SIGNAL (treeSelectionChanged(TreeLeaf*, bool, bool) ),  m_pMainMenu,        SLOT( onSelectedNodeChanged(TreeLeaf*, bool, bool) ));
-    QObject::connect( ui->m_TreeOfNodes,    SIGNAL (treeSelectionChanged(TreeLeaf*, TreeLeaf*) ),   ui->m_Service_Tab,  SLOT(onSelectedNodeChanged(TreeLeaf*,TreeLeaf*) ));
-    QObject::connect( ui->m_TreeOfNodes,    SIGNAL (updateAttachmentList() ),                       ui->m_Service_Tab,  SLOT(onAttachmentUpdated()  ));
-    QObject::connect( ui->m_TreeOfNodes,    SIGNAL (treeSelectionChanged(TreeLeaf*, TreeLeaf*) ),   this,               SLOT(onSelectedNodeChanged(TreeLeaf*,TreeLeaf*) ) );
-    QObject::connect( ui->m_TreeOfNodes,    SIGNAL ( showPopupMenu()    ),                          m_pMainMenu,        SLOT (showRightClickPopupNodeMenu()   ));
+    //for enabling menu after initial restore tree
+    QObject::connect( ui->m_TreeOfNodes,    SIGNAL ( endOfInit ( int )),                            m_pMainMenu,        SLOT( onTreeComboBoxChanged(int)                    ));
+    QObject::connect( ui->m_TreeOfNodes,    SIGNAL (treeSelectionChanged(TreeLeaf*, bool, bool) ),  m_pMainMenu,        SLOT( onSelectedNodeChanged(TreeLeaf*, bool, bool)  ));
+    QObject::connect( ui->m_TreeOfNodes,    SIGNAL (treeSelectionChanged(TreeLeaf*, TreeLeaf*) ),   ui->m_Service_Tab,  SLOT( onSelectedNodeChanged(TreeLeaf*,TreeLeaf*)    ));
+    QObject::connect( ui->m_TreeOfNodes,    SIGNAL (updateAttachmentList() ),                       ui->m_Service_Tab,  SLOT( onAttachmentUpdated()                         ));
+    QObject::connect( ui->m_TreeOfNodes,    SIGNAL (treeSelectionChanged(TreeLeaf*, TreeLeaf*) ),   this,               SLOT( onSelectedNodeChanged(TreeLeaf*,TreeLeaf*)    ));
+    QObject::connect( ui->m_TreeOfNodes,    SIGNAL ( showPopupMenu()    ),                          m_pMainMenu,        SLOT( showRightClickPopupNodeMenu()                 ));
 }
 
 void MainWindow::conSignalsAndSlotsForDBList()
