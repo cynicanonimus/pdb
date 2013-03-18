@@ -15,6 +15,7 @@
 #include <QFont>
 #include <QFontComboBox>
 #include <QColor>
+#include <QPrintDialog>
 //
 #include "../CommonInclude/pdb/pdb_style.h"
 
@@ -23,18 +24,72 @@ MyEditor::MyEditor(QWidget *parent) :
 {
     m_strLastLoadDir = tr("");
     //
-    m_ptrUndo   = NULL;
-    m_ptrRedo   = NULL;
-    m_ptrToolBar= NULL;
+    m_ptrUndo       = NULL;
+    m_ptrRedo       = NULL;
     //
-    m_ptrFontSize= NULL;
-    m_ptrFontType = NULL;
+    m_ptrBold       = NULL;
+    m_ptrUnderline  = NULL;
+    m_ptrItalic     = NULL;
+    m_ptrToolBar    = NULL;
+    //
+    m_ptrTextAlignLeft      = NULL;
+    m_ptrTextAlignRight     = NULL;
+    m_ptrTextAlignCenter    = NULL;
+    m_ptrTextAlignJustify   = NULL;
+    //
+    m_ptrFontSize   = NULL;
+    m_ptrFontType   = NULL;
     //
     //QObject::connect( ui->m_textEditor,                 SIGNAL(textChanged() ), m_pMainMenu,SLOT (onEditorTextChanged() ));
     QObject::connect( this, SIGNAL(textChanged()),                              this, SLOT(onTextChanged()                              ));
     //
     QObject::connect( this, SIGNAL(currentCharFormatChanged(QTextCharFormat)),  this, SLOT(onCurrentCharFormatChanged(QTextCharFormat)  ));
     QObject::connect( this, SIGNAL(cursorPositionChanged()),                    this, SLOT(OnCursorPositionChanged()                    ));
+}
+
+void MyEditor::OnPrint ()
+{
+#ifndef QT_NO_PRINTER
+    QPrinter printer(QPrinter::HighResolution);
+    QPrintDialog *dlg = new QPrintDialog(&printer, this);
+    //
+    if (this->textCursor().hasSelection())
+        dlg->addEnabledOption(QAbstractPrintDialog::PrintSelection);
+    //
+    dlg->setWindowTitle(tr("Print Document"));
+    //
+    if (dlg->exec() == QDialog::Accepted)
+    {
+        this->print(&printer);
+    }
+    delete dlg;
+#endif
+}
+
+void MyEditor::OnExportToPDF ()
+{
+#ifndef QT_NO_PRINTER
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    //
+    if( m_strLastExportDir.length() == 0 )
+    {
+        m_strLastExportDir = settings.value(g_str_ATTACH_EXPORT_PATH).toString();
+    };
+    //
+    QString fileName = QFileDialog::getSaveFileName(this, "Export PDF",
+                                                    m_strLastExportDir,
+                                                    "*.pdf");
+    if (!fileName.isEmpty())
+    {
+        if (QFileInfo(fileName).suffix().isEmpty())
+            fileName.append(".pdf");
+        //
+        QPrinter printer(QPrinter::HighResolution);
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setOutputFileName(fileName);
+        this->document()->print(&printer);
+    }
+#endif
 }
 
 void MyEditor::onCurrentCharFormatChanged (const QTextCharFormat &format)
@@ -87,7 +142,7 @@ void MyEditor::onLoadFromFile ()
     loadFile(fn);
 }
 
-void MyEditor::onFilePrintPreview()
+void MyEditor::onPrintPreview()
 {
     QPrinter printer(QPrinter::HighResolution);
     QPrintPreviewDialog preview(&printer, this);
@@ -223,6 +278,70 @@ void MyEditor::addEditorToolBar (QToolBar* ptr_tool_bar)
     };
 }
 
+void MyEditor::passBUIActions ( QAction* ptr_bold, QAction* ptr_underline, QAction* ptr_italic )
+{
+    if ( (NULL == m_ptrBold) && (NULL != ptr_bold) )
+    {
+        m_ptrBold = ptr_bold;
+        //
+        //m_ptrBold->setShortcut(Qt::CTRL + Qt::Key_B);
+        m_ptrBold->setPriority(QAction::LowPriority);
+        //
+        QFont bold;
+        bold.setBold(true);
+        m_ptrBold->setFont(bold);
+        QObject::connect(m_ptrBold, SIGNAL(triggered()), this, SLOT(onTextBold()));
+        m_ptrBold->setCheckable(true);
+    };
+    //
+    if ( (NULL == m_ptrUnderline) && (NULL != ptr_underline) )
+    {
+        m_ptrUnderline = ptr_underline;
+        //
+        //m_ptrUnderline->setShortcut(Qt::CTRL + Qt::Key_U);
+        m_ptrUnderline->setPriority(QAction::LowPriority);
+        QFont underline;
+        underline.setUnderline(true);
+        m_ptrUnderline->setFont(underline);
+        QObject::connect(m_ptrUnderline, SIGNAL(triggered()), this, SLOT(onTextUnderline()));
+        m_ptrUnderline->setCheckable(true);
+    };
+    //
+    if ( (NULL == m_ptrItalic) && (NULL != ptr_italic) )
+    {
+        m_ptrItalic = ptr_italic;
+        //
+        m_ptrItalic->setPriority(QAction::LowPriority);
+     //m_ptrItalic->setShortcut(Qt::CTRL + Qt::Key_I);
+        QFont italic;
+        italic.setItalic(true);
+        m_ptrItalic->setFont(italic);
+        QObject::connect(m_ptrItalic, SIGNAL(triggered()), this, SLOT(onTextItalic()));
+        m_ptrItalic->setCheckable(true);
+    };
+}
+
+void MyEditor::onTextBold             ()
+{
+    QTextCharFormat fmt;
+    fmt.setFontWeight(m_ptrBold->isChecked() ? QFont::Bold : QFont::Normal);
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void MyEditor::onTextUnderline        ()
+{
+    QTextCharFormat fmt;
+    fmt.setFontUnderline(m_ptrUnderline->isChecked());
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void MyEditor::onTextItalic           ()
+{
+    QTextCharFormat fmt;
+    fmt.setFontItalic(m_ptrItalic->isChecked());
+    mergeFormatOnWordOrSelection(fmt);
+}
+
 void MyEditor::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 {
     QTextCursor cursor = this->textCursor();
@@ -242,11 +361,15 @@ void MyEditor::fontChanged(const QFont &f)
     if (m_ptrFontSize)
         m_ptrFontSize->setCurrentIndex(m_ptrFontSize->findText(QString::number(f.pointSize())));
     //
-    /*
-    actionTextBold->setChecked(f.bold());
-    actionTextItalic->setChecked(f.italic());
-    actionTextUnderline->setChecked(f.underline());
-    */
+    if (m_ptrBold)
+        m_ptrBold->setChecked(f.bold());
+    //
+    if (m_ptrUnderline)
+        m_ptrUnderline->setChecked(f.underline());
+    //
+    if (m_ptrItalic)
+        m_ptrItalic->setChecked(f.italic());
+    //
 }
 
 void MyEditor::colorChanged(const QColor &c)
@@ -254,4 +377,27 @@ void MyEditor::colorChanged(const QColor &c)
     QPixmap pix(16, 16);
     pix.fill(c);
     //actionTextColor->setIcon(pix);
+}
+
+void MyEditor::passAlignActions ( QAction* ptr_text_align_left, QAction* ptr_text_align_right, QAction* ptr_text_align_center, QAction* ptr_text_align_justify)
+{
+    if ( (NULL == m_ptrTextAlignLeft) && (NULL != ptr_text_align_left) )
+    {
+        m_ptrTextAlignLeft = ptr_text_align_left;
+    };
+    //
+    if ( (NULL == m_ptrTextAlignRight) && (NULL != ptr_text_align_right) )
+    {
+        m_ptrTextAlignRight = ptr_text_align_right;
+    };
+    //
+    if ( (NULL == m_ptrTextAlignCenter) && (NULL != ptr_text_align_center) )
+    {
+        m_ptrTextAlignCenter = ptr_text_align_center;
+    };
+    //
+    if ( (NULL == m_ptrTextAlignJustify) && (NULL != ptr_text_align_justify) )
+    {
+        m_ptrTextAlignJustify = ptr_text_align_justify;
+    };
 }

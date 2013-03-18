@@ -95,8 +95,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_TreeOfNodes->setStatusBar( statusBar() );
     ui->m_Service_Tab->setStatusBar( statusBar() );
     //
-    ui->m_textEditor->passUndoRedoAction(m_pMainMenu->m_ptrUndo, m_pMainMenu->m_ptrRedo);
-    ui->m_textEditor->addEditorToolBar(m_pMainMenu->m_ptrEditorToolBar);
+    ui->m_textEditor->passUndoRedoAction( m_pMainMenu->m_ptrUndo, m_pMainMenu->m_ptrRedo );
+    ui->m_textEditor->passBUIActions    ( m_pMainMenu->m_ptrBold, m_pMainMenu->m_ptrUnderline, m_pMainMenu->m_ptrItalic );
+    ui->m_textEditor->passAlignActions  ( m_pMainMenu->m_ptrTextAlignLeft, m_pMainMenu->m_ptrTextAlignRight, m_pMainMenu->m_ptrTextAlignCenter, m_pMainMenu->m_ptrTextAlignJustify);
+    ui->m_textEditor->addEditorToolBar  ( m_pMainMenu->m_ptrEditorToolBar );
     //
     if (ConnectionManager::getInstance().getManagerStatus() == ConnectionManager::STATE_OK)
     {
@@ -264,7 +266,9 @@ void MainWindow::conSignalsAndSlotsForEditor ()
     //
     //connect menu to real document actions
     //
-    QObject::connect( m_pMainMenu->m_ptrPrintPreview,   SIGNAL(triggered()),        ui->m_textEditor, SLOT(onFilePrintPreview() ));
+    QObject::connect( m_pMainMenu->m_ptrPrint,          SIGNAL(triggered()),        ui->m_textEditor, SLOT(OnPrint()            ));
+    QObject::connect( m_pMainMenu->m_ptrPrintPreview,   SIGNAL(triggered()),        ui->m_textEditor, SLOT(onPrintPreview()     ));
+    QObject::connect( m_pMainMenu->m_ptrExportToPdf,    SIGNAL(triggered()),        ui->m_textEditor, SLOT(OnExportToPDF()      ));
     QObject::connect( m_pMainMenu->m_ptrSaveToFile,     SIGNAL(triggered()),        ui->m_textEditor, SLOT(onExportToFile()     ));
     QObject::connect( m_pMainMenu->m_ptrLoadFromFile,   SIGNAL(triggered()),        ui->m_textEditor, SLOT(onLoadFromFile()     ));
     QObject::connect( m_pMainMenu->m_ptrUndo,           SIGNAL(triggered()),        ui->m_textEditor, SLOT(undo()               ));

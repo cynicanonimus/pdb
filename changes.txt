@@ -21,3 +21,4 @@ Date 		CommitID		Changes
 17.03.2013      17.03.2013-4		bugfix ('+' instead of '++')
 --------------------------------------------------------------------------------------------------------
 18.03.2013      18.03.2013-1		Implement change font and font size for node description
+18.03.2013      18.03.2013-2		Implement print, export to pdf, make bold italic and underline for node description. 

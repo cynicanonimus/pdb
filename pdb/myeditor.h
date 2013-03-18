@@ -19,16 +19,21 @@ public:
     explicit MyEditor(QWidget *parent = 0);
 
 public:
-    void    passUndoRedoAction     (QAction* ptr_undo, QAction* ptr_redo);
-    void    addEditorToolBar       (QToolBar* ptr_tool_bar);
-    
+    void    passUndoRedoAction     ( QAction* ptr_undo, QAction* ptr_redo );
+    //Bold,     Underline,     TextItalic
+    void    passBUIActions         ( QAction* ptr_bold, QAction* ptr_underline, QAction* ptr_italic );
+    void    passAlignActions       ( QAction* ptr_text_align_left, QAction* ptr_text_align_right, QAction* ptr_text_align_center, QAction* ptr_text_align_justify);
+    void    addEditorToolBar       ( QToolBar* ptr_tool_bar);
+
 signals:
     void    textExist              (bool);
 
 public slots:
-    void    onFilePrintPreview     ();
+    void    OnPrint                ();
+    void    onPrintPreview         ();
     void    onExportToFile         ();
     void    onLoadFromFile         ();
+    void    OnExportToPDF          ();
 
 private slots:
     void    onTextFamily           (const QString &f);
@@ -37,6 +42,9 @@ private slots:
     void    onTextSize             (const QString&);
     void    onCurrentCharFormatChanged (const QTextCharFormat &format);
     void    OnCursorPositionChanged();
+    void    onTextBold             ();
+    void    onTextUnderline        ();
+    void    onTextItalic           ();
 
 
 private:
@@ -52,6 +60,16 @@ private:
     //
     QAction*    m_ptrUndo;
     QAction*    m_ptrRedo;
+    //
+    QAction*    m_ptrBold;
+    QAction*    m_ptrUnderline;
+    QAction*    m_ptrItalic;
+    //
+    QAction*    m_ptrTextAlignLeft;
+    QAction*    m_ptrTextAlignRight;
+    QAction*    m_ptrTextAlignCenter;
+    QAction*    m_ptrTextAlignJustify;
+    //
     QToolBar*   m_ptrToolBar;
     //
     QFontComboBox*  m_ptrFontType;

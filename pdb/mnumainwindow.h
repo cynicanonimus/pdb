@@ -167,11 +167,11 @@ public:
     //
     QAction*    m_ptrPrint;
     QAction*    m_ptrPrintPreview;
-    QAction*    m_ptrPrintPdf;
+    QAction*    m_ptrExportToPdf;
     //
     QAction*    m_ptrBold;
     QAction*    m_ptrUnderline;
-    QAction*    m_ptrTextItalic;
+    QAction*    m_ptrItalic;
     //
     QAction*    m_ptrTextAlignLeft;
     QAction*    m_ptrTextAlignRight;

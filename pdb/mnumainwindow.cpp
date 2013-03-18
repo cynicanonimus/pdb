@@ -112,11 +112,10 @@ MnuMainWindow::~MnuMainWindow()
 
 void MnuMainWindow::onChangeEditText (bool b_flag)
 {
-    m_ptrPrintPreview->setEnabled(b_flag);
-    m_ptrSaveToFile->setEnabled(b_flag);
-    //not implemented yet
-    //m_ptrPrint->setEnabled(b_flag);
-    //m_ptrPrintPdf->setEnabled(b_flag);
+    m_ptrPrintPreview   ->setEnabled(b_flag);
+    m_ptrSaveToFile     ->setEnabled(b_flag);
+    m_ptrPrint          ->setEnabled(b_flag);
+    m_ptrExportToPdf    ->setEnabled(b_flag);
 }
 
 void MnuMainWindow::onTriggerTreeToolBox ()
@@ -406,6 +405,15 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     //
     m_ptrLoadFromFile           ->setEnabled(false);
     //
+    m_ptrBold                   ->setEnabled(false);
+    m_ptrUnderline              ->setEnabled(false);
+    m_ptrItalic                 ->setEnabled(false);
+    //
+    m_ptrTextAlignLeft          ->setEnabled(false);
+    m_ptrTextAlignRight         ->setEnabled(false);
+    m_ptrTextAlignCenter        ->setEnabled(false);
+    m_ptrTextAlignJustify       ->setEnabled(false);
+    //
     if (NULL == ptr_to_current)
         return;
     //
@@ -479,7 +487,15 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
         //
         //if selected node exist, user is able to load description of this node from file
         //
-        m_ptrLoadFromFile ->setEnabled(true);
+        m_ptrLoadFromFile   ->setEnabled(true);
+        m_ptrBold           ->setEnabled(true);
+        m_ptrUnderline      ->setEnabled(true);
+        m_ptrItalic         ->setEnabled(true);
+        //
+        m_ptrTextAlignLeft     ->setEnabled(true);
+        m_ptrTextAlignRight    ->setEnabled(true);
+        m_ptrTextAlignCenter   ->setEnabled(true);
+        m_ptrTextAlignJustify  ->setEnabled(true);
         //
         break;
     case AbstractDatabaseObject::OBJECT_DELETED:
@@ -732,7 +748,7 @@ void MnuMainWindow::createAttachmentControlMenu()
     m_ptrImportAttach   = new QAction(tr("Import attachment"), this);
     m_ptrImportAttach   ->setIconVisibleInMenu(true);
     m_ptrImportAttach   ->setIcon(QIcon(":/images/images/up_plus.png"));
-    m_ptrImportAttach   ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_I));
+    m_ptrImportAttach   ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_A));
     m_ptrImportAttach   ->setStatusTip(tr("Attach files to the node"));
     m_ptrImportAttach   ->setEnabled(false);
     //
@@ -1074,14 +1090,14 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrExpandSubtree      = new QAction(tr("Expand subtree"), this);
     m_ptrExpandSubtree      ->setIconVisibleInMenu(true);
     m_ptrExpandSubtree      ->setIcon(QIcon(":/images/images/expand_subtree.png"));
-    //m_ptrPasteNode      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrExpandSubtree      ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_Plus));
     m_ptrExpandSubtree      ->setStatusTip(tr("Expand this element and all childs"));
     m_ptrExpandSubtree      ->setEnabled(false);
     //
     m_ptrCollapseSubtree      = new QAction(tr("Collapse subtree"), this);
     m_ptrCollapseSubtree      ->setIconVisibleInMenu(true);
     m_ptrCollapseSubtree      ->setIcon(QIcon(":/images/images/collapse_subtree.png"));
-    //m_ptrPasteNode      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrCollapseSubtree      ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_Minus));
     m_ptrCollapseSubtree      ->setStatusTip(tr("Collapse this element and all childs"));
     m_ptrCollapseSubtree      ->setEnabled(false);
     //
@@ -1140,65 +1156,65 @@ void MnuMainWindow::createEditorMenu()
     m_ptrSaveNodeDescriptor     = new QAction(tr("Save node descriptor"), this);
     m_ptrSaveNodeDescriptor     ->setIconVisibleInMenu(true);
     m_ptrSaveNodeDescriptor     ->setIcon(QIcon(":/images/images/disk_green.png"));
-    m_ptrSaveNodeDescriptor     ->setShortcut(QKeySequence (Qt::ALT +Qt::Key_S));
+    m_ptrSaveNodeDescriptor     ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_S));
     m_ptrSaveNodeDescriptor     ->setStatusTip(tr("Save changed node descriptor"));
     m_ptrSaveNodeDescriptor     ->setEnabled(false);
     //
     m_ptrUndo      = new QAction(tr("Undo"), this);
     m_ptrUndo      ->setIconVisibleInMenu(true);
     m_ptrUndo      ->setIcon(QIcon(":/images/images/undo.png"));
-    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrUndo      ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_Z));
     m_ptrUndo      ->setStatusTip(tr("Undo last action"));
     m_ptrUndo      ->setEnabled(false);
     //
     m_ptrRedo      = new QAction(tr("Redo"), this);
     m_ptrRedo      ->setIconVisibleInMenu(true);
     m_ptrRedo      ->setIcon(QIcon(":/images/images/redo.png"));
-    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrRedo      ->setShortcut(QKeySequence ("Ctrl+Shift+Z") );
     m_ptrRedo      ->setStatusTip(tr("Redo last action"));
     m_ptrRedo      ->setEnabled(false);
     //
     m_ptrPrint      = new QAction(tr("Print"), this);
     m_ptrPrint      ->setIconVisibleInMenu(true);
     m_ptrPrint      ->setIcon(QIcon(":/images/images/printer.png"));
-    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrPrint      ->setShortcut(QKeySequence ("Ctrl+Shift+P"));
     m_ptrPrint      ->setStatusTip(tr("Print node descriptor"));
     m_ptrPrint      ->setEnabled(false);
     //
     m_ptrPrintPreview      = new QAction(tr("Print preview"), this);
     m_ptrPrintPreview      ->setIconVisibleInMenu(true);
     m_ptrPrintPreview      ->setIcon(QIcon(":/images/images/printer_view.png"));
-    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrPrintPreview      ->setShortcut(QKeySequence ("Ctrl+Shift+V"));
     m_ptrPrintPreview      ->setStatusTip(tr("Print preview for node descriptor"));
     m_ptrPrintPreview      ->setEnabled(false);
     //
-    m_ptrPrintPdf      = new QAction(tr("Export to PDF"), this);
-    m_ptrPrintPdf      ->setIconVisibleInMenu(true);
-    m_ptrPrintPdf      ->setIcon(QIcon(":/images/images/document_into.png"));
+    m_ptrExportToPdf      = new QAction(tr("Export to PDF"), this);
+    m_ptrExportToPdf      ->setIconVisibleInMenu(true);
+    m_ptrExportToPdf      ->setIcon(QIcon(":/images/images/document_into.png"));
     //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
-    m_ptrPrintPdf      ->setStatusTip(tr("Export node descriptor to PDF file"));
-    m_ptrPrintPdf      ->setEnabled(false);
+    m_ptrExportToPdf      ->setStatusTip(tr("Export node descriptor to PDF file"));
+    m_ptrExportToPdf      ->setEnabled(false);
     //
     m_ptrBold      = new QAction(tr("Make bold"), this);
     m_ptrBold      ->setIconVisibleInMenu(true);
     m_ptrBold      ->setIcon(QIcon(":/images/images/textbold.png"));
-    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrBold      ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_B));
     m_ptrBold      ->setStatusTip(tr("Make text bold"));
     m_ptrBold      ->setEnabled(false);
     //
     m_ptrUnderline      = new QAction(tr("Make underline"), this);
     m_ptrUnderline      ->setIconVisibleInMenu(true);
     m_ptrUnderline      ->setIcon(QIcon(":/images/images/textunder.png"));
-    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrUnderline      ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_U));
     m_ptrUnderline      ->setStatusTip(tr("Make text underline"));
     m_ptrUnderline      ->setEnabled(false);
     //
-    m_ptrTextItalic      = new QAction(tr("Make italic"), this);
-    m_ptrTextItalic      ->setIconVisibleInMenu(true);
-    m_ptrTextItalic      ->setIcon(QIcon(":/images/images/textitalic.png"));
-    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
-    m_ptrTextItalic      ->setStatusTip(tr("Make text italic"));
-    m_ptrTextItalic      ->setEnabled(false);
+    m_ptrItalic      = new QAction(tr("Make italic"), this);
+    m_ptrItalic      ->setIconVisibleInMenu(true);
+    m_ptrItalic      ->setIcon(QIcon(":/images/images/textitalic.png"));
+    m_ptrItalic      ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_I));
+    m_ptrItalic      ->setStatusTip(tr("Make text italic"));
+    m_ptrItalic      ->setEnabled(false);
     //
     m_ptrTextAlignLeft      = new QAction(tr("Left"), this);
     m_ptrTextAlignLeft      ->setIconVisibleInMenu(true);
@@ -1247,14 +1263,14 @@ void MnuMainWindow::createEditorMenu()
     m_ptrEditorToolBar->addSeparator();
     m_ptrEditorToolBar->addAction(m_ptrPrintPreview);
     m_ptrEditorToolBar->addSeparator();
-    m_ptrEditorToolBar->addAction(m_ptrPrintPdf);
+    m_ptrEditorToolBar->addAction(m_ptrExportToPdf);
     //
     m_ptrEditorToolBar->addSeparator();
     m_ptrEditorToolBar->addAction(m_ptrBold);
     m_ptrEditorToolBar->addSeparator();
     m_ptrEditorToolBar->addAction(m_ptrUnderline);
     m_ptrEditorToolBar->addSeparator();
-    m_ptrEditorToolBar->addAction(m_ptrTextItalic);
+    m_ptrEditorToolBar->addAction(m_ptrItalic);
     //
     //TODO: Make submenu, add this actions in
     //
@@ -1434,13 +1450,13 @@ void MnuMainWindow::assemblyEditorMenu ( QMenu* ptr_node_menu )
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrPrintPreview);
     ptr_node_menu->addSeparator();
-    ptr_node_menu->addAction(m_ptrPrintPdf);
+    ptr_node_menu->addAction(m_ptrExportToPdf);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrBold);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrUnderline);
     ptr_node_menu->addSeparator();
-    ptr_node_menu->addAction(m_ptrTextItalic);
+    ptr_node_menu->addAction(m_ptrItalic);
 }
 
 void MnuMainWindow::assemblyAllMenus()
