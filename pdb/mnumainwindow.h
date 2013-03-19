@@ -91,6 +91,9 @@ private:
     void        assemblyNodeProtectSubMenu      ( QMenu* ptr_menu      );
     //
     void        assemblyEditorMenu              ( QMenu* ptr_node_menu );
+    void        assemblyAlignSubMenu            ( QMenu* ptr_align_menu );
+    void        assemblyTextAttribSubMenu       ( QMenu* ptr_attrib_menu);
+    void        assemblyChangeCaseSubMenu       ( QMenu* ptr_case_menu );
     //
     void        assemblyAttachMenu              ( QMenu* ptr_node_menu );
     void        assemblyAttachProtectionSubMenu ( QMenu* ptr_node_menu );
@@ -168,16 +171,27 @@ public:
     QAction*    m_ptrPrint;
     QAction*    m_ptrPrintPreview;
     QAction*    m_ptrExportToPdf;
+    //---------------------------------------------------------------------------
+    QMenu*      m_ptrCaseMenu;
+    //
+    QAction*    m_ptrSentenceCase;
+    QAction*    m_ptrUpperCase;
+    QAction*    m_ptrLowerCase;
+    QAction*    m_ptrToggleCase;
+    //---------------------------------------------------------------------------
+    QMenu*      m_ptrMakeTextAttribSubMenu;
     //
     QAction*    m_ptrBold;
     QAction*    m_ptrUnderline;
     QAction*    m_ptrItalic;
+    //---------------------------------------------------------------------------
+    QMenu*      m_ptrAlignSubMenu;
     //
     QAction*    m_ptrTextAlignLeft;
     QAction*    m_ptrTextAlignRight;
     QAction*    m_ptrTextAlignCenter;
     QAction*    m_ptrTextAlignJustify;
-    //
+    //---------------------------------------------------------------------------
     //QAction*    m_ptrFamily;
     QAction*    m_ptrTextSize;
     QAction*    m_ptrTextStyle;
@@ -199,7 +213,6 @@ public:
     QAction*    m_ptrViewAttach;
     //
     QToolBar*    m_ptrAttachmentToolBar;
-
     //----------------------------- protection - submenu of the Attach menu  -----------------------------
     QMenu*      m_ptrAttachProtectionSubMenu;
     //

@@ -22,3 +22,5 @@ Date 		CommitID		Changes
 --------------------------------------------------------------------------------------------------------
 18.03.2013      18.03.2013-1		Implement change font and font size for node description
 18.03.2013      18.03.2013-2		Implement print, export to pdf, make bold italic and underline for node description. 
+--------------------------------------------------------------------------------------------------------
+19.03.2013      19.03.2013-1		Add items to the editor menu

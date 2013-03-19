@@ -16,6 +16,7 @@
 #include <QFontComboBox>
 #include <QColor>
 #include <QPrintDialog>
+#include <QActionGroup>
 //
 #include "../CommonInclude/pdb/pdb_style.h"
 
@@ -32,6 +33,7 @@ MyEditor::MyEditor(QWidget *parent) :
     m_ptrItalic     = NULL;
     m_ptrToolBar    = NULL;
     //
+    m_grpAction             = NULL;
     m_ptrTextAlignLeft      = NULL;
     m_ptrTextAlignRight     = NULL;
     m_ptrTextAlignCenter    = NULL;
@@ -45,6 +47,13 @@ MyEditor::MyEditor(QWidget *parent) :
     //
     QObject::connect( this, SIGNAL(currentCharFormatChanged(QTextCharFormat)),  this, SLOT(onCurrentCharFormatChanged(QTextCharFormat)  ));
     QObject::connect( this, SIGNAL(cursorPositionChanged()),                    this, SLOT(OnCursorPositionChanged()                    ));
+    QObject::connect( this, SIGNAL(selectionChanged()),                         this, SLOT(onSelectionChanged()                         ));
+}
+
+MyEditor::~MyEditor()
+{
+    if ( m_grpAction )
+        delete m_grpAction;
 }
 
 void MyEditor::OnPrint ()
@@ -100,7 +109,7 @@ void MyEditor::onCurrentCharFormatChanged (const QTextCharFormat &format)
 
 void MyEditor::OnCursorPositionChanged()
 {
-    //alignmentChanged(this->alignment());
+    alignmentChanged(this->alignment());
 }
 
 void MyEditor::onTextChanged ()
@@ -351,6 +360,18 @@ void MyEditor::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
     //
     cursor.mergeCharFormat(format);
     this->mergeCurrentCharFormat(format);
+    //
+}
+
+void MyEditor::onSelectionChanged()
+{
+    bool b_has = this->textCursor().hasSelection();
+    QString str_selected_text;
+    //
+    if (b_has)
+        str_selected_text = this->textCursor().selectedText();
+    //
+    return;
 }
 
 void MyEditor::fontChanged(const QFont &f)
@@ -381,23 +402,70 @@ void MyEditor::colorChanged(const QColor &c)
 
 void MyEditor::passAlignActions ( QAction* ptr_text_align_left, QAction* ptr_text_align_right, QAction* ptr_text_align_center, QAction* ptr_text_align_justify)
 {
+    if (NULL == m_grpAction )
+    {
+        m_grpAction = new QActionGroup(this);
+         QObject::connect(m_grpAction, SIGNAL(triggered(QAction*)), this, SLOT(OnTextAlign(QAction*)));
+    };
+    //
     if ( (NULL == m_ptrTextAlignLeft) && (NULL != ptr_text_align_left) )
     {
         m_ptrTextAlignLeft = ptr_text_align_left;
+        m_ptrTextAlignLeft->setCheckable(true);
+        m_ptrTextAlignLeft->setPriority(QAction::LowPriority);
+        m_grpAction->addAction(m_ptrTextAlignLeft);
     };
     //
     if ( (NULL == m_ptrTextAlignRight) && (NULL != ptr_text_align_right) )
     {
         m_ptrTextAlignRight = ptr_text_align_right;
+        m_ptrTextAlignRight->setCheckable(true);
+        m_ptrTextAlignRight->setPriority(QAction::LowPriority);
+        m_grpAction->addAction(m_ptrTextAlignRight);
     };
     //
     if ( (NULL == m_ptrTextAlignCenter) && (NULL != ptr_text_align_center) )
     {
         m_ptrTextAlignCenter = ptr_text_align_center;
+        m_ptrTextAlignCenter->setCheckable(true);
+        m_ptrTextAlignCenter->setPriority(QAction::LowPriority);
+        m_grpAction->addAction(m_ptrTextAlignCenter);
     };
     //
     if ( (NULL == m_ptrTextAlignJustify) && (NULL != ptr_text_align_justify) )
     {
         m_ptrTextAlignJustify = ptr_text_align_justify;
+        m_ptrTextAlignJustify->setCheckable(true);
+        m_ptrTextAlignJustify->setPriority(QAction::LowPriority);
+        m_grpAction->addAction(m_ptrTextAlignJustify);
+    };
+}
+
+void MyEditor::OnTextAlign(QAction* a)
+{
+    if (a == m_ptrTextAlignLeft)
+        this->setAlignment(Qt::AlignLeft | Qt::AlignAbsolute);
+    else if (a == m_ptrTextAlignCenter)
+        this->setAlignment(Qt::AlignHCenter);
+    else if (a == m_ptrTextAlignRight)
+        this->setAlignment(Qt::AlignRight | Qt::AlignAbsolute);
+    else if (a == m_ptrTextAlignJustify)
+        this->setAlignment(Qt::AlignJustify);
+}
+
+void MyEditor::alignmentChanged (Qt::Alignment a)
+{
+    if (a & Qt::AlignLeft)
+    {
+        m_ptrTextAlignLeft->setChecked(true);
+    } else if (a & Qt::AlignHCenter)
+    {
+        m_ptrTextAlignCenter->setChecked(true);
+    } else if (a & Qt::AlignRight)
+    {
+        m_ptrTextAlignRight->setChecked(true);
+    } else if (a & Qt::AlignJustify)
+    {
+        m_ptrTextAlignJustify->setChecked(true);
     };
 }

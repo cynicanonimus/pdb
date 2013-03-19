@@ -10,6 +10,7 @@ QT_FORWARD_DECLARE_CLASS(QTextCharFormat)
 QT_FORWARD_DECLARE_CLASS(QFont)
 QT_FORWARD_DECLARE_CLASS(QFontComboBox)
 QT_FORWARD_DECLARE_CLASS(QColor)
+QT_FORWARD_DECLARE_CLASS(QActionGroup)
 
 //
 class MyEditor : public QTextEdit
@@ -17,6 +18,7 @@ class MyEditor : public QTextEdit
     Q_OBJECT
 public:
     explicit MyEditor(QWidget *parent = 0);
+    ~MyEditor();
 
 public:
     void    passUndoRedoAction     ( QAction* ptr_undo, QAction* ptr_redo );
@@ -45,6 +47,8 @@ private slots:
     void    onTextBold             ();
     void    onTextUnderline        ();
     void    onTextItalic           ();
+    void    OnTextAlign            (QAction* a);
+    void    onSelectionChanged     ();
 
 
 private:
@@ -53,6 +57,7 @@ private:
     void    loadFile              (const QString &f);
     void    fontChanged           (const QFont &f);
     void    colorChanged          (const QColor &c);
+    void    alignmentChanged      (Qt::Alignment a);
 
 private:
     QString     m_strLastExportDir;
@@ -65,6 +70,7 @@ private:
     QAction*    m_ptrUnderline;
     QAction*    m_ptrItalic;
     //
+    QActionGroup* m_grpAction;
     QAction*    m_ptrTextAlignLeft;
     QAction*    m_ptrTextAlignRight;
     QAction*    m_ptrTextAlignCenter;

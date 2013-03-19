@@ -1195,6 +1195,34 @@ void MnuMainWindow::createEditorMenu()
     m_ptrExportToPdf      ->setStatusTip(tr("Export node descriptor to PDF file"));
     m_ptrExportToPdf      ->setEnabled(false);
     //
+    m_ptrSentenceCase      = new QAction(tr("Sentence case"), this);
+    //m_ptrSentenceCase    ->setIconVisibleInMenu(true);
+    //m_ptrSentenceCase    ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrSentenceCase    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrSentenceCase      ->setStatusTip(tr("Set words case as in sentence"));
+    m_ptrSentenceCase      ->setEnabled(false);
+    //
+    m_ptrUpperCase      = new QAction(tr("UPPER CASE"), this);
+    //m_ptrUpperCase    ->setIconVisibleInMenu(true);
+    //m_ptrUpperCase    ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrUpperCase    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrUpperCase      ->setStatusTip(tr("SET UPPER CASE"));
+    m_ptrUpperCase      ->setEnabled(false);
+    //
+    m_ptrLowerCase      = new QAction(tr("lower case"), this);
+    //m_ptrLowerCase    ->setIconVisibleInMenu(true);
+    //m_ptrLowerCase    ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrLowerCase    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrLowerCase      ->setStatusTip(tr("set lower case"));
+    m_ptrLowerCase      ->setEnabled(false);
+    //
+    m_ptrToggleCase      = new QAction(tr("tOGGLE cASE"), this);
+    //m_ptrToggleCase    ->setIconVisibleInMenu(true);
+    //m_ptrToggleCase    ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrToggleCase    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrToggleCase      ->setStatusTip(tr("toggle case for selection"));
+    m_ptrToggleCase      ->setEnabled(false);
+    //
     m_ptrBold      = new QAction(tr("Make bold"), this);
     m_ptrBold      ->setIconVisibleInMenu(true);
     m_ptrBold      ->setIcon(QIcon(":/images/images/textbold.png"));
@@ -1374,6 +1402,37 @@ void MnuMainWindow::assemblyNodeProtectSubMenu (QMenu* ptr_menu)
     ptr_menu->addAction(m_ptrUn_ProtectAttachmentsOfAllNodes);
 }
 
+void MnuMainWindow::assemblyAlignSubMenu ( QMenu* ptr_align_menu )
+{
+    ptr_align_menu->addAction(m_ptrTextAlignLeft);
+    ptr_align_menu->addSeparator();
+    ptr_align_menu->addAction(m_ptrTextAlignRight);
+    ptr_align_menu->addSeparator();
+    ptr_align_menu->addAction(m_ptrTextAlignCenter);
+    ptr_align_menu->addSeparator();
+    ptr_align_menu->addAction(m_ptrTextAlignJustify);
+}
+
+void MnuMainWindow::assemblyTextAttribSubMenu       ( QMenu* ptr_attrib_menu)
+{
+    ptr_attrib_menu->addAction(m_ptrBold);
+    ptr_attrib_menu->addSeparator();
+    ptr_attrib_menu->addAction(m_ptrUnderline);
+    ptr_attrib_menu->addSeparator();
+    ptr_attrib_menu->addAction(m_ptrItalic);
+}
+
+void MnuMainWindow::assemblyChangeCaseSubMenu ( QMenu* ptr_case_menu )
+{
+    ptr_case_menu->addAction(m_ptrSentenceCase);
+    ptr_case_menu->addSeparator();
+    ptr_case_menu->addAction(m_ptrUpperCase);
+    ptr_case_menu->addSeparator();
+    ptr_case_menu->addAction(m_ptrLowerCase);
+    ptr_case_menu->addSeparator();
+    ptr_case_menu->addAction(m_ptrToggleCase);
+}
+
 void MnuMainWindow::assemblyAttachProtectionSubMenu( QMenu* ptr_node_menu )
 {
     if (NULL == ptr_node_menu)
@@ -1451,27 +1510,17 @@ void MnuMainWindow::assemblyEditorMenu ( QMenu* ptr_node_menu )
     ptr_node_menu->addAction(m_ptrPrintPreview);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrExportToPdf);
-    ptr_node_menu->addSeparator();
-    ptr_node_menu->addAction(m_ptrBold);
-    ptr_node_menu->addSeparator();
-    ptr_node_menu->addAction(m_ptrUnderline);
-    ptr_node_menu->addSeparator();
-    ptr_node_menu->addAction(m_ptrItalic);
 }
 
 void MnuMainWindow::assemblyAllMenus()
 {
     m_ptrTreeControlMenu = m_ptrParent->menuBar()->addMenu(tr("&Tree"));
-    //
+    //======================== tree menu ========================
     assemblyTreeMenu(m_ptrTreeControlMenu);
-    //--------
+    //======================== node menu ========================
     m_ptrNodeControlMenu = m_ptrParent->menuBar()->addMenu(tr("&Node"));
     //
     assemblyNodeMenu(m_ptrNodeControlMenu);
-    //
-    m_ptrEditorMenu = m_ptrParent->menuBar()->addMenu(tr("&Editor"));
-    //
-    assemblyEditorMenu(m_ptrEditorMenu);
     //
     m_ptrNodeControlMenu->addSeparator();
     m_ptrNodeCryptoSubMenu = m_ptrNodeControlMenu->addMenu(tr("Encrypt/Decrypt..."));
@@ -1480,8 +1529,24 @@ void MnuMainWindow::assemblyAllMenus()
     //
     m_ptrNodeControlMenu->addSeparator();
     m_ptrNodeProtectSubMenu= m_ptrNodeControlMenu->addMenu(tr("Protect/Unprotect..."));
+    //
     assemblyNodeProtectSubMenu(m_ptrNodeProtectSubMenu);
-    //--------
+    //======================== editor menu ========================
+    m_ptrEditorMenu = m_ptrParent->menuBar()->addMenu(tr("&Editor"));
+    assemblyEditorMenu(m_ptrEditorMenu);
+    //
+    m_ptrEditorMenu ->addSeparator();
+    m_ptrCaseMenu = m_ptrEditorMenu->addMenu(tr("Change case"));
+    assemblyChangeCaseSubMenu(m_ptrCaseMenu);
+    //
+    m_ptrEditorMenu ->addSeparator();
+    m_ptrMakeTextAttribSubMenu = m_ptrEditorMenu->addMenu(tr("Font attributes"));
+    assemblyTextAttribSubMenu(m_ptrMakeTextAttribSubMenu);
+    //
+    m_ptrEditorMenu ->addSeparator();
+    m_ptrAlignSubMenu = m_ptrEditorMenu->addMenu(tr("Alignment"));
+    assemblyAlignSubMenu(m_ptrAlignSubMenu);
+    //======================== attachment menu ========================
     m_ptrAttachmentMenu = m_ptrParent->menuBar()->addMenu(tr("&Attachment"));
     //
     assemblyAttachMenu(m_ptrAttachmentMenu);
@@ -1494,16 +1559,16 @@ void MnuMainWindow::assemblyAllMenus()
     m_ptrAttachProtectionSubMenu = m_ptrAttachmentMenu->addMenu(tr("Protection..."));
     //
     assemblyAttachProtectionSubMenu(m_ptrAttachProtectionSubMenu);
-    //--------
+    //======================== view menu ========================
     m_ptrViewMenu = m_ptrParent->menuBar()->addMenu(tr("View"));
     //
     assemblyViewMenu(m_ptrViewMenu);
-    //--------
+    //======================== security menu ========================
     m_ptrSecurity = m_ptrParent->menuBar()->addMenu(tr("Security"));
     //
     assemblySecurityMenu(m_ptrSecurity);
     //
-    //m_ptrParent->menuBar()->addAction(m_ptrAbout);
+    //======================== help menu ========================
     //
     m_ptrHelpMenu = m_ptrParent->menuBar()->addMenu(tr("&Help"));
     assemblyHelpMenu();
