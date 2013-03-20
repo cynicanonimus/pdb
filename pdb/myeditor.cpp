@@ -39,6 +39,11 @@ MyEditor::MyEditor(QWidget *parent) :
     m_ptrTextAlignCenter    = NULL;
     m_ptrTextAlignJustify   = NULL;
     //
+    m_ptrSentenceCase   = NULL;
+    m_ptrUpperCase      = NULL;
+    m_ptrLowerCase      = NULL;
+    m_ptrToggleCase     = NULL;
+    //
     m_ptrFontSize   = NULL;
     m_ptrFontType   = NULL;
     //
@@ -366,10 +371,18 @@ void MyEditor::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 void MyEditor::onSelectionChanged()
 {
     bool b_has = this->textCursor().hasSelection();
-    QString str_selected_text;
     //
-    if (b_has)
-        str_selected_text = this->textCursor().selectedText();
+    if (m_ptrSentenceCase)
+        m_ptrSentenceCase->setEnabled(b_has);
+    //
+    if (m_ptrUpperCase)
+        m_ptrUpperCase->setEnabled(b_has);
+    //
+    if  (m_ptrLowerCase)
+        m_ptrLowerCase->setEnabled(b_has);
+    //
+    if (m_ptrToggleCase)
+        m_ptrToggleCase->setEnabled(b_has);
     //
     return;
 }
@@ -439,6 +452,112 @@ void MyEditor::passAlignActions ( QAction* ptr_text_align_left, QAction* ptr_tex
         m_ptrTextAlignJustify->setPriority(QAction::LowPriority);
         m_grpAction->addAction(m_ptrTextAlignJustify);
     };
+}
+
+void MyEditor::passTextCaseActions ( QAction* ptr_sentence_case,  QAction* ptr_upper_case,  QAction* ptr_lower_case,  QAction* ptr_toggle_case )
+{
+    if ( (NULL == m_ptrSentenceCase) && (NULL != ptr_sentence_case) )
+    {
+        m_ptrSentenceCase = ptr_sentence_case;
+        QObject::connect(m_ptrSentenceCase, SIGNAL(triggered()), this, SLOT(onTextSentenceCase() ));
+    };
+    //
+    if ( (NULL == m_ptrUpperCase) && (NULL != ptr_upper_case) )
+    {
+        m_ptrUpperCase = ptr_upper_case;
+        QObject::connect(m_ptrUpperCase, SIGNAL(triggered()), this, SLOT(onTextUpperCase() ));
+    };
+    //
+    if ( (NULL == m_ptrLowerCase) && (NULL != ptr_lower_case) )
+    {
+        m_ptrLowerCase = ptr_lower_case;
+
+        QObject::connect(m_ptrLowerCase, SIGNAL(triggered()), this, SLOT(onTextLowerCase() ));
+    };
+    //
+    if ( (NULL == m_ptrToggleCase) && (NULL != ptr_toggle_case) )
+    {
+        m_ptrToggleCase = ptr_toggle_case;
+        QObject::connect(m_ptrToggleCase, SIGNAL(triggered()), this, SLOT(onTextToggleCase() ));
+    };
+    //
+
+}
+
+void MyEditor::onTextSentenceCase ()
+{
+    if (false == this->textCursor().hasSelection() )
+        return;
+    //
+    QString str_selected_text = this->textCursor().selectedText();
+    str_selected_text = str_selected_text.toLower();
+    str_selected_text[0] = str_selected_text[0].toUpper();
+    //
+    QTextCharFormat fmt;
+    prepareTextFormatting(fmt);
+    //
+    this->textCursor().insertText(str_selected_text, fmt);
+    //
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void MyEditor::onTextToggleCase ()
+{
+    if (false == this->textCursor().hasSelection() )
+        return;
+    //
+    QString str_selected_text = this->textCursor().selectedText();
+    //
+    for (int i = 0; i < str_selected_text.length(); ++i)
+    {
+        if (str_selected_text[i].isUpper())
+            str_selected_text[i] = str_selected_text[i].toLower();
+        else if(str_selected_text[i].isLower())
+            str_selected_text[i] = str_selected_text[i].toUpper();
+    };
+    //
+    QTextCharFormat fmt;
+    prepareTextFormatting(fmt);
+    //
+    this->textCursor().insertText(str_selected_text, fmt);
+    //
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void MyEditor::onTextLowerCase ()
+{
+    if (false == this->textCursor().hasSelection() )
+        return;
+    //
+    QString str_selected_text = this->textCursor().selectedText();
+    QTextCharFormat fmt;
+    prepareTextFormatting(fmt);
+    //
+    this->textCursor().insertText(str_selected_text.toLower(), fmt);
+    //
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void MyEditor::onTextUpperCase ()
+{
+    if (false == this->textCursor().hasSelection() )
+        return;
+    //
+    QString str_selected_text = this->textCursor().selectedText();
+    QTextCharFormat fmt;
+    prepareTextFormatting(fmt);
+    //
+    this->textCursor().insertText(str_selected_text.toUpper(), fmt);
+    //
+    mergeFormatOnWordOrSelection(fmt);
+}
+
+void MyEditor::prepareTextFormatting (QTextCharFormat& fmt)
+{
+    fmt = this->textCursor().blockCharFormat();
+    fmt.setFontWeight(m_ptrBold->isChecked() ? QFont::Bold : QFont::Normal);
+    fmt.setFontUnderline(m_ptrUnderline->isChecked());
+    fmt.setFontItalic(m_ptrItalic->isChecked());
 }
 
 void MyEditor::OnTextAlign(QAction* a)

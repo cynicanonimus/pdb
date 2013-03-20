@@ -25,6 +25,8 @@ public:
     //Bold,     Underline,     TextItalic
     void    passBUIActions         ( QAction* ptr_bold, QAction* ptr_underline, QAction* ptr_italic );
     void    passAlignActions       ( QAction* ptr_text_align_left, QAction* ptr_text_align_right, QAction* ptr_text_align_center, QAction* ptr_text_align_justify);
+    void    passTextCaseActions    ( QAction* ptr_sentence_case,  QAction* ptr_upper_case,  QAction* ptr_lower_case,  QAction* ptr_toggle_case );
+    //
     void    addEditorToolBar       ( QToolBar* ptr_tool_bar);
 
 signals:
@@ -49,6 +51,11 @@ private slots:
     void    onTextItalic           ();
     void    OnTextAlign            (QAction* a);
     void    onSelectionChanged     ();
+    //
+    void    onTextUpperCase        ();
+    void    onTextLowerCase        ();
+    void    onTextToggleCase       ();
+    void    onTextSentenceCase     ();
 
 
 private:
@@ -58,6 +65,7 @@ private:
     void    fontChanged           (const QFont &f);
     void    colorChanged          (const QColor &c);
     void    alignmentChanged      (Qt::Alignment a);
+    void    prepareTextFormatting (QTextCharFormat& fmt);
 
 private:
     QString     m_strLastExportDir;
@@ -75,6 +83,11 @@ private:
     QAction*    m_ptrTextAlignRight;
     QAction*    m_ptrTextAlignCenter;
     QAction*    m_ptrTextAlignJustify;
+    //
+    QAction*    m_ptrSentenceCase;
+    QAction*    m_ptrUpperCase;
+    QAction*    m_ptrLowerCase;
+    QAction*    m_ptrToggleCase;
     //
     QToolBar*   m_ptrToolBar;
     //

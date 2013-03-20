@@ -24,3 +24,5 @@ Date 		CommitID		Changes
 18.03.2013      18.03.2013-2		Implement print, export to pdf, make bold italic and underline for node description. 
 --------------------------------------------------------------------------------------------------------
 19.03.2013      19.03.2013-1		Add items to the editor menu
+--------------------------------------------------------------------------------------------------------
+20.03.2013      20.03.2013-1		Implement change case of the text in the editor
