@@ -14,6 +14,7 @@
 #include <QTextCharFormat>
 #include <QFont>
 #include <QFontComboBox>
+#include <QColorDialog>
 #include <QColor>
 #include <QPrintDialog>
 #include <QActionGroup>
@@ -27,6 +28,9 @@ MyEditor::MyEditor(QWidget *parent) :
     //
     m_ptrUndo       = NULL;
     m_ptrRedo       = NULL;
+    //
+    m_ptrChangeTextColor        = NULL;
+    m_ptrChangeBackgroundColor  = NULL;
     //
     m_ptrBold       = NULL;
     m_ptrUnderline  = NULL;
@@ -109,7 +113,8 @@ void MyEditor::OnExportToPDF ()
 void MyEditor::onCurrentCharFormatChanged (const QTextCharFormat &format)
 {
     fontChanged(format.font());
-    colorChanged(format.foreground().color());
+    onTextColorChanged(format.foreground().color());
+//    onBackColorChanged(format.background().color());
 }
 
 void MyEditor::OnCursorPositionChanged()
@@ -267,29 +272,78 @@ void MyEditor::passUndoRedoAction (QAction* ptr_undo, QAction* ptr_redo)
     };
 }
 
-void MyEditor::addEditorToolBar (QToolBar* ptr_tool_bar)
+void MyEditor::addEditorToolBarAndColorActions ( QToolBar* ptr_tool_bar, QAction* ptr_set_text_color, QAction* ptr_set_background_color )
 {
-    if ( (NULL == m_ptrToolBar) && (NULL != ptr_tool_bar))
+    if ( (NULL != m_ptrToolBar)                 ||
+         (NULL != m_ptrChangeTextColor)         ||
+         (NULL != m_ptrChangeBackgroundColor)   ||
+         (NULL == ptr_tool_bar)                 ||
+         (NULL == ptr_set_text_color)           ||
+         (NULL == ptr_set_background_color)
+       )
     {
-        m_ptrToolBar =  ptr_tool_bar;
-        //
-        m_ptrFontSize = new QComboBox(m_ptrToolBar);
-        m_ptrFontSize->setEditable(true);
-        QFontDatabase db;
-        foreach(int size, db.standardSizes())
-        {
-            m_ptrFontSize->addItem(QString::number(size));
-        };
-        //
-        QObject::connect(m_ptrFontSize, SIGNAL(activated(QString)),this, SLOT(onTextSize(QString)));
-        m_ptrFontSize->setCurrentIndex(m_ptrFontSize->findText(QString::number(QApplication::font().pointSize())));
-        //
-        m_ptrFontType = new QFontComboBox(m_ptrToolBar);
-        QObject::connect(m_ptrFontType, SIGNAL(activated(QString)), this, SLOT(onTextFamily(QString) ));
-        //
-        m_ptrToolBar->addWidget(m_ptrFontType);
-        m_ptrToolBar->addWidget(m_ptrFontSize);
+        return;
     };
+    //
+    m_ptrToolBar                = ptr_tool_bar;
+    QPixmap pix_black(16, 16);
+    pix_black.fill(Qt::black);
+    m_ptrChangeTextColor        = ptr_set_text_color;
+    m_ptrChangeTextColor->setIcon(pix_black);
+    QObject::connect(m_ptrChangeTextColor, SIGNAL(triggered()), this, SLOT(onTextColor()));
+    //
+    QPixmap pix_white(16, 16);
+    pix_white.fill(Qt::white);
+    m_ptrChangeBackgroundColor  = ptr_set_background_color;
+    m_ptrChangeBackgroundColor->setIcon(pix_white);
+    QObject::connect(m_ptrChangeBackgroundColor, SIGNAL(triggered()), this, SLOT(onBackColor()));
+    //
+    m_ptrFontSize = new QComboBox(m_ptrToolBar);
+    m_ptrFontSize->setEditable(true);
+    QFontDatabase db;
+    foreach(int size, db.standardSizes())
+    {
+        m_ptrFontSize->addItem(QString::number(size));
+    };
+    //
+    QObject::connect(m_ptrFontSize, SIGNAL(activated(QString)),this, SLOT(onTextSize(QString)));
+    m_ptrFontSize->setCurrentIndex(m_ptrFontSize->findText(QString::number(QApplication::font().pointSize())));
+    //
+    m_ptrFontType = new QFontComboBox(m_ptrToolBar);
+    QObject::connect(m_ptrFontType, SIGNAL(activated(QString)), this, SLOT(onTextFamily(QString) ));
+    //
+    m_ptrToolBar->addWidget(m_ptrFontType);
+    m_ptrToolBar->addSeparator();
+    m_ptrToolBar->addWidget(m_ptrFontSize);
+    //
+    m_ptrToolBar->addSeparator();
+    m_ptrToolBar->addAction(m_ptrChangeTextColor);
+    m_ptrToolBar->addSeparator();
+    m_ptrToolBar->addAction(m_ptrChangeBackgroundColor);
+}
+
+void MyEditor::onBackColor ()
+{
+    QColor col = QColorDialog::getColor(this-> textBackgroundColor(), this);
+    if (!col.isValid())
+        return;
+    //
+    QTextCharFormat fmt;
+    fmt.setBackground(col);
+    mergeFormatOnWordOrSelection(fmt);
+    onBackColorChanged(col);
+}
+
+void MyEditor::onTextColor()
+{
+    QColor col = QColorDialog::getColor(this->textColor(), this);
+    if (!col.isValid())
+        return;
+    //
+    QTextCharFormat fmt;
+    fmt.setForeground(col);
+    mergeFormatOnWordOrSelection(fmt);
+    onTextColorChanged(col);
 }
 
 void MyEditor::passBUIActions ( QAction* ptr_bold, QAction* ptr_underline, QAction* ptr_italic )
@@ -406,11 +460,18 @@ void MyEditor::fontChanged(const QFont &f)
     //
 }
 
-void MyEditor::colorChanged(const QColor &c)
+void MyEditor::onBackColorChanged (const QColor &c)
 {
-    QPixmap pix(16, 16);
+    QPixmap pix(48, 48);
     pix.fill(c);
-    //actionTextColor->setIcon(pix);
+    m_ptrChangeBackgroundColor->setIcon(pix);
+}
+
+void MyEditor::onTextColorChanged(const QColor &c)
+{
+    QPixmap pix(48, 48);
+    pix.fill(c);
+    m_ptrChangeTextColor->setIcon(pix);
 }
 
 void MyEditor::passAlignActions ( QAction* ptr_text_align_left, QAction* ptr_text_align_right, QAction* ptr_text_align_center, QAction* ptr_text_align_justify)

@@ -58,5 +58,7 @@
         <file>images/textright.png</file>
         <file>images/undo.png</file>
         <file>images/redo.png</file>
+        <file>images/table_add.png</file>
+        <file>images/link_add.png</file>
     </qresource>
 </RCC>

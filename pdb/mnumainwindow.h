@@ -91,6 +91,8 @@ private:
     void        assemblyNodeProtectSubMenu      ( QMenu* ptr_menu      );
     //
     void        assemblyEditorMenu              ( QMenu* ptr_node_menu );
+    void        assemblyTextColorSubMenu        ( QMenu* ptr_set_text_color_menu );
+    void        assemblyInsertInTextSubMenu     ( QMenu* ptr_insert_in_text_menu );
     void        assemblyAlignSubMenu            ( QMenu* ptr_align_menu );
     void        assemblyTextAttribSubMenu       ( QMenu* ptr_attrib_menu);
     void        assemblyChangeCaseSubMenu       ( QMenu* ptr_case_menu );
@@ -171,6 +173,18 @@ public:
     QAction*    m_ptrPrint;
     QAction*    m_ptrPrintPreview;
     QAction*    m_ptrExportToPdf;
+    //---------------------------------------------------------------------------
+    QMenu*      m_ptrTextColorMenu;
+    QAction*    m_ptrChangeTextColor;
+    QAction*    m_ptrChangeBackgroundColor;
+    //---------------------------------------------------------------------------
+    QMenu*      m_ptrInsertInTextMenu;
+
+    QAction*    m_ptrInsertList;
+    QAction*    m_ptrInsertImage;
+    QAction*    m_ptrInsertURL;
+    QAction*    m_ptrInsertTable;
+
     //---------------------------------------------------------------------------
     QMenu*      m_ptrCaseMenu;
     //

@@ -403,6 +403,9 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     //
     m_ptrPasteAttach            ->setEnabled(false);
     //
+    m_ptrChangeTextColor        ->setEnabled(false);
+    m_ptrChangeBackgroundColor  ->setEnabled(false);
+    //
     m_ptrLoadFromFile           ->setEnabled(false);
     //
     m_ptrBold                   ->setEnabled(false);
@@ -496,6 +499,9 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
         m_ptrTextAlignRight    ->setEnabled(true);
         m_ptrTextAlignCenter   ->setEnabled(true);
         m_ptrTextAlignJustify  ->setEnabled(true);
+        //
+        m_ptrChangeTextColor        ->setEnabled(true);
+        m_ptrChangeBackgroundColor  ->setEnabled(true);
         //
         break;
     case AbstractDatabaseObject::OBJECT_DELETED:
@@ -1195,6 +1201,50 @@ void MnuMainWindow::createEditorMenu()
     m_ptrExportToPdf      ->setStatusTip(tr("Export node descriptor to PDF file"));
     m_ptrExportToPdf      ->setEnabled(false);
     //
+    m_ptrChangeTextColor      = new QAction(tr("Text"), this);
+    m_ptrChangeTextColor      ->setIconVisibleInMenu(true);
+    //we set icon dynamically later
+    //m_ptrChangeTextColor      ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrLoadFromFile      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrChangeTextColor      ->setStatusTip(tr("Set text color"));
+    m_ptrChangeTextColor      ->setEnabled(false);
+    //
+    m_ptrChangeBackgroundColor      = new QAction(tr("Background"), this);
+    m_ptrChangeBackgroundColor      ->setIconVisibleInMenu(true);
+    //we set icon dynamically later
+    //m_ptrChangeBackgroundColor      ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrChangeBackgroundColor      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrChangeBackgroundColor      ->setStatusTip(tr("Set background color"));
+    m_ptrChangeBackgroundColor      ->setEnabled(false);
+    //
+    m_ptrInsertList      = new QAction(tr("List..."), this);
+    m_ptrInsertList      ->setIconVisibleInMenu(true);
+    //m_ptrInsertList      ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrInsertList      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrInsertList      ->setStatusTip(tr("Insert list in the document"));
+    m_ptrInsertList      ->setEnabled(false);
+    //
+    m_ptrInsertImage      = new QAction(tr("Image..."), this);
+    m_ptrInsertImage      ->setIconVisibleInMenu(true);
+    //m_ptrInsertImage      ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrInsertImage      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrInsertImage      ->setStatusTip(tr("Insert image in the document"));
+    m_ptrInsertImage      ->setEnabled(false);
+    //
+    m_ptrInsertURL      = new QAction(tr("URL..."), this);
+    m_ptrInsertURL      ->setIconVisibleInMenu(true);
+    m_ptrInsertURL      ->setIcon(QIcon(":/images/images/link_add.png"));
+    //m_ptrInsertImage      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrInsertURL      ->setStatusTip(tr("Insert URL in the document"));
+    m_ptrInsertURL      ->setEnabled(false);
+    //
+    m_ptrInsertTable      = new QAction(tr("Table..."), this);
+    m_ptrInsertTable      ->setIconVisibleInMenu(true);
+    m_ptrInsertTable      ->setIcon(QIcon(":/images/images/table_add.png"));
+    //m_ptrInsertTable      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrInsertTable      ->setStatusTip(tr("Insert table in the document"));
+    m_ptrInsertTable      ->setEnabled(false);
+    //
     m_ptrSentenceCase      = new QAction(tr("Sentence case"), this);
     //m_ptrSentenceCase    ->setIconVisibleInMenu(true);
     //m_ptrSentenceCase    ->setIcon(QIcon(":/images/images/document_into.png"));
@@ -1205,14 +1255,14 @@ void MnuMainWindow::createEditorMenu()
     m_ptrUpperCase      = new QAction(tr("UPPER CASE"), this);
     //m_ptrUpperCase    ->setIconVisibleInMenu(true);
     //m_ptrUpperCase    ->setIcon(QIcon(":/images/images/document_into.png"));
-    //m_ptrUpperCase    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrUpperCase    ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_Up));
     m_ptrUpperCase      ->setStatusTip(tr("SET UPPER CASE"));
     m_ptrUpperCase      ->setEnabled(false);
     //
     m_ptrLowerCase      = new QAction(tr("lower case"), this);
     //m_ptrLowerCase    ->setIconVisibleInMenu(true);
     //m_ptrLowerCase    ->setIcon(QIcon(":/images/images/document_into.png"));
-    //m_ptrLowerCase    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrLowerCase    ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_Down));
     m_ptrLowerCase      ->setStatusTip(tr("set lower case"));
     m_ptrLowerCase      ->setEnabled(false);
     //
@@ -1402,6 +1452,24 @@ void MnuMainWindow::assemblyNodeProtectSubMenu (QMenu* ptr_menu)
     ptr_menu->addAction(m_ptrUn_ProtectAttachmentsOfAllNodes);
 }
 
+void MnuMainWindow::assemblyTextColorSubMenu  ( QMenu* ptr_set_text_color_menu )
+{
+    ptr_set_text_color_menu->addAction(m_ptrChangeTextColor);
+    ptr_set_text_color_menu->addSeparator();
+    ptr_set_text_color_menu->addAction(m_ptrChangeBackgroundColor);
+}
+
+void MnuMainWindow::assemblyInsertInTextSubMenu ( QMenu* ptr_insert_in_text_menu )
+{
+    ptr_insert_in_text_menu->addAction(m_ptrInsertList);
+    ptr_insert_in_text_menu->addSeparator();
+    ptr_insert_in_text_menu->addAction(m_ptrInsertImage);
+    ptr_insert_in_text_menu->addSeparator();
+    ptr_insert_in_text_menu->addAction(m_ptrInsertURL);
+    ptr_insert_in_text_menu->addSeparator();
+    ptr_insert_in_text_menu->addAction(m_ptrInsertTable);
+}
+
 void MnuMainWindow::assemblyAlignSubMenu ( QMenu* ptr_align_menu )
 {
     ptr_align_menu->addAction(m_ptrTextAlignLeft);
@@ -1534,6 +1602,14 @@ void MnuMainWindow::assemblyAllMenus()
     //======================== editor menu ========================
     m_ptrEditorMenu = m_ptrParent->menuBar()->addMenu(tr("&Editor"));
     assemblyEditorMenu(m_ptrEditorMenu);
+    //
+    m_ptrEditorMenu ->addSeparator();
+    m_ptrTextColorMenu = m_ptrEditorMenu->addMenu(tr("Set color"));
+    assemblyTextColorSubMenu(m_ptrTextColorMenu);
+    //
+    m_ptrEditorMenu ->addSeparator();
+    m_ptrInsertInTextMenu = m_ptrEditorMenu->addMenu(tr("Insert..."));
+    assemblyInsertInTextSubMenu(m_ptrInsertInTextMenu);
     //
     m_ptrEditorMenu ->addSeparator();
     m_ptrCaseMenu = m_ptrEditorMenu->addMenu(tr("Change case"));

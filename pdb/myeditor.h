@@ -23,11 +23,12 @@ public:
 public:
     void    passUndoRedoAction     ( QAction* ptr_undo, QAction* ptr_redo );
     //Bold,     Underline,     TextItalic
-    void    passBUIActions         ( QAction* ptr_bold, QAction* ptr_underline, QAction* ptr_italic );
-    void    passAlignActions       ( QAction* ptr_text_align_left, QAction* ptr_text_align_right, QAction* ptr_text_align_center, QAction* ptr_text_align_justify);
-    void    passTextCaseActions    ( QAction* ptr_sentence_case,  QAction* ptr_upper_case,  QAction* ptr_lower_case,  QAction* ptr_toggle_case );
+    void    passBUIActions         ( QAction* ptr_bold,             QAction* ptr_underline,         QAction* ptr_italic );
+    void    passAlignActions       ( QAction* ptr_text_align_left,  QAction* ptr_text_align_right,  QAction* ptr_text_align_center, QAction* ptr_text_align_justify);
+    void    passTextCaseActions    ( QAction* ptr_sentence_case,    QAction* ptr_upper_case,        QAction* ptr_lower_case,        QAction* ptr_toggle_case );
+    void    passTextColorActions   ( );
     //
-    void    addEditorToolBar       ( QToolBar* ptr_tool_bar);
+    void    addEditorToolBarAndColorActions ( QToolBar* ptr_tool_bar, QAction* ptr_set_text_color, QAction* ptr_set_background_color );
 
 signals:
     void    textExist              (bool);
@@ -56,14 +57,16 @@ private slots:
     void    onTextLowerCase        ();
     void    onTextToggleCase       ();
     void    onTextSentenceCase     ();
-
+    void    onTextColor            ();
+    void    onBackColor            ();
 
 private:
     void    mergeFormatOnWordOrSelection (const QTextCharFormat &format);
     void    fileSave              (const QString& f_name);
     void    loadFile              (const QString &f);
     void    fontChanged           (const QFont &f);
-    void    colorChanged          (const QColor &c);
+    void    onTextColorChanged    (const QColor &c);
+    void    onBackColorChanged    (const QColor &c);
     void    alignmentChanged      (Qt::Alignment a);
     void    prepareTextFormatting (QTextCharFormat& fmt);
 
@@ -88,6 +91,9 @@ private:
     QAction*    m_ptrUpperCase;
     QAction*    m_ptrLowerCase;
     QAction*    m_ptrToggleCase;
+    //
+    QAction*    m_ptrChangeTextColor;
+    QAction*    m_ptrChangeBackgroundColor;
     //
     QToolBar*   m_ptrToolBar;
     //
