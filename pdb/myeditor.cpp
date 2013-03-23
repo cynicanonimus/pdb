@@ -114,7 +114,7 @@ void MyEditor::onCurrentCharFormatChanged (const QTextCharFormat &format)
 {
     fontChanged(format.font());
     onTextColorChanged(format.foreground().color());
-//    onBackColorChanged(format.background().color());
+    onBackColorChanged(format.background().color());
 }
 
 void MyEditor::OnCursorPositionChanged()

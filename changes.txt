@@ -28,3 +28,5 @@ Date 		CommitID		Changes
 20.03.2013      20.03.2013-1		Implement change case of the text in the editor
 --------------------------------------------------------------------------------------------------------
 22.03.2013      22.03.2013-1            Implement fore-and background text of editor elements (has bug with backgound color visualisation)
+--------------------------------------------------------------------------------------------------------
+23.03.2013      23.03.2013-1	        Fix the bug with the slow attachments status detection. 
