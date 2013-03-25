@@ -52,7 +52,8 @@ SOURCES += main.cpp\
     ../CommonInclude/pdb/DBSettings.cpp \
     ../CommonInclude/pdb/cryptosupport.cpp \
     waiter.cpp \
-    myeditor.cpp
+    myeditor.cpp \
+    dlginserttable.cpp
 
 HEADERS  += mainwindow.h \
     GDefinitions.h \
@@ -91,7 +92,8 @@ HEADERS  += mainwindow.h \
     ../CommonInclude/pdb/cryptosupport.h \
     ../CommonInclude/pdb/VariantPtr.h \
     waiter.h \
-    myeditor.h
+    myeditor.h \
+    dlginserttable.h
 
 FORMS    += mainwindow.ui \
     notificationdialog.ui \
@@ -101,7 +103,8 @@ FORMS    += mainwindow.ui \
     treestatisticdlg.ui \
     treesearchdlg.ui \
     passworddlg.ui \
-    askchangesdetailsdlg.ui
+    askchangesdetailsdlg.ui \
+    dlginserttable.ui
 
 RESOURCES += \
     pdb_res.qrc

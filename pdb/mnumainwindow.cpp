@@ -407,6 +407,8 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     //
     m_ptrLoadFromFile           ->setEnabled(false);
     //
+    m_ptrInsertTable            ->setEnabled(false);
+    //
     m_ptrBold                   ->setEnabled(false);
     m_ptrUnderline              ->setEnabled(false);
     m_ptrItalic                 ->setEnabled(false);
@@ -490,6 +492,9 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
         //if selected node exist, user is able to load description of this node from file
         //
         m_ptrLoadFromFile   ->setEnabled(true);
+        //
+        m_ptrInsertTable    ->setEnabled(true);
+        //
         m_ptrBold           ->setEnabled(true);
         m_ptrUnderline      ->setEnabled(true);
         m_ptrItalic         ->setEnabled(true);

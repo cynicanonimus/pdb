@@ -11,6 +11,7 @@ QT_FORWARD_DECLARE_CLASS(QFont)
 QT_FORWARD_DECLARE_CLASS(QFontComboBox)
 QT_FORWARD_DECLARE_CLASS(QColor)
 QT_FORWARD_DECLARE_CLASS(QActionGroup)
+QT_FORWARD_DECLARE_CLASS(MnuMainWindow)
 
 //
 class MyEditor : public QTextEdit
@@ -21,14 +22,9 @@ public:
     ~MyEditor();
 
 public:
-    void    passUndoRedoAction     ( QAction* ptr_undo, QAction* ptr_redo );
-    //Bold,     Underline,     TextItalic
-    void    passBUIActions         ( QAction* ptr_bold,             QAction* ptr_underline,         QAction* ptr_italic );
-    void    passAlignActions       ( QAction* ptr_text_align_left,  QAction* ptr_text_align_right,  QAction* ptr_text_align_center, QAction* ptr_text_align_justify);
-    void    passTextCaseActions    ( QAction* ptr_sentence_case,    QAction* ptr_upper_case,        QAction* ptr_lower_case,        QAction* ptr_toggle_case );
-    void    passTextColorActions   ( );
+    void    passMnuItems           ( MnuMainWindow* ptr_mnu_window );
     //
-    void    addEditorToolBarAndColorActions ( QToolBar* ptr_tool_bar, QAction* ptr_set_text_color, QAction* ptr_set_background_color );
+    //void    addEditorToolBarAndColorActions ( QToolBar* ptr_tool_bar, QAction* ptr_set_text_color, QAction* ptr_set_background_color );
 
 signals:
     void    textExist              (bool);
@@ -57,8 +53,11 @@ private slots:
     void    onTextLowerCase        ();
     void    onTextToggleCase       ();
     void    onTextSentenceCase     ();
+    //
     void    onTextColor            ();
     void    onBackColor            ();
+    //
+    void    onInsertTable          ();
 
 private:
     void    mergeFormatOnWordOrSelection (const QTextCharFormat &format);
@@ -74,31 +73,11 @@ private:
     QString     m_strLastExportDir;
     QString     m_strLastLoadDir;
     //
-    QAction*    m_ptrUndo;
-    QAction*    m_ptrRedo;
-    //
-    QAction*    m_ptrBold;
-    QAction*    m_ptrUnderline;
-    QAction*    m_ptrItalic;
-    //
-    QActionGroup* m_grpAction;
-    QAction*    m_ptrTextAlignLeft;
-    QAction*    m_ptrTextAlignRight;
-    QAction*    m_ptrTextAlignCenter;
-    QAction*    m_ptrTextAlignJustify;
-    //
-    QAction*    m_ptrSentenceCase;
-    QAction*    m_ptrUpperCase;
-    QAction*    m_ptrLowerCase;
-    QAction*    m_ptrToggleCase;
-    //
-    QAction*    m_ptrChangeTextColor;
-    QAction*    m_ptrChangeBackgroundColor;
-    //
-    QToolBar*   m_ptrToolBar;
+    MnuMainWindow*  m_ptrMnuObject;
+    QActionGroup*   m_grpAction;
     //
     QFontComboBox*  m_ptrFontType;
-    QComboBox*  m_ptrFontSize;
+    QComboBox*      m_ptrFontSize;
 };
 
 #endif // MYEDITOR_H

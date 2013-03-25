@@ -1,4 +1,6 @@
 #include "myeditor.h"
+#include "dlginserttable.h"
+//
 #include <QPrinter>
 #include <QPrintPreviewDialog>
 #include <QFileDialog>
@@ -19,6 +21,12 @@
 #include <QPrintDialog>
 #include <QActionGroup>
 //
+#include <QTextTableFormat>
+#include <QTextFrameFormat>
+
+//
+
+#include "mnumainwindow.h"
 #include "../CommonInclude/pdb/pdb_style.h"
 
 MyEditor::MyEditor(QWidget *parent) :
@@ -26,6 +34,9 @@ MyEditor::MyEditor(QWidget *parent) :
 {
     m_strLastLoadDir = tr("");
     //
+    m_ptrMnuObject  = NULL;
+    m_grpAction     = NULL;
+/*
     m_ptrUndo       = NULL;
     m_ptrRedo       = NULL;
     //
@@ -37,7 +48,6 @@ MyEditor::MyEditor(QWidget *parent) :
     m_ptrItalic     = NULL;
     m_ptrToolBar    = NULL;
     //
-    m_grpAction             = NULL;
     m_ptrTextAlignLeft      = NULL;
     m_ptrTextAlignRight     = NULL;
     m_ptrTextAlignCenter    = NULL;
@@ -50,6 +60,7 @@ MyEditor::MyEditor(QWidget *parent) :
     //
     m_ptrFontSize   = NULL;
     m_ptrFontType   = NULL;
+*/
     //
     //QObject::connect( ui->m_textEditor,                 SIGNAL(textChanged() ), m_pMainMenu,SLOT (onEditorTextChanged() ));
     QObject::connect( this, SIGNAL(textChanged()),                              this, SLOT(onTextChanged()                              ));
@@ -63,6 +74,116 @@ MyEditor::~MyEditor()
 {
     if ( m_grpAction )
         delete m_grpAction;
+}
+
+void MyEditor::passMnuItems ( MnuMainWindow* ptr_mnu_window )
+{
+    if ( NULL != m_ptrMnuObject )
+        return;
+    //
+    m_ptrMnuObject = ptr_mnu_window;
+    //---------------------------------------------------------------------------------------------------------------------
+    QObject::connect(this->document(), SIGNAL(undoAvailable(bool)), m_ptrMnuObject->m_ptrUndo, SLOT(setEnabled(bool)));
+    QObject::connect(this->document(), SIGNAL(redoAvailable(bool)), m_ptrMnuObject->m_ptrRedo, SLOT(setEnabled(bool)));
+    //---------------------------------------------------------------------------------------------------------------------
+    QPixmap pix_black(16, 16);
+    pix_black.fill(Qt::black);
+    m_ptrMnuObject->m_ptrChangeTextColor->setIcon(pix_black);
+    QObject::connect(m_ptrMnuObject->m_ptrChangeTextColor, SIGNAL(triggered()), this, SLOT(onTextColor()));
+    //
+    QPixmap pix_white(16, 16);
+    pix_white.fill(Qt::white);
+    m_ptrMnuObject->m_ptrChangeBackgroundColor->setIcon(pix_white);
+    QObject::connect(m_ptrMnuObject->m_ptrChangeBackgroundColor, SIGNAL(triggered()), this, SLOT(onBackColor()));
+    //
+    m_ptrFontSize = new QComboBox(m_ptrMnuObject->m_ptrEditorToolBar);
+    m_ptrFontSize->setEditable(true);
+    QFontDatabase db;
+    foreach(int size, db.standardSizes())
+    {
+        m_ptrFontSize->addItem(QString::number(size));
+    };
+    //
+    QObject::connect(m_ptrFontSize, SIGNAL(activated(QString)),this, SLOT(onTextSize(QString)));
+    m_ptrFontSize->setCurrentIndex(m_ptrFontSize->findText(QString::number(QApplication::font().pointSize())));
+    //
+    m_ptrFontType = new QFontComboBox(m_ptrMnuObject->m_ptrEditorToolBar);
+    QObject::connect(m_ptrFontType, SIGNAL(activated(QString)), this, SLOT(onTextFamily(QString) ));
+    //
+    m_ptrMnuObject->m_ptrEditorToolBar->addWidget(m_ptrFontType);
+    m_ptrMnuObject->m_ptrEditorToolBar->addSeparator();
+    m_ptrMnuObject->m_ptrEditorToolBar->addWidget(m_ptrFontSize);
+    //
+    m_ptrMnuObject->m_ptrEditorToolBar->addSeparator();
+    m_ptrMnuObject->m_ptrEditorToolBar->addAction(m_ptrMnuObject->m_ptrChangeTextColor);
+    m_ptrMnuObject->m_ptrEditorToolBar->addSeparator();
+    m_ptrMnuObject->m_ptrEditorToolBar->addAction(m_ptrMnuObject->m_ptrChangeBackgroundColor);
+    //---------------------------------------------------------------------------------------------------------------------
+    m_ptrMnuObject->m_ptrBold->setPriority(QAction::LowPriority);
+    //
+    QFont bold;
+    bold.setBold(true);
+    m_ptrMnuObject->m_ptrBold->setFont(bold);
+    QObject::connect(m_ptrMnuObject->m_ptrBold, SIGNAL(triggered()), this, SLOT(onTextBold()));
+    m_ptrMnuObject->m_ptrBold->setCheckable(true);
+    //m_ptrUnderline->setShortcut(Qt::CTRL + Qt::Key_U);
+    m_ptrMnuObject->m_ptrUnderline->setPriority(QAction::LowPriority);
+    QFont underline;
+    underline.setUnderline(true);
+    m_ptrMnuObject->m_ptrUnderline->setFont(underline);
+    QObject::connect(m_ptrMnuObject->m_ptrUnderline, SIGNAL(triggered()), this, SLOT(onTextUnderline()));
+    m_ptrMnuObject->m_ptrUnderline->setCheckable(true);
+    //
+    m_ptrMnuObject->m_ptrItalic->setPriority(QAction::LowPriority);
+    //m_ptrItalic->setShortcut(Qt::CTRL + Qt::Key_I);
+    QFont italic;
+    italic.setItalic(true);
+    m_ptrMnuObject->m_ptrItalic->setFont(italic);
+    QObject::connect(m_ptrMnuObject->m_ptrItalic, SIGNAL(triggered()), this, SLOT(onTextItalic()));
+    m_ptrMnuObject->m_ptrItalic->setCheckable(true);
+    //---------------------------------------------------------------------------------------------------------------------
+    if (NULL == m_grpAction )
+    {
+        m_grpAction = new QActionGroup(this);
+         QObject::connect(m_grpAction, SIGNAL(triggered(QAction*)), this, SLOT(OnTextAlign(QAction*)));
+    };
+    //
+    m_ptrMnuObject->m_ptrTextAlignLeft->setCheckable(true);
+    m_ptrMnuObject->m_ptrTextAlignLeft->setPriority(QAction::LowPriority);
+    m_grpAction->addAction(m_ptrMnuObject->m_ptrTextAlignLeft);
+    //
+    m_ptrMnuObject->m_ptrTextAlignRight->setCheckable(true);
+    m_ptrMnuObject->m_ptrTextAlignRight->setPriority(QAction::LowPriority);
+    m_grpAction->addAction(    m_ptrMnuObject->m_ptrTextAlignRight);
+    //
+    m_ptrMnuObject->m_ptrTextAlignCenter->setCheckable(true);
+    m_ptrMnuObject->m_ptrTextAlignCenter->setPriority(QAction::LowPriority);
+    m_grpAction->addAction(m_ptrMnuObject->m_ptrTextAlignCenter);
+    //
+    m_ptrMnuObject->m_ptrTextAlignJustify->setCheckable(true);
+    m_ptrMnuObject->m_ptrTextAlignJustify->setPriority(QAction::LowPriority);
+    m_grpAction->addAction(m_ptrMnuObject->m_ptrTextAlignJustify);
+    //
+    QObject::connect(m_ptrMnuObject->m_ptrSentenceCase, SIGNAL(triggered()), this, SLOT(onTextSentenceCase()    ));
+    QObject::connect(m_ptrMnuObject->m_ptrUpperCase,    SIGNAL(triggered()), this, SLOT(onTextUpperCase()       ));
+    QObject::connect(m_ptrMnuObject->m_ptrLowerCase,    SIGNAL(triggered()), this, SLOT(onTextLowerCase()       ));
+    QObject::connect(m_ptrMnuObject->m_ptrToggleCase,   SIGNAL(triggered()), this, SLOT(onTextToggleCase()      ));
+    //
+    QObject::connect(m_ptrMnuObject->m_ptrInsertTable,  SIGNAL(triggered()), this, SLOT(onInsertTable()         ));
+    //
+}
+
+void MyEditor::onInsertTable ()
+{
+    DlgInsertTable dlg;
+
+    QDialog::DialogCode en_code = (QDialog::DialogCode) dlg.exec();
+    if ( QDialog::Rejected == en_code )
+        return;
+    //
+    const QTextTableFormat& table_fmt = dlg.getTableFormat();
+    //
+    this->textCursor().insertTable(dlg.rows(), dlg.columns(), table_fmt);
 }
 
 void MyEditor::OnPrint ()
@@ -256,7 +377,7 @@ void MyEditor::onTextSize (const QString &p)
         mergeFormatOnWordOrSelection(fmt);
     };
 }
-
+/*
 void MyEditor::passUndoRedoAction (QAction* ptr_undo, QAction* ptr_redo)
 {
     if ( ptr_undo && (NULL == m_ptrUndo))
@@ -271,7 +392,8 @@ void MyEditor::passUndoRedoAction (QAction* ptr_undo, QAction* ptr_redo)
         connect(this->document(), SIGNAL(redoAvailable(bool)), m_ptrRedo, SLOT(setEnabled(bool)));
     };
 }
-
+*/
+/*
 void MyEditor::addEditorToolBarAndColorActions ( QToolBar* ptr_tool_bar, QAction* ptr_set_text_color, QAction* ptr_set_background_color )
 {
     if ( (NULL != m_ptrToolBar)                 ||
@@ -321,7 +443,7 @@ void MyEditor::addEditorToolBarAndColorActions ( QToolBar* ptr_tool_bar, QAction
     m_ptrToolBar->addSeparator();
     m_ptrToolBar->addAction(m_ptrChangeBackgroundColor);
 }
-
+*/
 void MyEditor::onBackColor ()
 {
     QColor col = QColorDialog::getColor(this-> textBackgroundColor(), this);
@@ -345,7 +467,7 @@ void MyEditor::onTextColor()
     mergeFormatOnWordOrSelection(fmt);
     onTextColorChanged(col);
 }
-
+/*
 void MyEditor::passBUIActions ( QAction* ptr_bold, QAction* ptr_underline, QAction* ptr_italic )
 {
     if ( (NULL == m_ptrBold) && (NULL != ptr_bold) )
@@ -388,26 +510,35 @@ void MyEditor::passBUIActions ( QAction* ptr_bold, QAction* ptr_underline, QActi
         m_ptrItalic->setCheckable(true);
     };
 }
-
+*/
 void MyEditor::onTextBold             ()
 {
-    QTextCharFormat fmt;
-    fmt.setFontWeight(m_ptrBold->isChecked() ? QFont::Bold : QFont::Normal);
-    mergeFormatOnWordOrSelection(fmt);
+    if (m_ptrMnuObject)
+    {
+        QTextCharFormat fmt;
+        fmt.setFontWeight(m_ptrMnuObject->m_ptrBold->isChecked() ? QFont::Bold : QFont::Normal);
+        mergeFormatOnWordOrSelection(fmt);
+    };
 }
 
 void MyEditor::onTextUnderline        ()
 {
-    QTextCharFormat fmt;
-    fmt.setFontUnderline(m_ptrUnderline->isChecked());
-    mergeFormatOnWordOrSelection(fmt);
+    if (m_ptrMnuObject)
+    {
+        QTextCharFormat fmt;
+        fmt.setFontUnderline(m_ptrMnuObject->m_ptrUnderline->isChecked());
+        mergeFormatOnWordOrSelection(fmt);
+    };
 }
 
 void MyEditor::onTextItalic           ()
 {
-    QTextCharFormat fmt;
-    fmt.setFontItalic(m_ptrItalic->isChecked());
-    mergeFormatOnWordOrSelection(fmt);
+    if (m_ptrMnuObject)
+    {
+        QTextCharFormat fmt;
+        fmt.setFontItalic(m_ptrMnuObject->m_ptrItalic->isChecked());
+        mergeFormatOnWordOrSelection(fmt);
+    };
 }
 
 void MyEditor::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
@@ -424,19 +555,18 @@ void MyEditor::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 
 void MyEditor::onSelectionChanged()
 {
+    if (NULL == m_ptrMnuObject)
+        return;
+    //
     bool b_has = this->textCursor().hasSelection();
     //
-    if (m_ptrSentenceCase)
-        m_ptrSentenceCase->setEnabled(b_has);
+    m_ptrMnuObject->m_ptrSentenceCase->setEnabled(b_has);
     //
-    if (m_ptrUpperCase)
-        m_ptrUpperCase->setEnabled(b_has);
+    m_ptrMnuObject->m_ptrUpperCase->setEnabled(b_has);
     //
-    if  (m_ptrLowerCase)
-        m_ptrLowerCase->setEnabled(b_has);
+    m_ptrMnuObject->m_ptrLowerCase->setEnabled(b_has);
     //
-    if (m_ptrToggleCase)
-        m_ptrToggleCase->setEnabled(b_has);
+    m_ptrMnuObject->m_ptrToggleCase->setEnabled(b_has);
     //
     return;
 }
@@ -449,72 +579,37 @@ void MyEditor::fontChanged(const QFont &f)
     if (m_ptrFontSize)
         m_ptrFontSize->setCurrentIndex(m_ptrFontSize->findText(QString::number(f.pointSize())));
     //
-    if (m_ptrBold)
-        m_ptrBold->setChecked(f.bold());
+    if (NULL == m_ptrMnuObject)
+        return;
     //
-    if (m_ptrUnderline)
-        m_ptrUnderline->setChecked(f.underline());
+    m_ptrMnuObject->m_ptrBold->setChecked(f.bold());
     //
-    if (m_ptrItalic)
-        m_ptrItalic->setChecked(f.italic());
+    m_ptrMnuObject->m_ptrUnderline->setChecked(f.underline());
+    //
+    m_ptrMnuObject->m_ptrItalic->setChecked(f.italic());
     //
 }
 
 void MyEditor::onBackColorChanged (const QColor &c)
 {
+    if (NULL == m_ptrMnuObject)
+        return;
+    //
     QPixmap pix(48, 48);
     pix.fill(c);
-    m_ptrChangeBackgroundColor->setIcon(pix);
+    m_ptrMnuObject->m_ptrChangeBackgroundColor->setIcon(pix);
 }
 
 void MyEditor::onTextColorChanged(const QColor &c)
 {
+    if (NULL == m_ptrMnuObject)
+        return;
+    //
     QPixmap pix(48, 48);
     pix.fill(c);
-    m_ptrChangeTextColor->setIcon(pix);
+    m_ptrMnuObject->m_ptrChangeTextColor->setIcon(pix);
 }
-
-void MyEditor::passAlignActions ( QAction* ptr_text_align_left, QAction* ptr_text_align_right, QAction* ptr_text_align_center, QAction* ptr_text_align_justify)
-{
-    if (NULL == m_grpAction )
-    {
-        m_grpAction = new QActionGroup(this);
-         QObject::connect(m_grpAction, SIGNAL(triggered(QAction*)), this, SLOT(OnTextAlign(QAction*)));
-    };
-    //
-    if ( (NULL == m_ptrTextAlignLeft) && (NULL != ptr_text_align_left) )
-    {
-        m_ptrTextAlignLeft = ptr_text_align_left;
-        m_ptrTextAlignLeft->setCheckable(true);
-        m_ptrTextAlignLeft->setPriority(QAction::LowPriority);
-        m_grpAction->addAction(m_ptrTextAlignLeft);
-    };
-    //
-    if ( (NULL == m_ptrTextAlignRight) && (NULL != ptr_text_align_right) )
-    {
-        m_ptrTextAlignRight = ptr_text_align_right;
-        m_ptrTextAlignRight->setCheckable(true);
-        m_ptrTextAlignRight->setPriority(QAction::LowPriority);
-        m_grpAction->addAction(m_ptrTextAlignRight);
-    };
-    //
-    if ( (NULL == m_ptrTextAlignCenter) && (NULL != ptr_text_align_center) )
-    {
-        m_ptrTextAlignCenter = ptr_text_align_center;
-        m_ptrTextAlignCenter->setCheckable(true);
-        m_ptrTextAlignCenter->setPriority(QAction::LowPriority);
-        m_grpAction->addAction(m_ptrTextAlignCenter);
-    };
-    //
-    if ( (NULL == m_ptrTextAlignJustify) && (NULL != ptr_text_align_justify) )
-    {
-        m_ptrTextAlignJustify = ptr_text_align_justify;
-        m_ptrTextAlignJustify->setCheckable(true);
-        m_ptrTextAlignJustify->setPriority(QAction::LowPriority);
-        m_grpAction->addAction(m_ptrTextAlignJustify);
-    };
-}
-
+/*
 void MyEditor::passTextCaseActions ( QAction* ptr_sentence_case,  QAction* ptr_upper_case,  QAction* ptr_lower_case,  QAction* ptr_toggle_case )
 {
     if ( (NULL == m_ptrSentenceCase) && (NULL != ptr_sentence_case) )
@@ -544,7 +639,7 @@ void MyEditor::passTextCaseActions ( QAction* ptr_sentence_case,  QAction* ptr_u
     //
 
 }
-
+*/
 void MyEditor::onTextSentenceCase ()
 {
     if (false == this->textCursor().hasSelection() )
@@ -615,37 +710,47 @@ void MyEditor::onTextUpperCase ()
 
 void MyEditor::prepareTextFormatting (QTextCharFormat& fmt)
 {
+    if (NULL == m_ptrMnuObject)
+        return;
+    //
     fmt = this->textCursor().blockCharFormat();
-    fmt.setFontWeight(m_ptrBold->isChecked() ? QFont::Bold : QFont::Normal);
-    fmt.setFontUnderline(m_ptrUnderline->isChecked());
-    fmt.setFontItalic(m_ptrItalic->isChecked());
+    //
+    fmt.setFontWeight   ( m_ptrMnuObject->m_ptrBold->isChecked() ? QFont::Bold : QFont::Normal);
+    fmt.setFontUnderline( m_ptrMnuObject->m_ptrUnderline->isChecked()    );
+    fmt.setFontItalic   ( m_ptrMnuObject->m_ptrItalic->isChecked()       );
 }
 
 void MyEditor::OnTextAlign(QAction* a)
 {
-    if (a == m_ptrTextAlignLeft)
+    if (NULL == m_ptrMnuObject)
+        return;
+    //
+    if (a == m_ptrMnuObject->m_ptrTextAlignLeft)
         this->setAlignment(Qt::AlignLeft | Qt::AlignAbsolute);
-    else if (a == m_ptrTextAlignCenter)
+    else if (a == m_ptrMnuObject->m_ptrTextAlignCenter)
         this->setAlignment(Qt::AlignHCenter);
-    else if (a == m_ptrTextAlignRight)
+    else if (a == m_ptrMnuObject->m_ptrTextAlignRight)
         this->setAlignment(Qt::AlignRight | Qt::AlignAbsolute);
-    else if (a == m_ptrTextAlignJustify)
+    else if (a == m_ptrMnuObject->m_ptrTextAlignJustify)
         this->setAlignment(Qt::AlignJustify);
 }
 
 void MyEditor::alignmentChanged (Qt::Alignment a)
 {
+    if (NULL == m_ptrMnuObject)
+        return;
+    //
     if (a & Qt::AlignLeft)
     {
-        m_ptrTextAlignLeft->setChecked(true);
+        m_ptrMnuObject->m_ptrTextAlignLeft->setChecked(true);
     } else if (a & Qt::AlignHCenter)
     {
-        m_ptrTextAlignCenter->setChecked(true);
+       m_ptrMnuObject->m_ptrTextAlignCenter->setChecked(true);
     } else if (a & Qt::AlignRight)
     {
-        m_ptrTextAlignRight->setChecked(true);
+        m_ptrMnuObject->m_ptrTextAlignRight->setChecked(true);
     } else if (a & Qt::AlignJustify)
     {
-        m_ptrTextAlignJustify->setChecked(true);
+        m_ptrMnuObject->m_ptrTextAlignJustify->setChecked(true);
     };
 }
