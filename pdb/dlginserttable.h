@@ -20,6 +20,8 @@ public:
     const QTextTableFormat&         getTableFormat  () const { return m_TableFormat;}
     unsigned int                    columns         () const { return m_uiColumnsNumber;}
     unsigned int                    rows            () const { return m_uiRowsNumber;}
+    //
+    void                            setTableFormat  (const QTextTableFormat& tbl_format);
 
 private:
     QTextFrameFormat::BorderStyle   getBorderStyle() const;

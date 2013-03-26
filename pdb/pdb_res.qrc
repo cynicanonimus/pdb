@@ -60,5 +60,11 @@
         <file>images/redo.png</file>
         <file>images/table_add.png</file>
         <file>images/link_add.png</file>
+        <file>images/row_remove.png</file>
+        <file>images/col_remove.png</file>
+        <file>images/row_add.png</file>
+        <file>images/coll_add.png</file>
+        <file>images/table_edit.png</file>
+        <file>images/cell_merge.png</file>
     </qresource>
 </RCC>

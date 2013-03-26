@@ -66,6 +66,9 @@ private slots:
     void onTriggerNodeToolBox               ();
     void onTriggerAttachmentToolBox         ();
     void onTriggerEditToolBox               ();
+    void onTriggerTableToolBox              ();
+
+
 
 private:
     void        analyseAttachmentsStatus        ( const Attachment::AttachmentsList&    v_attachment, AttachStatusChecker& checker );
@@ -76,6 +79,7 @@ private:
     void        createNodeControlMenu       ();
     void        createAttachmentControlMenu ();
     void        createEditorMenu            ();
+    void        createTableSubMenu          ();
     void        createProtectionMenu        ();
     void        createSecurityMenu          ();
     void        createToolBarSubMenu        ();
@@ -92,6 +96,7 @@ private:
     //
     void        assemblyEditorMenu              ( QMenu* ptr_node_menu );
     void        assemblyTextColorSubMenu        ( QMenu* ptr_set_text_color_menu );
+    void        assemblyTableSubMenu            ( QMenu* ptr_table_menu );
     void        assemblyInsertInTextSubMenu     ( QMenu* ptr_insert_in_text_menu );
     void        assemblyAlignSubMenu            ( QMenu* ptr_align_menu );
     void        assemblyTextAttribSubMenu       ( QMenu* ptr_attrib_menu);
@@ -173,18 +178,29 @@ public:
     QAction*    m_ptrPrint;
     QAction*    m_ptrPrintPreview;
     QAction*    m_ptrExportToPdf;
-    //---------------------------------------------------------------------------
+    //--------------------------------text color ---------------------------------
     QMenu*      m_ptrTextColorMenu;
+    //
     QAction*    m_ptrChangeTextColor;
     QAction*    m_ptrChangeBackgroundColor;
+    //------------------------------- table --------------------------------------
+    QMenu*      m_ptrTableMenu;
+    //
+    QAction*    m_ptrInsertTable;
+    QAction*    m_ptrInsertRow;
+    QAction*    m_ptrInsertColumn;
+    QAction*    m_ptrRemoveRow;
+    QAction*    m_ptrRemoveColumn;
+    QAction*    m_ptrCellsMerge;
+    QAction*    m_ptrTableSettings;
+
+    QToolBar*   m_ptrTableToolBar;
     //---------------------------------------------------------------------------
     QMenu*      m_ptrInsertInTextMenu;
 
     QAction*    m_ptrInsertList;
     QAction*    m_ptrInsertImage;
     QAction*    m_ptrInsertURL;
-    QAction*    m_ptrInsertTable;
-
     //---------------------------------------------------------------------------
     QMenu*      m_ptrCaseMenu;
     //
@@ -243,6 +259,7 @@ public:
     QAction*    m_ptrMnuAttachmentToolBar;
     QAction*    m_ptrMnuTreeToolBar;
     QAction*    m_ptrMnuEditorToolBar;
+    QAction*    m_ptrMnuTableToolBar;
 
     //----------------------------- security - main menu  -----------------------------
     QMenu*      m_ptrSecurity;

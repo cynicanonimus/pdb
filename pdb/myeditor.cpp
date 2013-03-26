@@ -21,8 +21,10 @@
 #include <QPrintDialog>
 #include <QActionGroup>
 //
+#include <QTextTable>
 #include <QTextTableFormat>
 #include <QTextFrameFormat>
+#include <QInputDialog>
 
 //
 
@@ -171,6 +173,48 @@ void MyEditor::passMnuItems ( MnuMainWindow* ptr_mnu_window )
     //
     QObject::connect(m_ptrMnuObject->m_ptrInsertTable,  SIGNAL(triggered()), this, SLOT(onInsertTable()         ));
     //
+    QObject::connect(m_ptrMnuObject->m_ptrInsertRow,    SIGNAL(triggered()), this, SLOT(onAddRow        ()      ));
+    QObject::connect(m_ptrMnuObject->m_ptrInsertColumn, SIGNAL(triggered()), this, SLOT(onAddColumn     ()      ));
+    QObject::connect(m_ptrMnuObject->m_ptrRemoveRow,    SIGNAL(triggered()), this, SLOT(onRemoveRow     ()      ));
+    QObject::connect(m_ptrMnuObject->m_ptrRemoveColumn, SIGNAL(triggered()), this, SLOT(onRemoveColumn  ()      ));
+    QObject::connect(m_ptrMnuObject->m_ptrCellsMerge,   SIGNAL(triggered()), this, SLOT(onMergeCells    ()      ));
+    QObject::connect(m_ptrMnuObject->m_ptrTableSettings, SIGNAL(triggered()), this, SLOT(onTableSettings()      ));
+
+
+}
+
+void MyEditor::onTableSettings ()
+{
+    QTextTable* ptr_tbl = this->textCursor().currentTable();
+    if (NULL == ptr_tbl)
+        return;
+    //
+    QTextTableFormat table_fmt =  ptr_tbl->format();
+    //
+    DlgInsertTable dlg;
+    //
+    dlg.setTableFormat(table_fmt);
+    //
+    QDialog::DialogCode en_code = (QDialog::DialogCode) dlg.exec();
+    if ( QDialog::Rejected == en_code )
+        return;
+    //
+    QTextTableFormat table_fmt_changed = dlg.getTableFormat();
+    //
+    ptr_tbl->setFormat(table_fmt_changed);
+    //
+    return;
+}
+
+void MyEditor::onMergeCells ()
+{
+    QTextCursor cursor = this->textCursor();
+    QTextTable* ptr_tbl = cursor.currentTable();
+    //
+    if (ptr_tbl)
+    {
+        ptr_tbl->mergeCells(cursor);
+    };
 }
 
 void MyEditor::onInsertTable ()
@@ -184,6 +228,67 @@ void MyEditor::onInsertTable ()
     const QTextTableFormat& table_fmt = dlg.getTableFormat();
     //
     this->textCursor().insertTable(dlg.rows(), dlg.columns(), table_fmt);
+    //
+}
+
+void MyEditor::onAddRow ()
+{
+    QTextTable* ptr_tbl = this->textCursor().currentTable();
+    if (NULL == ptr_tbl)
+        return;
+    //
+
+    //
+    bool ok = false;
+    QTextCursor cursor = this->textCursor();
+    QTextTableCell cell = ptr_tbl->cellAt(cursor);
+    int cell_rowcursor_is = cell.row(); /* int value start from zero */
+    //
+    int approwtot = QInputDialog::getInteger(0, tr("Append NR. line row"),tr("Row:"), 1, 1, 100, 1, &ok);
+    //
+    ptr_tbl->insertRows(cell_rowcursor_is+1, approwtot);
+}
+
+void MyEditor::onAddColumn ()
+{
+    QTextTable* ptr_tbl = this->textCursor().currentTable();
+    if (NULL == ptr_tbl)
+        return;
+    //
+    bool ok = false;
+    QTextCursor cursor = this->textCursor();
+    QTextTableCell cell = ptr_tbl->cellAt(cursor);
+    int cell_colcursor_is = cell.column(); /* int value start from zero */
+    //
+    int approwtot = QInputDialog::getInteger(0, tr("Append NR. col row"),tr("Col:"), 1, 1, 100, 1, &ok);
+    //
+    ptr_tbl->insertColumns(cell_colcursor_is+1, approwtot);
+}
+
+void MyEditor::onRemoveRow ()
+{
+    QTextTable* ptr_tbl = this->textCursor().currentTable();
+    if (NULL == ptr_tbl)
+        return;
+    //
+    QTextCursor cursor = this->textCursor();
+    QTextTableCell cell = ptr_tbl->cellAt(cursor);
+    int cell_rowcursor_is = cell.row(); /* int value start from zero */
+    //
+    ptr_tbl->removeRows(cell_rowcursor_is, 1);
+}
+
+void MyEditor::onRemoveColumn ()
+{
+    QTextTable* ptr_tbl = this->textCursor().currentTable();
+    if (NULL == ptr_tbl)
+        return;
+    //
+    QTextCursor cursor = this->textCursor();
+    QTextTableCell cell = ptr_tbl->cellAt(cursor);
+    int cell_colcursor_is = cell.column(); /* int value start from zero */
+    //
+    ptr_tbl->removeColumns(cell_colcursor_is, 1);
 }
 
 void MyEditor::OnPrint ()
@@ -241,6 +346,47 @@ void MyEditor::onCurrentCharFormatChanged (const QTextCharFormat &format)
 void MyEditor::OnCursorPositionChanged()
 {
     alignmentChanged(this->alignment());
+    //
+    QTextTable* ptr_tbl = this->textCursor().currentTable();
+    if (NULL != ptr_tbl)
+    {
+        m_ptrMnuObject->m_ptrInsertRow->setEnabled(true);
+        m_ptrMnuObject->m_ptrInsertColumn->setEnabled(true);
+        m_ptrMnuObject->m_ptrTableSettings->setEnabled(true);
+        //
+        int i_firstRow     = 0;
+        int i_numRows      = 0;
+        int i_firstColumn  = 0;
+        int i_numColumns   = 0;
+        //
+        this->textCursor().selectedTableCells(&i_firstRow,&i_numRows,&i_firstColumn,&i_numColumns);
+        //
+        if ( (i_numRows > 0) || (i_numColumns > 0) )
+            m_ptrMnuObject->m_ptrCellsMerge->setEnabled(true);
+        else
+            m_ptrMnuObject->m_ptrCellsMerge->setEnabled(false);
+        //
+        if ( ptr_tbl->rows() > 1 )
+            m_ptrMnuObject->m_ptrRemoveRow->setEnabled(true);
+        else
+            m_ptrMnuObject->m_ptrRemoveRow->setEnabled(false);
+        //
+        if ( ptr_tbl->columns() > 1 )
+            m_ptrMnuObject->m_ptrRemoveColumn->setEnabled(true);
+        else
+            m_ptrMnuObject->m_ptrRemoveColumn->setEnabled(false);
+    }else
+    {
+        m_ptrMnuObject->m_ptrInsertRow->setEnabled(false);
+        m_ptrMnuObject->m_ptrInsertColumn->setEnabled(false);
+        m_ptrMnuObject->m_ptrTableSettings->setEnabled(false);
+        //
+        m_ptrMnuObject->m_ptrRemoveRow->setEnabled(false);
+        m_ptrMnuObject->m_ptrRemoveColumn->setEnabled(false);
+        //
+        m_ptrMnuObject->m_ptrCellsMerge->setEnabled(false);
+    }
+    return;
 }
 
 void MyEditor::onTextChanged ()

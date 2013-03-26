@@ -42,6 +42,7 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     createTreeControlMenu       ();
     createNodeControlMenu       ();
     createEditorMenu            ();
+    createTableSubMenu          ();
     createAttachmentControlMenu ();
     createCryptograficMenu      ();
     createProtectionMenu        ();
@@ -55,6 +56,7 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     QObject::connect(m_ptrMnuNodeToolBar,       SIGNAL(triggered()), this, SLOT (onTriggerNodeToolBox()       ));
     QObject::connect(m_ptrMnuAttachmentToolBar, SIGNAL(triggered()), this, SLOT (onTriggerAttachmentToolBox() ));
     QObject::connect(m_ptrMnuEditorToolBar,     SIGNAL(triggered()), this, SLOT (onTriggerEditToolBox      () ));
+    QObject::connect(m_ptrMnuTableToolBar,      SIGNAL(triggered()), this, SLOT (onTriggerTableToolBox     () ));
 }
 
 MnuMainWindow::~MnuMainWindow()
@@ -170,6 +172,18 @@ void MnuMainWindow::onTriggerEditToolBox ()
     };
 }
 
+void MnuMainWindow::onTriggerTableToolBox ()
+{
+    if ( m_ptrTableToolBar->isVisible() )
+    {
+        m_ptrTableToolBar->hide();
+        m_ptrMnuTableToolBar->setChecked(false);
+    }else
+    {
+        m_ptrTableToolBar->show();
+        m_ptrMnuTableToolBar->setChecked(true);
+    };
+}
 //-------------------------- signal processing begin  ----------------------------------------
 void  MnuMainWindow::onCheckPassword ( bool b_password_exist )
 {
@@ -854,6 +868,9 @@ void MnuMainWindow::createToolBarSubMenu()
     //
     m_ptrMnuEditorToolBar = new QAction("Editor toolbar", this);
     m_ptrMnuEditorToolBar ->setCheckable(true);
+    //
+    m_ptrMnuTableToolBar = new QAction("Table toolbar", this);
+    m_ptrMnuTableToolBar ->setCheckable(true);
 }
 
 void MnuMainWindow::createCryptograficMenu ()
@@ -1261,13 +1278,6 @@ void MnuMainWindow::createEditorMenu()
     m_ptrInsertURL      ->setStatusTip(tr("Insert URL in the document"));
     m_ptrInsertURL      ->setEnabled(false);
     //
-    m_ptrInsertTable      = new QAction(tr("Table..."), this);
-    m_ptrInsertTable      ->setIconVisibleInMenu(true);
-    m_ptrInsertTable      ->setIcon(QIcon(":/images/images/table_add.png"));
-    //m_ptrInsertTable      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
-    m_ptrInsertTable      ->setStatusTip(tr("Insert table in the document"));
-    m_ptrInsertTable      ->setEnabled(false);
-    //
     m_ptrSentenceCase      = new QAction(tr("Sentence case"), this);
     //m_ptrSentenceCase    ->setIconVisibleInMenu(true);
     //m_ptrSentenceCase    ->setIcon(QIcon(":/images/images/document_into.png"));
@@ -1344,7 +1354,7 @@ void MnuMainWindow::createEditorMenu()
     //m_ptrTextAlignJustify      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
     m_ptrTextAlignJustify      ->setStatusTip(tr("Align text center"));
     m_ptrTextAlignJustify      ->setEnabled(false);
-    //TODO
+    //
     m_ptrEditorToolBar = new QToolBar();
     //
     m_ptrEditorToolBar->addAction(m_ptrLoadFromFile);
@@ -1373,8 +1383,6 @@ void MnuMainWindow::createEditorMenu()
     m_ptrEditorToolBar->addSeparator();
     m_ptrEditorToolBar->addAction(m_ptrItalic);
     //
-    //TODO: Make submenu, add this actions in
-    //
     m_ptrEditorToolBar->addSeparator();
     m_ptrEditorToolBar->addAction(m_ptrTextAlignLeft);
     m_ptrEditorToolBar->addSeparator();
@@ -1383,6 +1391,74 @@ void MnuMainWindow::createEditorMenu()
     m_ptrEditorToolBar->addAction(m_ptrTextAlignCenter);
     m_ptrEditorToolBar->addSeparator();
     m_ptrEditorToolBar->addAction(m_ptrTextAlignJustify);
+}
+
+void MnuMainWindow::createTableSubMenu ()
+{
+    m_ptrInsertTable      = new QAction(tr("Insert table"), this);
+    m_ptrInsertTable      ->setIconVisibleInMenu(true);
+    m_ptrInsertTable      ->setIcon(QIcon(":/images/images/table_add.png"));
+    //m_ptrInsertTable      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrInsertTable      ->setStatusTip(tr("Insert table in the document"));
+    m_ptrInsertTable      ->setEnabled(false);
+    //
+    m_ptrInsertRow      = new QAction(tr("Insert row"), this);
+    m_ptrInsertRow      ->setIconVisibleInMenu(true);
+    m_ptrInsertRow      ->setIcon(QIcon(":/images/images/row_add.png"));
+    //m_ptrInsertRow      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrInsertRow      ->setStatusTip(tr("Insert raw(s) in the table"));
+    m_ptrInsertRow      ->setEnabled(false);
+    //
+    m_ptrInsertColumn      = new QAction(tr("Insert column"), this);
+    m_ptrInsertColumn      ->setIconVisibleInMenu(true);
+    m_ptrInsertColumn      ->setIcon(QIcon(":/images/images/coll_add.png"));
+    //m_ptrInsertColumn      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrInsertColumn      ->setStatusTip(tr("Insert column(s) in the table"));
+    m_ptrInsertColumn      ->setEnabled(false);
+    //
+    m_ptrRemoveRow      = new QAction(tr("Remove row"), this);
+    m_ptrRemoveRow      ->setIconVisibleInMenu(true);
+    m_ptrRemoveRow      ->setIcon(QIcon(":/images/images/row_remove.png"));
+    //m_ptrRemoveRow      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrRemoveRow      ->setStatusTip(tr("Remove current raw from the table"));
+    m_ptrRemoveRow      ->setEnabled(false);
+    //
+    m_ptrRemoveColumn      = new QAction(tr("Remove column"), this);
+    m_ptrRemoveColumn      ->setIconVisibleInMenu(true);
+    m_ptrRemoveColumn      ->setIcon(QIcon(":/images/images/col_remove.png"));
+    //m_ptrRemoveColumn      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrRemoveColumn      ->setStatusTip(tr("Remove current column from the table"));
+    m_ptrRemoveColumn      ->setEnabled(false);
+    //
+    m_ptrCellsMerge      = new QAction(tr("Merge cells"), this);
+    m_ptrCellsMerge      ->setIconVisibleInMenu(true);
+    m_ptrCellsMerge      ->setIcon(QIcon(":/images/images/cell_merge.png"));
+    //m_ptrCellsMerge      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrCellsMerge      ->setStatusTip(tr("Merge selected cells"));
+    m_ptrCellsMerge      ->setEnabled(false);
+    //
+    m_ptrTableSettings      = new QAction(tr("Change table settings"), this);
+    m_ptrTableSettings      ->setIconVisibleInMenu(true);
+    m_ptrTableSettings      ->setIcon(QIcon(":/images/images/table_edit.png"));
+    //m_ptrTableSettings      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrTableSettings      ->setStatusTip(tr("Change settings of the current table"));
+    m_ptrTableSettings      ->setEnabled(false);
+    //
+    m_ptrTableToolBar  = new QToolBar();
+    m_ptrTableToolBar ->addAction(m_ptrInsertTable);
+    m_ptrTableToolBar ->addSeparator();
+    m_ptrTableToolBar ->addAction(m_ptrInsertRow);
+    m_ptrTableToolBar ->addSeparator();
+    m_ptrTableToolBar ->addAction(m_ptrInsertColumn);
+    m_ptrTableToolBar ->addSeparator();
+    m_ptrTableToolBar ->addAction(m_ptrRemoveRow);
+    m_ptrTableToolBar ->addSeparator();
+    m_ptrTableToolBar ->addAction(m_ptrRemoveColumn);
+    m_ptrTableToolBar ->addSeparator();
+    m_ptrTableToolBar ->addAction(m_ptrCellsMerge);
+    m_ptrTableToolBar ->addSeparator();
+    m_ptrTableToolBar ->addAction(m_ptrTableSettings);
+    m_ptrTableToolBar ->addSeparator();
 }
 
 void MnuMainWindow::assemblyTreeMenu(QMenu* ptr_node_menu)
@@ -1482,6 +1558,23 @@ void MnuMainWindow::assemblyTextColorSubMenu  ( QMenu* ptr_set_text_color_menu )
     ptr_set_text_color_menu->addAction(m_ptrChangeBackgroundColor);
 }
 
+void MnuMainWindow::assemblyTableSubMenu ( QMenu* ptr_table_menu )
+{
+    ptr_table_menu->addAction(m_ptrInsertTable);
+    ptr_table_menu->addSeparator();
+    ptr_table_menu->addAction(m_ptrInsertRow);
+    ptr_table_menu->addSeparator();
+    ptr_table_menu->addAction(m_ptrInsertColumn);
+    ptr_table_menu->addSeparator();
+    ptr_table_menu->addAction(m_ptrRemoveRow);
+    ptr_table_menu->addSeparator();
+    ptr_table_menu->addAction(m_ptrRemoveColumn);
+    ptr_table_menu->addSeparator();
+    ptr_table_menu->addAction(m_ptrCellsMerge);
+    ptr_table_menu->addSeparator();
+    ptr_table_menu->addAction(m_ptrTableSettings);
+}
+
 void MnuMainWindow::assemblyInsertInTextSubMenu ( QMenu* ptr_insert_in_text_menu )
 {
     ptr_insert_in_text_menu->addAction(m_ptrInsertList);
@@ -1489,8 +1582,8 @@ void MnuMainWindow::assemblyInsertInTextSubMenu ( QMenu* ptr_insert_in_text_menu
     ptr_insert_in_text_menu->addAction(m_ptrInsertImage);
     ptr_insert_in_text_menu->addSeparator();
     ptr_insert_in_text_menu->addAction(m_ptrInsertURL);
-    ptr_insert_in_text_menu->addSeparator();
-    ptr_insert_in_text_menu->addAction(m_ptrInsertTable);
+    //ptr_insert_in_text_menu->addSeparator();
+    //ptr_insert_in_text_menu->addAction();
 }
 
 void MnuMainWindow::assemblyAlignSubMenu ( QMenu* ptr_align_menu )
@@ -1566,6 +1659,9 @@ void MnuMainWindow::assemblyViewMenu( QMenu* ptr_node_menu )
     m_ptrToolbarsMenu->addSeparator();
     //
     m_ptrToolbarsMenu->addAction(m_ptrMnuEditorToolBar);
+    m_ptrToolbarsMenu->addSeparator();
+    //
+    m_ptrToolbarsMenu->addAction(m_ptrMnuTableToolBar);
 }
 
 void MnuMainWindow::assemblySecurityMenu( QMenu* ptr_node_menu )
@@ -1631,6 +1727,10 @@ void MnuMainWindow::assemblyAllMenus()
     assemblyTextColorSubMenu(m_ptrTextColorMenu);
     //
     m_ptrEditorMenu ->addSeparator();
+    m_ptrTableMenu = m_ptrEditorMenu->addMenu(tr("Table"));
+    assemblyTableSubMenu(m_ptrTableMenu);
+    //
+    m_ptrEditorMenu ->addSeparator();
     m_ptrInsertInTextMenu = m_ptrEditorMenu->addMenu(tr("Insert..."));
     assemblyInsertInTextSubMenu(m_ptrInsertInTextMenu);
     //
@@ -1686,6 +1786,9 @@ void MnuMainWindow::syncToolbarsVisibilityAndMenu ()
     //
     if ( m_ptrEditorToolBar )
         m_ptrEditorToolBar->isVisible() ? m_ptrMnuEditorToolBar->setChecked(true) : m_ptrMnuEditorToolBar->setChecked(false);
+    //
+    if ( m_ptrTableToolBar)
+        m_ptrTableToolBar->isVisible() ? m_ptrMnuTableToolBar->setChecked(true) : m_ptrMnuTableToolBar->setChecked(false);
     //
     return;
 }

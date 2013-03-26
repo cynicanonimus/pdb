@@ -58,7 +58,13 @@ private slots:
     void    onBackColor            ();
     //
     void    onInsertTable          ();
-
+    void    onAddRow               ();
+    void    onAddColumn            ();
+    void    onRemoveRow            ();
+    void    onRemoveColumn         ();
+    void    onMergeCells           ();
+    void    onTableSettings        ();
+    //
 private:
     void    mergeFormatOnWordOrSelection (const QTextCharFormat &format);
     void    fileSave              (const QString& f_name);

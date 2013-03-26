@@ -32,3 +32,5 @@ Date 		CommitID		Changes
 23.03.2013      23.03.2013-1	        Fix the bug with the slow attachments status detection. 
 --------------------------------------------------------------------------------------------------------
 25.03.2013      25.03.2013-1            Implement insert table function
+--------------------------------------------------------------------------------------------------------
+26.03.2013	26.03.2013-1		Implement insert/remove row/columns same as split cells for table

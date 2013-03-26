@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     addToolBar(Qt::RightToolBarArea,    m_pMainMenu->m_ptrAttachmentToolBar);
     addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrTreeToolBar);
     addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrEditorToolBar);
+    addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrTableToolBar);
     //
     //m_pMainMenu->m_ptrTreeToolBar->isVisible()
 
@@ -96,13 +97,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_Service_Tab->setStatusBar( statusBar() );
     //
     ui->m_textEditor->passMnuItems ( m_pMainMenu );
-/*
-    ui->m_textEditor->passUndoRedoAction ( m_pMainMenu->m_ptrUndo, m_pMainMenu->m_ptrRedo );
-    ui->m_textEditor->passBUIActions     ( m_pMainMenu->m_ptrBold, m_pMainMenu->m_ptrUnderline, m_pMainMenu->m_ptrItalic );
-    ui->m_textEditor->passAlignActions   ( m_pMainMenu->m_ptrTextAlignLeft, m_pMainMenu->m_ptrTextAlignRight, m_pMainMenu->m_ptrTextAlignCenter, m_pMainMenu->m_ptrTextAlignJustify);
-    ui->m_textEditor->passTextCaseActions( m_pMainMenu->m_ptrSentenceCase,m_pMainMenu->m_ptrUpperCase, m_pMainMenu->m_ptrLowerCase, m_pMainMenu->m_ptrToggleCase );
-    ui->m_textEditor->addEditorToolBarAndColorActions ( m_pMainMenu->m_ptrEditorToolBar, m_pMainMenu->m_ptrChangeTextColor, m_pMainMenu->m_ptrChangeBackgroundColor );
-*/
     //
     if (ConnectionManager::getInstance().getManagerStatus() == ConnectionManager::STATE_OK)
     {
@@ -370,6 +364,7 @@ void MainWindow::showInterfaceElements          (bool b_show)
     m_pMainMenu->m_ptrAttachmentToolBar->setEnabled ( b_show );
     m_pMainMenu->m_ptrTreeToolBar->setEnabled       ( b_show );
     m_pMainMenu->m_ptrEditorToolBar->setEnabled     ( b_show );
+    m_pMainMenu->m_ptrTableToolBar->setEnabled      ( b_show );
     //
     m_pMainMenu->m_ptrTreeControlMenu->setEnabled( b_show );
     m_pMainMenu->m_ptrNodeControlMenu->setEnabled( b_show );

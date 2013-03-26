@@ -47,6 +47,75 @@ DlgInsertTable::~DlgInsertTable()
 {
     delete ui;
 }
+//
+void DlgInsertTable::setTableFormat ( const QTextTableFormat& tbl_format )
+{
+    ui->borderWidth->setValue( tbl_format.border() );
+    QTextFrameFormat::BorderStyle style = tbl_format.borderStyle();
+    //
+    QTextLength length = tbl_format.width();
+
+    ui->tableWidth->setValue((int)length.value(100));
+    //
+    int i_current_index = 0;
+    switch (style)
+    {
+    case QTextFrameFormat::BorderStyle_None:
+        i_current_index = 0;
+        break;
+    case QTextFrameFormat::BorderStyle_Dashed:
+        i_current_index = 1;
+        break;
+    case QTextFrameFormat::BorderStyle_Dotted:
+        i_current_index = 2;
+        break;
+    case QTextFrameFormat::BorderStyle_Solid:
+        i_current_index = 3;
+        break;
+    case QTextFrameFormat::BorderStyle_Double:
+        i_current_index = 4;
+        break;
+    case QTextFrameFormat::BorderStyle_DotDash:
+        i_current_index = 5;
+        break;
+    case QTextFrameFormat::BorderStyle_DotDotDash:
+        i_current_index = 6;
+        break;
+    case QTextFrameFormat::BorderStyle_Groove:
+        i_current_index = 7;
+        break;
+    case QTextFrameFormat::BorderStyle_Ridge:
+        i_current_index = 8;
+        break;
+    case QTextFrameFormat::BorderStyle_Inset:
+        i_current_index = 9;
+        break;
+    case QTextFrameFormat::BorderStyle_Outset:
+        i_current_index = 10;
+        break;
+    default:
+        Q_ASSERT(FALSE);
+        i_current_index = 0;
+        break;
+    };
+    //
+    ui->comboBoxFrameStyle->setCurrentIndex(i_current_index);
+    //
+    QBrush brush = tbl_format.borderBrush();
+    //
+
+    QColor col = brush.color();
+    //
+    if(col.isValid())
+    {
+        m_cFrameColor = col;
+        QString qss = QString("background-color: %1").arg(m_cFrameColor.name());
+        ui->buttonBackColor->setStyleSheet(qss);
+    };
+    //
+    ui->columsNumber->setEnabled(false);
+    ui->rowsNumber->setEnabled(false);
+}
 //----------------------------------------------------------------------------------------
 QTextFrameFormat::BorderStyle DlgInsertTable::getBorderStyle() const
 {
