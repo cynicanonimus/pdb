@@ -54,8 +54,12 @@ private slots:
     void    onTextToggleCase       ();
     void    onTextSentenceCase     ();
     //
+    //void    onZoomIn               ();
+    //
     void    onTextColor            ();
     void    onBackColor            ();
+    //
+    void    onInsertImageLink      ();
     //
     void    onInsertTable          ();
     void    onAddRow               ();
@@ -63,6 +67,7 @@ private slots:
     void    onRemoveRow            ();
     void    onRemoveColumn         ();
     void    onMergeCells           ();
+    void    onCellSplit            ();
     void    onTableSettings        ();
     //
 private:

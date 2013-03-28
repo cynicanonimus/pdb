@@ -66,5 +66,7 @@
         <file>images/coll_add.png</file>
         <file>images/table_edit.png</file>
         <file>images/cell_merge.png</file>
+        <file>images/cell_split.png</file>
+        <file>images/picture.png</file>
     </qresource>
 </RCC>

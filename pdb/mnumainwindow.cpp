@@ -432,6 +432,8 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     m_ptrTextAlignCenter        ->setEnabled(false);
     m_ptrTextAlignJustify       ->setEnabled(false);
     //
+    m_ptrInsertImageLink       ->setEnabled(false);
+    //
     if (NULL == ptr_to_current)
         return;
     //
@@ -520,6 +522,8 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
         //
         m_ptrChangeTextColor        ->setEnabled(true);
         m_ptrChangeBackgroundColor  ->setEnabled(true);
+        //
+        m_ptrInsertImageLink       ->setEnabled(true);
         //
         break;
     case AbstractDatabaseObject::OBJECT_DELETED:
@@ -1252,24 +1256,24 @@ void MnuMainWindow::createEditorMenu()
     m_ptrChangeBackgroundColor      = new QAction(tr("Background"), this);
     m_ptrChangeBackgroundColor      ->setIconVisibleInMenu(true);
     //we set icon dynamically later
-    //m_ptrChangeBackgroundColor      ->setIcon(QIcon(":/images/images/document_into.png"));
-    //m_ptrChangeBackgroundColor      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    //m_ptrChangeBackgroundColor    ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrChangeBackgroundColor    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
     m_ptrChangeBackgroundColor      ->setStatusTip(tr("Set background color"));
     m_ptrChangeBackgroundColor      ->setEnabled(false);
     //
     m_ptrInsertList      = new QAction(tr("List..."), this);
     m_ptrInsertList      ->setIconVisibleInMenu(true);
-    //m_ptrInsertList      ->setIcon(QIcon(":/images/images/document_into.png"));
-    //m_ptrInsertList      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    //m_ptrInsertList    ->setIcon(QIcon(":/images/images/document_into.png"));
+    //m_ptrInsertList    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
     m_ptrInsertList      ->setStatusTip(tr("Insert list in the document"));
     m_ptrInsertList      ->setEnabled(false);
     //
-    m_ptrInsertImage      = new QAction(tr("Image..."), this);
-    m_ptrInsertImage      ->setIconVisibleInMenu(true);
-    //m_ptrInsertImage      ->setIcon(QIcon(":/images/images/document_into.png"));
-    //m_ptrInsertImage      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
-    m_ptrInsertImage      ->setStatusTip(tr("Insert image in the document"));
-    m_ptrInsertImage      ->setEnabled(false);
+    m_ptrInsertImageLink      = new QAction(tr("Insert Link image as link to the file"), this);
+    m_ptrInsertImageLink      ->setIconVisibleInMenu(true);
+    m_ptrInsertImageLink      ->setIcon(QIcon(":/images/images/picture.png"));
+    //m_ptrInsertImageLink    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrInsertImageLink      ->setStatusTip(tr("Insert to to the file with image"));
+    m_ptrInsertImageLink      ->setEnabled(false);
     //
     m_ptrInsertURL      = new QAction(tr("URL..."), this);
     m_ptrInsertURL      ->setIconVisibleInMenu(true);
@@ -1355,6 +1359,15 @@ void MnuMainWindow::createEditorMenu()
     m_ptrTextAlignJustify      ->setStatusTip(tr("Align text center"));
     m_ptrTextAlignJustify      ->setEnabled(false);
     //
+/*
+    m_ptrZoomIn      = new QAction(tr("Zoom In"), this);
+    m_ptrZoomIn      ->setIconVisibleInMenu(true);
+    //m_ptrZoomIn      ->setIcon(QIcon(":/images/images/textjustify.png"));
+    //m_ptrZoomIn      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrZoomIn      ->setStatusTip(tr("Zoom in"));
+    m_ptrZoomIn      ->setEnabled(true);
+*/
+    //
     m_ptrEditorToolBar = new QToolBar();
     //
     m_ptrEditorToolBar->addAction(m_ptrLoadFromFile);
@@ -1391,6 +1404,11 @@ void MnuMainWindow::createEditorMenu()
     m_ptrEditorToolBar->addAction(m_ptrTextAlignCenter);
     m_ptrEditorToolBar->addSeparator();
     m_ptrEditorToolBar->addAction(m_ptrTextAlignJustify);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrInsertImageLink);
+    //
+    //m_ptrEditorToolBar->addSeparator();
+    //m_ptrEditorToolBar->addAction(m_ptrZoomIn);
 }
 
 void MnuMainWindow::createTableSubMenu ()
@@ -1437,6 +1455,13 @@ void MnuMainWindow::createTableSubMenu ()
     m_ptrCellsMerge      ->setStatusTip(tr("Merge selected cells"));
     m_ptrCellsMerge      ->setEnabled(false);
     //
+    m_ptrCellSplit      = new QAction(tr("Split cell"), this);
+    m_ptrCellSplit      ->setIconVisibleInMenu(true);
+    m_ptrCellSplit      ->setIcon(QIcon(":/images/images/cell_split.png"));
+    //m_ptrCellSplit      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrCellSplit      ->setStatusTip(tr("Split current cell"));
+    m_ptrCellSplit      ->setEnabled(false);
+    //
     m_ptrTableSettings      = new QAction(tr("Change table settings"), this);
     m_ptrTableSettings      ->setIconVisibleInMenu(true);
     m_ptrTableSettings      ->setIcon(QIcon(":/images/images/table_edit.png"));
@@ -1456,6 +1481,8 @@ void MnuMainWindow::createTableSubMenu ()
     m_ptrTableToolBar ->addAction(m_ptrRemoveColumn);
     m_ptrTableToolBar ->addSeparator();
     m_ptrTableToolBar ->addAction(m_ptrCellsMerge);
+    m_ptrTableToolBar ->addSeparator();
+    m_ptrTableToolBar ->addAction(m_ptrCellSplit);
     m_ptrTableToolBar ->addSeparator();
     m_ptrTableToolBar ->addAction(m_ptrTableSettings);
     m_ptrTableToolBar ->addSeparator();
@@ -1572,6 +1599,8 @@ void MnuMainWindow::assemblyTableSubMenu ( QMenu* ptr_table_menu )
     ptr_table_menu->addSeparator();
     ptr_table_menu->addAction(m_ptrCellsMerge);
     ptr_table_menu->addSeparator();
+    ptr_table_menu->addAction(m_ptrCellSplit);
+    ptr_table_menu->addSeparator();
     ptr_table_menu->addAction(m_ptrTableSettings);
 }
 
@@ -1579,7 +1608,7 @@ void MnuMainWindow::assemblyInsertInTextSubMenu ( QMenu* ptr_insert_in_text_menu
 {
     ptr_insert_in_text_menu->addAction(m_ptrInsertList);
     ptr_insert_in_text_menu->addSeparator();
-    ptr_insert_in_text_menu->addAction(m_ptrInsertImage);
+    ptr_insert_in_text_menu->addAction(m_ptrInsertImageLink);
     ptr_insert_in_text_menu->addSeparator();
     ptr_insert_in_text_menu->addAction(m_ptrInsertURL);
     //ptr_insert_in_text_menu->addSeparator();

@@ -33,6 +33,8 @@ Date 		CommitID		Changes
 --------------------------------------------------------------------------------------------------------
 25.03.2013      25.03.2013-1            Implement insert table function
 --------------------------------------------------------------------------------------------------------
-26.03.2013	26.03.2013-1		Implement insert/remove row/columns same as split cells for table
+26.03.2013	26.03.2013-1		Implement insert/remove row/columns same as merge cells for table
 --------------------------------------------------------------------------------------------------------
 28.03.2013      28.03.2013-1		Modify pdb/dbdescription.xml for SqlLite dababase
+28.03.2013      28.03.2013-2            Implement split table cells and insert link to image
+--------------------------------------------------------------------------------------------------------

@@ -192,6 +192,8 @@ public:
     QAction*    m_ptrRemoveRow;
     QAction*    m_ptrRemoveColumn;
     QAction*    m_ptrCellsMerge;
+    QAction*    m_ptrCellSplit;
+
     QAction*    m_ptrTableSettings;
 
     QToolBar*   m_ptrTableToolBar;
@@ -199,7 +201,7 @@ public:
     QMenu*      m_ptrInsertInTextMenu;
 
     QAction*    m_ptrInsertList;
-    QAction*    m_ptrInsertImage;
+    QAction*    m_ptrInsertImageLink;
     QAction*    m_ptrInsertURL;
     //---------------------------------------------------------------------------
     QMenu*      m_ptrCaseMenu;
@@ -226,6 +228,8 @@ public:
     QAction*    m_ptrTextSize;
     QAction*    m_ptrTextStyle;
     QAction*    m_ptrTextColor;
+    //
+    //QAction*    m_ptrZoomIn;
     //
     QToolBar*    m_ptrEditorToolBar;
     //----------------------------- attachment menu -----------------------------
