@@ -152,7 +152,7 @@
 			  `tree_name` TEXT NOT NULL,
 			  `last_change` INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			  `active` INTEGER(1) NOT NULL DEFAULT '1',
-			  `current` INTEGER(1) NOT NULL DEFAULT '0',
+			  `current_active` INTEGER(1) NOT NULL DEFAULT '0',
 			  UNIQUE (`tree_name`)
 			);
 		</statement>
