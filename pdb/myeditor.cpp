@@ -1,5 +1,6 @@
 #include "myeditor.h"
 #include "dlginserttable.h"
+#include "dlginserthtml.h"
 //
 #include <QPrinter>
 #include <QPrintPreviewDialog>
@@ -149,6 +150,7 @@ void MyEditor::passMnuItems ( MnuMainWindow* ptr_mnu_window )
     QObject::connect(m_ptrMnuObject->m_ptrInsertTable,  SIGNAL(triggered()), this, SLOT(onInsertTable()         ));
     //
     QObject::connect(m_ptrMnuObject->m_ptrInsertImageLink,  SIGNAL(triggered()), this, SLOT(onInsertImageLink() ));
+    QObject::connect(m_ptrMnuObject->m_ptrInsertHTML,   SIGNAL(triggered()), this, SLOT(onInsertHTML    ()      ));
     //
     QObject::connect(m_ptrMnuObject->m_ptrInsertRow,    SIGNAL(triggered()), this, SLOT(onAddRow        ()      ));
     QObject::connect(m_ptrMnuObject->m_ptrInsertColumn, SIGNAL(triggered()), this, SLOT(onAddColumn     ()      ));
@@ -165,6 +167,18 @@ void MyEditor::onZoomIn ()
     //this->is
 }
 */
+
+void MyEditor::onInsertHTML ()
+{
+    DlgInsertHTML dlg;
+    //
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        QString str_html = dlg.getHTMLCode();
+        QTextCursor cursor = this->textCursor();
+        cursor.insertHtml(str_html);
+    };
+}
 
 void MyEditor::onInsertImageLink()
 {

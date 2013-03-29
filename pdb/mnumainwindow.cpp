@@ -433,6 +433,7 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     m_ptrTextAlignJustify       ->setEnabled(false);
     //
     m_ptrInsertImageLink       ->setEnabled(false);
+    m_ptrInsertHTML            ->setEnabled(false);
     //
     if (NULL == ptr_to_current)
         return;
@@ -523,7 +524,8 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
         m_ptrChangeTextColor        ->setEnabled(true);
         m_ptrChangeBackgroundColor  ->setEnabled(true);
         //
-        m_ptrInsertImageLink       ->setEnabled(true);
+        m_ptrInsertImageLink        ->setEnabled(true);
+        m_ptrInsertHTML             ->setEnabled(true);
         //
         break;
     case AbstractDatabaseObject::OBJECT_DELETED:
@@ -1261,26 +1263,19 @@ void MnuMainWindow::createEditorMenu()
     m_ptrChangeBackgroundColor      ->setStatusTip(tr("Set background color"));
     m_ptrChangeBackgroundColor      ->setEnabled(false);
     //
-    m_ptrInsertList      = new QAction(tr("List..."), this);
-    m_ptrInsertList      ->setIconVisibleInMenu(true);
-    //m_ptrInsertList    ->setIcon(QIcon(":/images/images/document_into.png"));
-    //m_ptrInsertList    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
-    m_ptrInsertList      ->setStatusTip(tr("Insert list in the document"));
-    m_ptrInsertList      ->setEnabled(false);
+    m_ptrInsertHTML      = new QAction(tr("Insert HTML code"), this);
+    m_ptrInsertHTML      ->setIconVisibleInMenu(true);
+    m_ptrInsertHTML    ->setIcon(QIcon(":/images/images/code_add.png"));
+    //m_ptrInsertHTML    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
+    m_ptrInsertHTML      ->setStatusTip(tr("Insert HTML-code in the document"));
+    m_ptrInsertHTML      ->setEnabled(false);
     //
-    m_ptrInsertImageLink      = new QAction(tr("Insert Link image as link to the file"), this);
+    m_ptrInsertImageLink      = new QAction(tr("Insert image as link to the file"), this);
     m_ptrInsertImageLink      ->setIconVisibleInMenu(true);
     m_ptrInsertImageLink      ->setIcon(QIcon(":/images/images/picture.png"));
     //m_ptrInsertImageLink    ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
-    m_ptrInsertImageLink      ->setStatusTip(tr("Insert to to the file with image"));
+    m_ptrInsertImageLink      ->setStatusTip(tr("Insert link to the image file"));
     m_ptrInsertImageLink      ->setEnabled(false);
-    //
-    m_ptrInsertURL      = new QAction(tr("URL..."), this);
-    m_ptrInsertURL      ->setIconVisibleInMenu(true);
-    m_ptrInsertURL      ->setIcon(QIcon(":/images/images/link_add.png"));
-    //m_ptrInsertImage      ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_P));
-    m_ptrInsertURL      ->setStatusTip(tr("Insert URL in the document"));
-    m_ptrInsertURL      ->setEnabled(false);
     //
     m_ptrSentenceCase      = new QAction(tr("Sentence case"), this);
     //m_ptrSentenceCase    ->setIconVisibleInMenu(true);
@@ -1406,6 +1401,8 @@ void MnuMainWindow::createEditorMenu()
     m_ptrEditorToolBar->addAction(m_ptrTextAlignJustify);
     m_ptrEditorToolBar->addSeparator();
     m_ptrEditorToolBar->addAction(m_ptrInsertImageLink);
+    m_ptrEditorToolBar->addSeparator();
+    m_ptrEditorToolBar->addAction(m_ptrInsertHTML);
     //
     //m_ptrEditorToolBar->addSeparator();
     //m_ptrEditorToolBar->addAction(m_ptrZoomIn);
@@ -1606,11 +1603,9 @@ void MnuMainWindow::assemblyTableSubMenu ( QMenu* ptr_table_menu )
 
 void MnuMainWindow::assemblyInsertInTextSubMenu ( QMenu* ptr_insert_in_text_menu )
 {
-    ptr_insert_in_text_menu->addAction(m_ptrInsertList);
+    ptr_insert_in_text_menu->addAction(m_ptrInsertHTML);
     ptr_insert_in_text_menu->addSeparator();
     ptr_insert_in_text_menu->addAction(m_ptrInsertImageLink);
-    ptr_insert_in_text_menu->addSeparator();
-    ptr_insert_in_text_menu->addAction(m_ptrInsertURL);
     //ptr_insert_in_text_menu->addSeparator();
     //ptr_insert_in_text_menu->addAction();
 }

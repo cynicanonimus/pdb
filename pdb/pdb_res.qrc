@@ -68,5 +68,6 @@
         <file>images/cell_merge.png</file>
         <file>images/cell_split.png</file>
         <file>images/picture.png</file>
+        <file>images/code_add.png</file>
     </qresource>
 </RCC>

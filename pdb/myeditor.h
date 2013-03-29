@@ -60,6 +60,7 @@ private slots:
     void    onBackColor            ();
     //
     void    onInsertImageLink      ();
+    void    onInsertHTML           ();
     //
     void    onInsertTable          ();
     void    onAddRow               ();

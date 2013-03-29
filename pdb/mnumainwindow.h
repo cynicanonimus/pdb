@@ -200,9 +200,8 @@ public:
     //---------------------------------------------------------------------------
     QMenu*      m_ptrInsertInTextMenu;
 
-    QAction*    m_ptrInsertList;
+    QAction*    m_ptrInsertHTML;
     QAction*    m_ptrInsertImageLink;
-    QAction*    m_ptrInsertURL;
     //---------------------------------------------------------------------------
     QMenu*      m_ptrCaseMenu;
     //
