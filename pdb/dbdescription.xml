@@ -103,10 +103,80 @@
 		<driver>QOCI</driver>
 		<!-- list of executing statement. 'id' means priority of execution -->
 		<show_tables_request>
-		SHOW TABLES;		
+		select TABLE_NAME from USER_TABLES;		
 		</show_tables_request>		
+		<!-- User should have CREATE SESSION, CREATE TABLES privileges -->
+
 		<statement id="0">
-			select count (*) from attachments;
+			drop table ATTACHMENTS purge;
+		</statement>
+
+		<statement id="1">
+			drop table SERVICE_TBL purge;
+		</statement>
+
+		<statement id="2">
+			drop table NODE_TBL purge;		
+		</statement>
+
+		<statement id="3">
+			drop table ROOT_TBL purge;
+		</statement>
+
+		<statement id="4">
+			CREATE TABLE SERVICE_TBL (
+			  ID_PARAM number(11) NOT NULL,
+			  IS_ALREADY_IN_USE number(1) DEFAULT 0 NOT NULL,
+			  PASSWORD varchar2(255) DEFAULT NULL,
+			  PRIMARY KEY ( ID_PARAM )
+			);
+		</statement>
+
+		<statement id="5">
+			create table ROOT_TBL (
+			  ID_TREE number(11) NOT NULL,
+			  TREE_NAME varchar2(255) NOT NULL,
+			  LAST_CHANGE date DEFAULT SYSDATE NOT NULL,
+			  ACTIVE number(1) DEFAULT 1 NOT NULL,
+			  CURRENT_ACTIVE number(1)DEFAULT 0 NOT NULL,
+			  PRIMARY KEY (ID_TREE),
+			  CONSTRAINT TREE_NAME_UNIQUE UNIQUE (TREE_NAME)
+			);
+		</statement>
+
+		<statement id="6">
+			CREATE TABLE NODE_TBL (
+			  ID_NODE number(11) NOT NULL,
+			  ID_PARENT number(11) NOT NULL,
+			  ID_TREE number(11) NOT NULL,
+			  NODE_NAME varchar2(255) NOT NULL,
+			  NODE_DESCRIPTOR varchar2(2000),
+			  ACTIVE number(1) DEFAULT 1 NOT NULL,
+			  EXPANDED number(1) DEFAULT 0 NOT NULL,
+			  LAST_CHANGE date DEFAULT SYSDATE NOT NULL,
+			  ID_ICON number(11) DEFAULT 0 NOT NULL,
+			  PRIMARY KEY (ID_NODE),
+			  -- KEY `tree_ind` (`id_tree`), -- don't understand the purpose
+			  CONSTRAINT NODE_TBL_IBFK_1 FOREIGN KEY (ID_TREE) REFERENCES ROOT_TBL (ID_TREE) ON DELETE CASCADE
+			);
+		</statement>
+
+		<statement id="7">
+			CREATE TABLE ATTACHMENTS (
+			  ID_ATTACH number(11) NOT NULL,
+			  ID_PARENT number(11) NOT NULL,
+			  ATTACH_NAME varchar2(255) NOT NULL,
+			  ATTACH_SIZE number(11) DEFAULT 1 NOT NULL,
+			  ACTIVE number(1) DEFAULT 1 NOT NULL,
+			  CRYPTED number(1) DEFAULT 0 NOT NULL,
+			  LOCKED number(1) DEFAULT 0 NOT NULL,
+			  IS_BINARY number(1) NOT NULL,
+			  LAST_CHANGE date DEFAULT SYSDATE NOT NULL,
+			  ATTACH blob NOT NULL,
+			  PRIMARY KEY (ID_ATTACH),
+			  -- KEY `attach_ind` (`id_parent`), -- Unknown goal ???
+			  CONSTRAINT ATTACHMENTS_IBFK_1 FOREIGN KEY (ID_PARENT) REFERENCES NODE_TBL (ID_NODE) ON DELETE CASCADE
+			);
 		</statement>
 	</database>
 	<database type="SQLite">
