@@ -88,6 +88,8 @@ public slots:
     void onCutNode              ();
     void onPasteNode            ();
     //
+    void onChangeColor          ();
+    //
     void onImportNode           ();
     void onExportNode           ();
     //

@@ -61,6 +61,7 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
 
 MnuMainWindow::~MnuMainWindow()
 {
+/*
     if ( m_ptrCreateNewTree ) delete m_ptrCreateNewTree;
     if ( m_ptrDelTree       ) delete m_ptrDelTree;
     //if ( m_ptrRestoreTree   ) delete m_ptrRestoreTree;
@@ -106,9 +107,9 @@ MnuMainWindow::~MnuMainWindow()
     if ( m_ptrUn_ProtectAllAttachmentsOfNode)   delete   m_ptrUn_ProtectAllAttachmentsOfNode;
     if ( m_ptrProtectSelectedAttachments)       delete   m_ptrProtectSelectedAttachments;
     if ( m_ptrUn_ProtectSelectedAttachments)    delete   m_ptrUn_ProtectSelectedAttachments;
-
-
+    //
     //if ( m_ptrRefreshAttach ) delete  m_ptrRefreshAttach;
+*/
 
 }
 
@@ -405,6 +406,7 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     //
     m_ptrDelNode                ->setEnabled(false);
     m_ptrInsertNewNode          ->setEnabled(false);
+    m_ptrChangeNodeColor        ->setEnabled(false);
     m_ptrImportAttach           ->setEnabled(false);
     m_ptrRestoreNode            ->setEnabled(false);
     m_ptrRestoreSubtree         ->setEnabled(false);
@@ -456,6 +458,7 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     case AbstractDatabaseObject::OBJECT_NOT_DEFINED:
         m_ptrDelNode                ->setEnabled(false);
         m_ptrInsertNewNode          ->setEnabled(false);
+        m_ptrChangeNodeColor        ->setEnabled(false);
         m_ptrImportAttach           ->setEnabled(false);
         m_ptrRestoreNode            ->setEnabled(false);
         m_ptrRestoreSubtree         ->setEnabled(false);
@@ -480,6 +483,7 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
         //
         m_ptrImportNode         ->setEnabled(true);
         m_ptrInsertNewNode      ->setEnabled(true);
+        m_ptrChangeNodeColor    ->setEnabled(true);
         m_ptrImportAttach       ->setEnabled(true);
         //
         if (b_is_root_node)
@@ -1083,6 +1087,13 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrInsertNewNode  ->setStatusTip(tr("Insert new node"));
     m_ptrInsertNewNode  ->setEnabled(false);
     //
+    m_ptrChangeNodeColor  = new QAction(tr("Change node color"), this);
+    m_ptrChangeNodeColor  ->setIconVisibleInMenu(true);
+    m_ptrChangeNodeColor  ->setIcon(QIcon(":/images/images/colorwheel.png"));
+    //m_ptrChangeNodeColor  ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_Insert));
+    m_ptrChangeNodeColor  ->setStatusTip(tr("Change color of the current node"));
+    m_ptrChangeNodeColor  ->setEnabled(false);
+    //
     m_ptrCutNode        = new QAction(tr("Cut node"), this);
     m_ptrCutNode        ->setIconVisibleInMenu(true);
     m_ptrCutNode        ->setIcon(QIcon(":/images/images/cut.png"));
@@ -1156,6 +1167,8 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrNodeToolBar    = new QToolBar;
     //
     m_ptrNodeToolBar->addAction(m_ptrInsertNewNode);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrChangeNodeColor);
     m_ptrNodeToolBar->addSeparator();
     m_ptrNodeToolBar->addAction(m_ptrDelNode);
     m_ptrNodeToolBar->addSeparator();
@@ -1513,6 +1526,8 @@ void MnuMainWindow::assemblyNodeMenu(QMenu* ptr_node_menu)
         return;
     //
     ptr_node_menu->addAction(m_ptrInsertNewNode);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrChangeNodeColor);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrDelNode);
     ptr_node_menu->addSeparator();

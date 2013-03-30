@@ -69,5 +69,6 @@
         <file>images/cell_split.png</file>
         <file>images/picture.png</file>
         <file>images/code_add.png</file>
+        <file>images/colorwheel.png</file>
     </qresource>
 </RCC>

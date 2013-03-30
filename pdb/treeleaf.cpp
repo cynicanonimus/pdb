@@ -76,6 +76,7 @@ TreeLeaf::TreeLeaf(TreeLeaf*        prtParentLeaf,
                   int               i_parent_node_id,      // parent node ID
                   int               i_tree_id,
                   const QString&    str_name,              // node name
+                  const QString&    str_node_color,        // color of the node
                   const QString&    str_html_descriptor,   // node text descriptor
                   bool              b_is_active,           // is node "deleted" or not
                   bool              b_is_expanded,         // index of the parent element in the root_tbl
@@ -90,12 +91,19 @@ TreeLeaf::TreeLeaf(TreeLeaf*        prtParentLeaf,
   ,m_bIsExpandedDB (b_is_expanded)
   ,m_bIsExpandedActually (b_is_expanded)//
 {
+    if (str_node_color.length() > 0)
+    {
+        m_strNodeColor = str_node_color;
+        setColor (str_node_color, false);
+    };
+    //
     setInitialSettings(i_parent_node_id, str_name, i_tree_id);
     m_docDescriptor.setHtml(str_html_descriptor);
     //
     m_ptrParentTree = (MyTree *) parent_tree;
     Q_ASSERT (m_ptrParentTree);
-};
+    //
+}
 
 TreeLeaf::~TreeLeaf()
 {
@@ -106,7 +114,24 @@ TreeLeaf::~TreeLeaf()
     {
         delete m_vAttachments[i];
     };
-};
+}
+
+void TreeLeaf::setColor ( const QString& str_color, bool b_update_db )
+{
+    if ( str_color.length() == 0 )
+        return;
+    //
+
+    QColor clr (str_color);
+    QBrush brush (clr);
+    this->setForeground(0, brush);
+    //
+    if (b_update_db)
+    {
+        m_strNodeColor = str_color;
+        updateColor_DB();
+    };
+}
 
 void TreeLeaf::saveToDBExpandStateChange ()
 {
@@ -123,9 +148,7 @@ void TreeLeaf::placeStatusBarMsg (const QString& str_message)
     if (m_ptrParentTree)
         m_ptrParentTree->getStatusBar()->showMessage( str_message );
 }
-//
-// TODO: IT IS NOT FINISHED YET!
-//
+
 bool  TreeLeaf::exportNode ( const QString&    str_directory_path,
                              ExportFormat      fmt,
                              bool              b_recursive_export,
@@ -201,9 +224,7 @@ bool TreeLeaf::exportAttachments ( bool b_export_encrypted, const QString& str_f
     //
     return true;
 }
-//
-//TODO:
-// CHANGE EXPORT
+
 bool TreeLeaf::exportNodeDescriptor( ExportFormat fmt, const QString& str_full_path )
 {
     if ( m_docDescriptor.toPlainText().length() == 0)
@@ -1012,7 +1033,7 @@ void TreeLeaf::run()
     setObjectStatus(AbstractDatabaseObject::OBJECT_OK);
     //
 //    m_RunLocker.unlock();
-};
+}
 
 void TreeLeaf::setItemColor()
 {
@@ -1031,8 +1052,17 @@ void TreeLeaf::setItemColor()
         break;
     default:
         {
-            fg_color = settings.value(g_str_CLR_NORNAL_FG).value<QColor>();
-            bg_color = settings.value(g_str_CLR_NORNAL_BG).value<QColor>();
+            if (m_strNodeColor.isEmpty())
+            {
+                fg_color = settings.value(g_str_CLR_NORNAL_FG).value<QColor>();
+                bg_color = settings.value(g_str_CLR_NORNAL_BG).value<QColor>();
+            }else
+            {
+                setColor(m_strNodeColor, false);
+                QBrush bg_brash   ( settings.value(g_str_CLR_NORNAL_BG).value<QColor>() );
+                this->setBackground(0,bg_brash);
+                return;
+            };
         }
         break;
     //TODO: add colors for updating items
@@ -1344,6 +1374,36 @@ int  TreeLeaf::insertTo_DB()
     return m_iID;
 }
 
+bool TreeLeaf::updateColor_DB ()
+{
+    DBAcccessSafe   db_safe;
+    //
+    QSqlDatabase* ptr_db = db_safe.getDB();
+    if (NULL == ptr_db)
+        return false;
+    //
+    QSqlQuery qry(*ptr_db);
+    //
+    QString str_update_string = QString("UPDATE node_tbl SET node_color = :COLOR WHERE id_node = :ID;");
+    //
+    if(! qry.prepare( str_update_string ) )
+    {
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
+        return false;
+    };
+    //
+    qry.bindValue(":COLOR", this->m_strNodeColor);
+    qry.bindValue(":ID",   m_iID);
+    //
+    if( !qry.exec() )
+    {
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
+        return false;
+    };
+    //
+    return true;
+}
+
 bool TreeLeaf::updateName_DB()
 {
     DBAcccessSafe   db_safe;
@@ -1373,7 +1433,7 @@ bool TreeLeaf::updateName_DB()
     //
     m_strDatabaseNodeName = this->text(0);
     return true;
-};
+}
 
 void TreeLeaf::setActiveStatus_DB(bool b_active)
 {

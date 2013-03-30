@@ -98,17 +98,14 @@ bool ColorGraficElements::getDialogColor(QColor& t_color)
 {
     QColor temp_color = QColorDialog::getColor(Qt::white, m_pParentFrame );
     //
+    if ( temp_color.isValid() == false )
+    {
+        return false;
+    };
     int r = 0;
     int g = 0;
     int b = 0;
     temp_color.getRgb(&r,&g, &b);
-    //
-    if (
-            (0 == r) &&  (0 == g) && (0 == b)   //perhaps user press cancel.
-       )
-    {
-        return false;
-    };
     //
     t_color = temp_color;
     return true;

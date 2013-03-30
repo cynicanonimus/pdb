@@ -39,5 +39,6 @@ Date 		CommitID		Changes
 28.03.2013      28.03.2013-2            Implement split table cells and insert link to image
 --------------------------------------------------------------------------------------------------------
 30.03.2013      30.03.2013-1		Implement export node (subtree) to the HDD
-30.03.2013      30.03.2013-2            Update dbdescription.xml, add support for Oracle           
+30.03.2013      30.03.2013-2            Update dbdescription.xml, add support for Oracle 
+30.03.2013      30.03.2013-3            Implement user-defined colors for the nodes. WARNING: table node_tbl changed!!!!
 --------------------------------------------------------------------------------------------------------

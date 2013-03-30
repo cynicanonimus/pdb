@@ -244,7 +244,22 @@ void  MyTree::onExportNode ()
 
 //-------------------------------------------------------------------------
 
-void  MyTree::onImportNode ()
+void MyTree::onChangeColor ()
+{
+    TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
+    //
+    if (NULL == ptr_actual_item)
+        return;
+    //
+    QColor color = QColorDialog::getColor(Qt::black, this);
+    //
+    if (color.isValid())
+    {
+        ptr_actual_item->setColor(color.name(), true);
+    };
+}
+
+void MyTree::onImportNode ()
 {
     TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
 
@@ -1148,7 +1163,7 @@ bool MyTree::getLeafsFromDatabase_DB()
     //
     QSqlQuery qry(*ptr_db);
     //
-    QString str_query = "select id_node, id_parent, id_tree, node_name, node_descriptor, active, expanded, last_change from node_tbl order by id_tree, id_parent, id_node asc;";
+    QString str_query = "select id_node, id_parent, id_tree, node_name, node_color, node_descriptor, active, expanded, last_change from node_tbl order by id_tree, id_parent, id_node asc;";
     //
     if ( !qry.prepare( str_query ) )
     {
@@ -1174,9 +1189,10 @@ bool MyTree::getLeafsFromDatabase_DB()
             const int     i_parent_node_id    = qry.value(1).toInt();
             const int     i_parent_tree_id    = qry.value(2).toInt();
             const QString str_node_name       = qry.value(3).toString();
-            const QString str_node_descriptor = qry.value(4).toString();
-            const bool    b_node_active       = qry.value(5).toBool();
-            const bool    b_expanded          = qry.value(6).toBool();
+            const QString str_node_color      = qry.value(4).toString();
+            const QString str_node_descriptor = qry.value(5).toString();
+            const bool    b_node_active       = qry.value(6).toBool();
+            const bool    b_expanded          = qry.value(7).toBool();
 /*
             QString str_check = qry.value(5).toString();
             int i_check = qry.value(5).toInt();
@@ -1208,6 +1224,7 @@ bool MyTree::getLeafsFromDatabase_DB()
                                             i_parent_node_id,
                                             i_parent_tree_id,
                                             str_node_name,
+                                            str_node_color,
                                             str_node_descriptor,
                                             b_node_active,
                                             b_expanded,
@@ -1244,6 +1261,7 @@ bool MyTree::getLeafsFromDatabase_DB()
                                             i_parent_node_id, //because can be orpheline
                                             i_parent_tree_id,
                                             str_node_name,
+                                            str_node_color,
                                             str_node_descriptor,
                                             b_node_active,
                                             b_expanded,

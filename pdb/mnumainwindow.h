@@ -145,6 +145,8 @@ public:
     QAction*    m_ptrRestoreSubtree;
     QAction*    m_ptrInsertNewNode;
     //
+    QAction*    m_ptrChangeNodeColor;
+    //
     QAction*    m_ptrCutNode;
     QAction*    m_ptrPasteNode;
     //

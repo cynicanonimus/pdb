@@ -56,6 +56,7 @@ public:
                       int               i_parent_node_id,         // parent node ID
                       int               i_tree_id,
                       const QString&    str_name,                 // node name
+                      const QString&    str_node_color,           // color of the node
                       const QString&    str_html_descriptor,      // node text descriptor
                       bool              b_is_active,              // is node "deleted" or not
                       bool              b_is_expanded,            // is node expanded or not
@@ -74,6 +75,7 @@ public:
     TreeLeaf*               getChildNode                (int i_node_id);
     TreeLeaf*               getParent                   ();
     void                    setNewParent                (TreeLeaf* ptr_new_parent);
+    void                    setColor                    (const QString& str_color, bool b_update_db);
     //
     bool                    delete_it                   (bool b_silence=false);
     //
@@ -154,19 +156,20 @@ private:
     // function updates information about ID of the parent node for this node
     void                    updateParentInfoIn_DB();
     // function sets new color of the node depends of it status
-    void                    setItemColor();
+    void                    setItemColor            ();
     //
-    bool                    isPossibleToRestoreNode();
+    bool                    isPossibleToRestoreNode ();
     bool                    isPossibleToDeleteAttachments(QString &str_msg);
     //
-    void                    deleteAllAttachments ();
-    void                    restoreAllAttachments();
+    void                    deleteAllAttachments    ();
+    void                    restoreAllAttachments   ();
     //
     // function marks current node as "deleted" or "normal" depends of parameter
     //
     void                    setActiveStatus_DB      (bool b_active);
     int                     insertTo_DB             ();//must be defined in the every parent class. put new content to DB
     bool                    updateName_DB           ();
+    bool                    updateColor_DB          ();
     bool                    updateDescriptor_DB     ();
     void                    updateTreeID_DB         ();
     void                    updateExpandState_DB    ();
@@ -204,6 +207,8 @@ private:
     MyTree*         m_ptrParentTree;
     bool            m_bForceDelete;
     QString         m_strDatabaseNodeName;
+    //
+    QString         m_strNodeColor;
     //bool          m_bIsInternalNameAssigment;
 //
 
