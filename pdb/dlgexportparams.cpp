@@ -19,6 +19,7 @@
 #include "ui_dlgexportparams.h"
 //
 #include <QFileDialog>
+#include <QSettings>
 
 DlgExportParams::DlgExportParams(QWidget *parent) :
     QDialog(parent),
@@ -26,14 +27,25 @@ DlgExportParams::DlgExportParams(QWidget *parent) :
 {
     ui->setupUi(this);
     //
-    this->ui->m_bAll->setEnabled(false);
-    this->ui->m_bOnlySelected->setEnabled(false);
+    //do not change the order, because of "onOK"
     //
-    QObject::connect( this->ui->m_bAll,             SIGNAL(clicked()),              this, SLOT( onClickExportAll     ()  ));
-    QObject::connect( this->ui->m_bOnlySelected,    SIGNAL(clicked()),              this, SLOT(onClickExportCurrent  ()  ));
-    QObject::connect( this->ui->m_bCancel,          SIGNAL(clicked()),              this, SLOT(onClickCancel         ()  ));
-    QObject::connect( this->ui->m_ExportPath,       SIGNAL(textChanged(QString)),   this, SLOT(onChangeExportPath(QString)));
-    QObject::connect( this->ui->m_bChangePath,      SIGNAL(clicked()),              this, SLOT(onClickChangeExportPath() ));
+    ui->comboBoxExportFormats->addItem("txt");
+    ui->comboBoxExportFormats->addItem("html");
+    ui->comboBoxExportFormats->addItem("odt");
+    ui->comboBoxExportFormats->addItem("pdf");
+    //
+    ui->comboBoxExportFormats->setCurrentIndex(0);
+    //
+    ui->radioButtonOnlyCurrent->setChecked(true);
+    m_bExportOnlyCurrentNode = true;
+    //
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    m_strExportPath = settings.value(g_str_ATTACH_EXPORT_PATH).toString();
+    this->ui->m_ExportPath->setText(m_strExportPath);
+    //
+    QObject::connect( this->ui->m_bChangePath,      SIGNAL(clicked()),              this, SLOT(onClickChangeExportPath()    ));
+    QObject::connect( this->ui->ButtonOK,           SIGNAL(clicked()),              this, SLOT(onOK  ()                     ));
+    QObject::connect( this->ui->ButtonCancel,       SIGNAL(clicked()),              this, SLOT(reject()                     ));
 }
 
 DlgExportParams::~DlgExportParams()
@@ -41,77 +53,21 @@ DlgExportParams::~DlgExportParams()
     delete ui;
 }
 
-void DlgExportParams::reset()
-{
-    m_strExportPath = "";
-    m_enUserChoice = en_DO_NOTHING;
-};
-
-bool DlgExportParams::isExportAll() const
-{
-    return ( en_EXPORT_ALL == m_enUserChoice );
-};
-
-bool DlgExportParams::isExportCurrent() const
-{
-    return ( en_EXPORT_CURRENT == m_enUserChoice );
-};
 //**********************************************************************************
-const QString&  DlgExportParams::getExportPath  () const
-{
-    return m_strExportPath;
-};
-
-void DlgExportParams::onChangeExportPath   (QString str_path)
-{
-    if (QFile::exists(str_path))
-    {
-        this->ui->m_bAll->setEnabled(true);
-        this->ui->m_bOnlySelected->setEnabled(true);
-    }else
-    {
-        this->ui->m_bAll->setEnabled(false);
-        this->ui->m_bOnlySelected->setEnabled(false);
-    };
-    //
-    return;
-}
 
 void DlgExportParams::onClickChangeExportPath()
 {
     QString str_dir_name = QFileDialog::getExistingDirectory(NULL,
                                                              tr("Choose tree export directory"),
-                                                             NULL,
+                                                             m_strExportPath,
                                                              QFileDialog::ShowDirsOnly|QFileDialog::DontResolveSymlinks
                                                              );
-
-
-
     if (str_dir_name.length() > 0 )
+    {
         this->ui->m_ExportPath->setText(str_dir_name);
-};
-
-
-void  DlgExportParams::onClickExportAll()
-{
-    m_enUserChoice = en_EXPORT_ALL;
-    m_strExportPath = this->ui->m_ExportPath->text();
-    close();
-};
-
-void  DlgExportParams::onClickExportCurrent()
-{
-    m_enUserChoice = en_EXPORT_CURRENT;
-    m_strExportPath = this->ui->m_ExportPath->text();
-    close();
-};
-
-void  DlgExportParams::onClickCancel ()
-{
-    reset();
-    close();
-};
-
+        m_strExportPath = str_dir_name;
+    };
+}
 
 void DlgExportParams::keyPressEvent(QKeyEvent * event)
 {
@@ -120,11 +76,51 @@ void DlgExportParams::keyPressEvent(QKeyEvent * event)
     switch( key_code )
     {
     case Qt::Key_Escape:
-        onClickCancel();
+        this->reject();
         return;
     default:
         break;
     };
     //
     QDialog::keyPressEvent(event);
-};
+}
+
+void DlgExportParams::onOK()
+{
+    if ( true == ui->radioButtonOnlyCurrent->isChecked() )
+        m_bExportOnlyCurrentNode = true;
+    else
+        m_bExportOnlyCurrentNode = false;
+    //
+    //m_enExportFormat
+    switch (ui->comboBoxExportFormats->currentIndex())
+    {
+    case 0:
+        m_enExportFormat = en_TXT;
+        break;
+    case 1:
+        m_enExportFormat = en_HTML;
+        break;
+    case 2:
+        m_enExportFormat = en_ODT;
+        break;
+    case 3:
+        m_enExportFormat = en_PDF;
+        break;
+    default:
+        Q_ASSERT(FALSE);
+        m_enExportFormat = en_TXT;
+    };
+    //
+    if ( true == ui->checkBoxExportAttachments->isChecked() )
+        m_bExportAttachments = true;
+    else
+        m_bExportAttachments = false;
+    //
+    if ( true == ui->checkBoxNoExportEncrypted->isChecked() )
+        m_bExportEncrypted = false;
+    else
+        m_bExportEncrypted = true;
+    //
+    this->accept();
+}

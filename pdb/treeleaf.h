@@ -26,6 +26,7 @@
 #include <vector>
 #include <QMutex>
 //
+#include "../CommonInclude/pdb/pdb_style.h"
 #include "abstractdatabaseobject.h"
 #include "attachment.h"
 //
@@ -118,7 +119,11 @@ public:
     void                    notifyAboutAttachmentUpdate (bool b_result, QString str_attachment_name);
     //
     bool                    importNode                  ( const QString& str_directory_path, bool b_recursive_import);
-    bool                    exportNode                  ( const QString& str_directory_path, bool b_recursive_export);
+    bool                    exportNode                  ( const QString&    str_directory_path,
+                                                          ExportFormat      fmt,
+                                                          bool              b_recursive_export,
+                                                          bool              b_include_attach,
+                                                          bool              b_export_encrypted);
     //
     // move to open section because need to ask root node.
     // warning! this is recurcive call
@@ -133,6 +138,9 @@ public:
     AbstractDatabaseObject::DB_OBJECT_STATUS      getObjectStatus () const;
 //
 private:
+    QString                 getExtByExportFormat    ( ExportFormat fmt ) const;
+    bool                    exportAttachments       ( bool b_export_encrypted, const QString& str_full_path );
+    bool                    exportNodeDescriptor    ( ExportFormat fmt, const QString& str_full_path );
     //
     // request attachments list from database
     //

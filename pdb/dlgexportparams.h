@@ -17,6 +17,8 @@
     along with pdb.  If not, see <http://www.gnu.org/licenses/>.
 */
 //
+#include "../CommonInclude/pdb/pdb_style.h"
+//
 #include <QDialog>
 #include <QKeyEvent>
 
@@ -32,19 +34,18 @@ public:
     explicit DlgExportParams(QWidget *parent = 0);
     ~DlgExportParams();
     //
-    void            reset          ();
-    bool            isExportAll    () const;
-    bool            isExportCurrent() const;
-    const QString&  getExportPath  () const;
+    const QString&  getExportPath           () const        { return m_strExportPath;           }
+    ExportFormat    getExportFormat         () const        { return m_enExportFormat;          }
+    bool            isExportOnlyCurrentNode () const        { return m_bExportOnlyCurrentNode;  }
+    bool            isExportIncludeAttach   () const        { return m_bExportAttachments;      }
+    bool            exportEncrypted         () const        { return m_bExportEncrypted;        }
     //
     void    keyPressEvent(QKeyEvent * event);
 
 private slots:
-    void    onClickExportAll     ();
-    void    onClickExportCurrent ();
-    void    onClickCancel        ();
-    void    onChangeExportPath   (QString);
-    void    onClickChangeExportPath();
+    //
+    void    onClickChangeExportPath ();
+    void    onOK                    ();
     
 private:
     Ui::DlgExportParams *ui;
@@ -59,8 +60,11 @@ private:
         en_DO_NOTHING
     };
     //
-    en_EXPORT_TYPE  m_enUserChoice;
     QString         m_strExportPath;
+    bool            m_bExportOnlyCurrentNode;
+    ExportFormat    m_enExportFormat;
+    bool            m_bExportAttachments;
+    bool            m_bExportEncrypted;
 };
 
 #endif // DLGEXPORTPARAMS_H

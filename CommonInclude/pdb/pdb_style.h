@@ -86,6 +86,14 @@ const static QString  g_str_SEC_SCHRED_CMD  =   "security/schred_cmd";
 //
 const static QString  g_str_SEC_MARK_CRYPT  =   "security/mark_crypt";
 //
+enum ExportFormat
+{
+    en_TXT,
+    en_HTML,
+    en_ODT,
+    en_PDF
+};
+//
 enum LogNotificationCodes
 {
     en_ENABLE_LOG,

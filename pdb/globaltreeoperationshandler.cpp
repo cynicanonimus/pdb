@@ -55,10 +55,9 @@ void    GlobalTreeOperationsHandler::onCreateNewTree()
 {
     TreeRenameCreateDlg dlg;
     dlg.setDlgMode(TreeRenameCreateDlg::CREATE_DLG);
-    int             i_res = dlg.exec();
     RootOfTree*     p_root_of_tree = NULL;
     //
-    if (QDialog::Accepted == i_res)
+    if ( QDialog::Accepted == dlg.exec() )
     {
         p_root_of_tree = createNewTree_DB( dlg.getTreeName(), dlg.getRootNodeName() );
     };

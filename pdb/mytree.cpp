@@ -215,19 +215,23 @@ void MyTree::onDropAttachments ()
 
 void  MyTree::onExportNode ()
 {
-    QMessageBox box;
-    box.setText("Not ready yet, sorry");
-    box.exec();
-    return;
-
     TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
 
     if (NULL == ptr_actual_item)
         return;
     //
     DlgExportParams dlg;
-    dlg.exec();
+
+    if ( QDialog::Accepted == dlg.exec() )
+    {
+        ptr_actual_item->exportNode(dlg.getExportPath(),
+                                    dlg.getExportFormat(),
+                                    !dlg.isExportOnlyCurrentNode(),
+                                    dlg.isExportIncludeAttach(),
+                                    dlg.exportEncrypted() );
+    };
     //
+/*
     if ( dlg.isExportAll() == true )
     {
         ptr_actual_item->exportNode(dlg.getExportPath(), true);
@@ -235,6 +239,7 @@ void  MyTree::onExportNode ()
     {
         ptr_actual_item->exportNode(dlg.getExportPath(), false);
     };
+*/
 }
 
 //-------------------------------------------------------------------------

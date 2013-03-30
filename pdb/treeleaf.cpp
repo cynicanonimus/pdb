@@ -27,6 +27,8 @@
 #include <QColor>
 #include <QThreadPool>
 #include <QMessageBox>
+#include <QTextDocumentWriter>
+#include <QPrinter>
 //
 // create from user interface
 //
@@ -120,35 +122,60 @@ void TreeLeaf::placeStatusBarMsg (const QString& str_message)
 {
     if (m_ptrParentTree)
         m_ptrParentTree->getStatusBar()->showMessage( str_message );
-};
-
-bool  TreeLeaf::exportNode ( const QString& str_directory_path, bool b_recursive_export)
+}
+//
+// TODO: IT IS NOT FINISHED YET!
+//
+bool  TreeLeaf::exportNode ( const QString&    str_directory_path,
+                             ExportFormat      fmt,
+                             bool              b_recursive_export,
+                             bool              b_include_attach,
+                             bool              b_export_encrypted)
 {
     placeStatusBarMsg(tr("Exporting node ") + m_strDatabaseNodeName + "..." );
     //create export directory
     QString str_new_dir = str_directory_path + tr("//") + m_strDatabaseNodeName;
     QDir d_manager;
+    //
     bool b_create_success = d_manager.mkdir(str_new_dir);
     if (false == b_create_success)
     {
         placeStatusBarMsg (tr("Unable create ") + str_new_dir);
         return false;
     };
-    //if created - create file with the same name and ".txt" on the same level
-    QFile file( str_new_dir + tr(".txt") );
-    bool b_create_descriptor = file.open(QIODevice::WriteOnly | QIODevice::Text);
-    if ( b_create_descriptor == false)
-    {
-        placeStatusBarMsg( str_new_dir + tr(".txt") );
+    //
+    if ( false == exportNodeDescriptor(fmt, str_new_dir) )
         return false;
-    };
-    QTextStream out(&file);
-    out << m_docDescriptor.toHtml();
-    file.close();
     //
     QString str_message = QString(" (id = %1) name='%2' to '%3'").arg(this->m_iID).arg(this->text(0)).arg(str_directory_path);
     Logger::getInstance().logIt(en_LOG_EXPORT_NODE, str_message );
     //
+    if (true == b_include_attach)
+    {
+        if ( false == exportAttachments(b_export_encrypted, str_new_dir) )
+            return false;
+    };
+    //
+    placeStatusBarMsg( tr("Node ") + m_strDatabaseNodeName + tr(" exported.") );
+    //if export is recursive:
+    if (b_recursive_export == false)
+        return true;
+    //
+    //call export for all childs
+    //
+    for (int i = 0; i < this->childCount(); i++)
+    {
+        TreeLeaf* ptr_actual = (TreeLeaf*) this->child(i);
+        Q_ASSERT ( ptr_actual );
+        //
+        ptr_actual->exportNode(str_new_dir, fmt, b_recursive_export, b_include_attach, b_export_encrypted);
+    };
+    //
+    return true;
+}
+
+bool TreeLeaf::exportAttachments ( bool b_export_encrypted, const QString& str_full_path )
+{
     //request list of attachments from the server
     requestAttachments ();
     //save all attachments into created directory
@@ -158,25 +185,85 @@ bool  TreeLeaf::exportNode ( const QString& str_directory_path, bool b_recursive
     {
         Attachment* ptr_attachment = (*itr_attach);
         //
-        ptr_attachment->export_it(str_new_dir);
+        if (false == b_export_encrypted)
+        {
+            if ( true == ptr_attachment->is_crypted() )
+                continue; //ignore this attachment, because it is encrypted, and it is restricted now.
+        };
+        //
+        if ( ptr_attachment->export_it(str_full_path) == false )
+        {
+            QString str_message = QString ("Unable to export %1").arg( ptr_attachment->getName() );
+            Logger::getInstance().logIt( en_LOG_ERRORS, str_message, NULL );
+        };
         placeStatusBarMsg( tr("Attachment ") + ptr_attachment->getName() + tr(" exported.") );
     };
     //
-    placeStatusBarMsg( tr("Node ") + m_strDatabaseNodeName + tr(" exported.") );
-    //if export is recursive:
-    if (b_recursive_export == false)
-        return true;
-    //call export for all childs
-    for (int i = 0; i < this->childCount(); i++)
+    return true;
+}
+//
+//TODO:
+// CHANGE EXPORT
+bool TreeLeaf::exportNodeDescriptor( ExportFormat fmt, const QString& str_full_path )
+{
+    if ( m_docDescriptor.toPlainText().length() == 0)
+        return true; //do not make export of empty descriptors
+    //
+    QString str_full_file_name  = str_full_path + getExtByExportFormat(fmt);
+    //
+    switch(fmt)
     {
-        TreeLeaf* ptr_actual = (TreeLeaf*) this->child(i);
-        Q_ASSERT ( ptr_actual );
-        //
-        ptr_actual->exportNode(str_new_dir, b_recursive_export);
+    case en_TXT:
+    case en_HTML:
+    case en_ODT:
+    {
+        QTextDocumentWriter writer(str_full_file_name);
+        writer.write(&m_docDescriptor);
+    }
+        break;
+    case en_PDF:
+    {
+        //str_full_file_name += ".pdf"; do not need it, QPrinter does
+        QPrinter printer(QPrinter::HighResolution);
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setOutputFileName(str_full_file_name);
+        m_docDescriptor.print(&printer);
+    }
+        break;
+    default:
+        Q_ASSERT(FALSE);
+        return false;
     };
     //
     return true;
-};
+}
+
+QString TreeLeaf::getExtByExportFormat ( ExportFormat fmt ) const
+{
+    QString str_ret;
+    //
+    switch(fmt)
+    {
+    case en_TXT:
+        str_ret = ".txt";
+        break;
+    case en_HTML:
+        str_ret = ".html";
+        break;
+    case en_ODT:
+        str_ret = ".odt";
+        break;
+    case en_PDF:
+        str_ret = ".pdf";
+        break;
+    default:
+        Q_ASSERT(FALSE);
+        str_ret = ".txt";
+        break;
+    };
+    //
+    return str_ret;
+}
 
 bool TreeLeaf::isPossibleToExportNode() const
 {
