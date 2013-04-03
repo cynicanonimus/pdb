@@ -55,7 +55,8 @@ SOURCES += main.cpp\
     myeditor.cpp \
     dlginserttable.cpp \
     dlginserthtml.cpp \
-    htmlsyntaxhighlighter.cpp
+    htmlsyntaxhighlighter.cpp \
+    dlgaskencryptmethod.cpp
 
 HEADERS  += mainwindow.h \
     GDefinitions.h \
@@ -97,7 +98,8 @@ HEADERS  += mainwindow.h \
     myeditor.h \
     dlginserttable.h \
     dlginserthtml.h \
-    htmlsyntaxhighlighter.h
+    htmlsyntaxhighlighter.h \
+    dlgaskencryptmethod.h
 
 FORMS    += mainwindow.ui \
     notificationdialog.ui \
@@ -109,7 +111,8 @@ FORMS    += mainwindow.ui \
     passworddlg.ui \
     askchangesdetailsdlg.ui \
     dlginserttable.ui \
-    dlginserthtml.ui
+    dlginserthtml.ui \
+    dlgaskencryptmethod.ui
 
 RESOURCES += \
     pdb_res.qrc

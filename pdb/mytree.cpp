@@ -36,6 +36,7 @@
 #include "rootoftree.h"
 #include "attachimportorreplacedlg.h"
 #include "askchangesdetailsdlg.h"
+#include "dlgaskencryptmethod.h"
 //
 using namespace std;
 //
@@ -538,6 +539,14 @@ void  MyTree::OnDecryptAttachmentsGlobal   ()
 
 void MyTree::execGlobalEncryptionOperation ( bool b_encrypt )
 {
+    if ( b_encrypt )
+    {
+        DlgAskEncryptMethod dlg;
+        //
+        if ( dlg.exec() == QDialog::Rejected)
+            return;
+    };
+    //
     TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
     //
     AskChangesDetailsDlg dlg;

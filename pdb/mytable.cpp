@@ -23,6 +23,7 @@
 #include "tmpfilecleaner.h"
 #include "../CommonInclude/pdb/pdb_style.h"
 #include "logger.h"
+#include "dlgaskencryptmethod.h"
 //
 #include <QDesktopServices>
 #include  <QHeaderView>
@@ -543,6 +544,14 @@ void MyTable::MyTable::onCancelAsyncOperations ()
 
 void MyTable::encrypt_decrypt_array(bool b_encrypt, const Attachment::AttachmentsList &list)
 {
+    if ( b_encrypt )
+    {
+        DlgAskEncryptMethod dlg;
+        //
+        if ( dlg.exec() == QDialog::Rejected)
+            return;
+    };
+    //
     initOnDemand();
     //
     if (b_encrypt)

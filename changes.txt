@@ -42,3 +42,4 @@ Date 		CommitID		Changes
 30.03.2013      30.03.2013-2            Update dbdescription.xml, add support for Oracle 
 30.03.2013      30.03.2013-3            Implement user-defined colors for the nodes. WARNING: table node_tbl changed!!!!
 --------------------------------------------------------------------------------------------------------
+03.04.2013	03.04.2013-1		Implement possibility to change encrypt mode "on fly"
