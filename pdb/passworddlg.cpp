@@ -199,6 +199,7 @@ void PasswordDlg::onChangePassword1  (QString str_text)
 {
     switch(m_enMode)
     {
+    case UNLOCK_SCREEN:
     case ENTER_PASSWORD:
         if (str_text.length() == 0)
             ui->m_LeftButton->setEnabled(false);
@@ -223,6 +224,17 @@ void PasswordDlg::onLeftButtonClick  () //ok usially
         if ( isPasswordMatchWithExisting () == true )
         {
             ServicesCfg::getInstance().enterExistingPassword( ui->m_EnterPasswdLineEdit1->text() );
+            this->close();
+        }else
+        {
+            QMessageBox::critical(NULL, "Error", "Password is wrong, try again.", QMessageBox::Ok);
+            ui->m_EnterPasswdLineEdit1->setText("");
+        };
+        //
+        break;
+    case UNLOCK_SCREEN:
+        if ( isPasswordMatchWithExisting () == true )
+        {
             this->close();
         }else
         {
@@ -491,6 +503,10 @@ void PasswordDlg::onRightButtonClick () //cancel usially
         //emit Shutdown();
         close();
         break;
+    case UNLOCK_SCREEN:
+        emit Shutdown();
+        close();
+        break;
     default:
         //reset fields
         ui->m_EnterPasswdLineEdit1->setText("");
@@ -526,6 +542,26 @@ void PasswordDlg::setDlgMode (PASSWORD_MODE en_mode)
         ui->m_LeftButton            ->setEnabled(false);
         ui->m_LeftButton            ->setText("OK");
         ui->m_RightButton           ->setText("Cancel");
+        //
+        //ui->m_msgLabel->setText("Enter password and click 'OK' or click 'Exit application'");
+        //
+        ui->m_LblPassword2          ->hide();
+        ui->m_EnterPasswdLineEdit2  ->hide();
+        ui->m_LblPassword3          ->hide();
+        ui->m_EnterPasswdLineEdit3  ->hide();
+        this->resize(405, 90);
+        break;
+    case UNLOCK_SCREEN:
+        this                        ->setWindowTitle(str_header); //Enter application password
+        ui->m_LblPassword1          ->setText("Enter password:");
+        ui->m_EnterPasswdLineEdit1  ->setEchoMode(QLineEdit::Password);
+        ui->m_EnterPasswdLineEdit1  ->clear();
+        //
+        ui->m_LeftButton            ->setEnabled(false);
+        ui->m_LeftButton            ->setText("OK");
+        ui->m_RightButton           ->setText("Quit");
+        //
+        ui->m_EnterPasswdLineEdit1->setText("");
         //
         //ui->m_msgLabel->setText("Enter password and click 'OK' or click 'Exit application'");
         //
@@ -585,7 +621,8 @@ void PasswordDlg::setDlgMode (PASSWORD_MODE en_mode)
         //
         this->resize(405, 90);
         break;
-//405x225
+    default:
+        Q_ASSERT(FALSE);
         break;
     };
 }

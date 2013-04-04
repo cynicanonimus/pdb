@@ -105,7 +105,6 @@ void SecurityElements::readData()
     //
     m_bProtectByDefault     = settings.value(g_str_SEC_PROTECT).value<bool>();
     //
-    //g_str_SEC_BACKUP
     //
     m_uiEncryptMode         = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
     //

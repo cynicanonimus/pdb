@@ -38,6 +38,7 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     m_ptrAttachmentToolBar  = NULL;
     m_ptrNodeToolBar        = NULL;
     m_ptrEditorToolBar      = NULL;
+    m_ptrSecurityToolBar    = NULL;
     //
     createTreeControlMenu       ();
     createNodeControlMenu       ();
@@ -57,6 +58,7 @@ MnuMainWindow::MnuMainWindow( MainWindow* parent ) :
     QObject::connect(m_ptrMnuAttachmentToolBar, SIGNAL(triggered()), this, SLOT (onTriggerAttachmentToolBox() ));
     QObject::connect(m_ptrMnuEditorToolBar,     SIGNAL(triggered()), this, SLOT (onTriggerEditToolBox      () ));
     QObject::connect(m_ptrMnuTableToolBar,      SIGNAL(triggered()), this, SLOT (onTriggerTableToolBox     () ));
+    QObject::connect(m_ptrMnuSecurityToolBar,   SIGNAL(triggered()), this, SLOT (onTriggerSecurityToolBox  () ));
 }
 
 MnuMainWindow::~MnuMainWindow()
@@ -185,9 +187,24 @@ void MnuMainWindow::onTriggerTableToolBox ()
         m_ptrMnuTableToolBar->setChecked(true);
     };
 }
+
+void MnuMainWindow::onTriggerSecurityToolBox ()
+{
+    if ( m_ptrSecurityToolBar->isVisible() )
+    {
+        m_ptrSecurityToolBar->hide();
+        m_ptrMnuSecurityToolBar->setChecked(false);
+    }else
+    {
+        m_ptrSecurityToolBar->show();
+        m_ptrMnuSecurityToolBar->setChecked(true);
+    };
+}
+
 //-------------------------- signal processing begin  ----------------------------------------
 void  MnuMainWindow::onCheckPassword ( bool b_password_exist )
 {
+    m_ptrLockAppScreen      ->setEnabled(false);
     m_bPasswordExist = b_password_exist;
     //
     if (m_bPasswordExist)
@@ -195,10 +212,16 @@ void  MnuMainWindow::onCheckPassword ( bool b_password_exist )
         if ( ServicesCfg::getInstance().getPassword().length() == 0 )
             m_ptrCreateChangePassword->setText ( "Enter password..." );
         else
+        {
+            m_ptrLockAppScreen      ->setEnabled(true);
             m_ptrCreateChangePassword->setText ( "Change password..." );
+        };
     }
     else
+    {
         m_ptrCreateChangePassword->setText ( "Create protection password..." );
+    }
+
 }
 
 void MnuMainWindow::showRightClickPopupNodeMenu()
@@ -859,10 +882,31 @@ void MnuMainWindow::createSecurityMenu()
 {
     m_ptrCreateChangePassword   = new QAction("", this);
     m_ptrCreateChangePassword   ->setIconVisibleInMenu(true);
-    //m_ptrCreateChangePassword      ->setIcon(QIcon(":/images/images/no_shield.png"));
+    m_ptrCreateChangePassword      ->setIcon(QIcon(":/images/images/keys.png"));
     //m_ptrCreateChangePassword      ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_M));
     m_ptrCreateChangePassword      ->setStatusTip(tr("Create password for encrypt/decrypt attachments"));
     m_ptrCreateChangePassword      ->setEnabled(true);
+    //
+    m_ptrLockAppScreen   = new QAction("Lock screen", this);
+    m_ptrLockAppScreen   ->setIconVisibleInMenu(true);
+    m_ptrLockAppScreen      ->setIcon(QIcon(":/images/images/lock_screen.png"));
+    m_ptrLockAppScreen      ->setShortcut(QKeySequence (Qt::Key_F10));
+    m_ptrLockAppScreen      ->setStatusTip(tr("Lock application screen"));
+    m_ptrLockAppScreen      ->setEnabled(false);
+/*
+    if ( ServicesCfg::getInstance().getPassword().length() == 0 )
+
+    else
+        m_ptrLockAppScreen      ->setEnabled(true);
+*/
+    //
+    //
+    if (NULL == m_ptrSecurityToolBar)
+        m_ptrSecurityToolBar = new QToolBar;
+    //
+    m_ptrSecurityToolBar->addAction(m_ptrCreateChangePassword);
+    m_ptrSecurityToolBar->addSeparator();
+    m_ptrSecurityToolBar->addAction(m_ptrLockAppScreen);
 }
 
 void MnuMainWindow::createToolBarSubMenu()
@@ -881,6 +925,9 @@ void MnuMainWindow::createToolBarSubMenu()
     //
     m_ptrMnuTableToolBar = new QAction("Table toolbar", this);
     m_ptrMnuTableToolBar ->setCheckable(true);
+    //
+    m_ptrMnuSecurityToolBar= new QAction("Security toolbar", this);
+    m_ptrMnuSecurityToolBar ->setCheckable(true);
 }
 
 void MnuMainWindow::createCryptograficMenu ()
@@ -1701,11 +1748,16 @@ void MnuMainWindow::assemblyViewMenu( QMenu* ptr_node_menu )
     m_ptrToolbarsMenu->addSeparator();
     //
     m_ptrToolbarsMenu->addAction(m_ptrMnuTableToolBar);
+    m_ptrToolbarsMenu->addSeparator();
+    //
+    m_ptrToolbarsMenu->addAction(m_ptrMnuSecurityToolBar);
 }
 
 void MnuMainWindow::assemblySecurityMenu( QMenu* ptr_node_menu )
 {
     ptr_node_menu->addAction(m_ptrCreateChangePassword);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrLockAppScreen);
 }
 
 void MnuMainWindow::assemblyHelpMenu()
@@ -1828,6 +1880,9 @@ void MnuMainWindow::syncToolbarsVisibilityAndMenu ()
     //
     if ( m_ptrTableToolBar)
         m_ptrTableToolBar->isVisible() ? m_ptrMnuTableToolBar->setChecked(true) : m_ptrMnuTableToolBar->setChecked(false);
+    //
+    if (m_ptrSecurityToolBar)
+        m_ptrSecurityToolBar->isVisible() ? m_ptrMnuSecurityToolBar->setChecked(true) : m_ptrMnuSecurityToolBar->setChecked(false);
     //
     return;
 }

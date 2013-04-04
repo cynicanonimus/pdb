@@ -67,6 +67,7 @@ private slots:
     void onTriggerAttachmentToolBox         ();
     void onTriggerEditToolBox               ();
     void onTriggerTableToolBox              ();
+    void onTriggerSecurityToolBox           ();
 
 
 
@@ -265,10 +266,14 @@ public:
     QAction*    m_ptrMnuTreeToolBar;
     QAction*    m_ptrMnuEditorToolBar;
     QAction*    m_ptrMnuTableToolBar;
-
+    QAction*    m_ptrMnuSecurityToolBar;
     //----------------------------- security - main menu  -----------------------------
     QMenu*      m_ptrSecurity;
+    //
     QAction*    m_ptrCreateChangePassword;
+    QAction*    m_ptrLockAppScreen;
+    //
+    QToolBar*    m_ptrSecurityToolBar;
     //----------------------------- protection - submenu of the Attach menu  -----------------------------
     QMenu*      m_ptrCryptography;
     //--

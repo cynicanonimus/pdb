@@ -70,5 +70,7 @@
         <file>images/picture.png</file>
         <file>images/code_add.png</file>
         <file>images/colorwheel.png</file>
+        <file>images/keys.png</file>
+        <file>images/lock_screen.png</file>
     </qresource>
 </RCC>

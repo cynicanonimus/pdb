@@ -70,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrTreeToolBar);
     addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrEditorToolBar);
     addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrTableToolBar);
+    addToolBar(Qt::BottomToolBarArea,   m_pMainMenu->m_ptrSecurityToolBar);
     //
     //m_pMainMenu->m_ptrTreeToolBar->isVisible()
 
@@ -288,10 +289,11 @@ void MainWindow::conSignalsAndSlots ()
 
 void MainWindow::conSignalsAndSlotsForPwd ()
 {
-    QObject::connect( m_ptrPwdDlg,                           SIGNAL(Shutdown()),            this,               SLOT(close()                    ));
-    QObject::connect(m_pMainMenu->m_ptrCreateChangePassword, SIGNAL(triggered()),           this,               SLOT(onCreateChangePassword()   ));
-    QObject::connect(m_ptrPwdDlg,                            SIGNAL(DropAttachments()),     ui->m_TreeOfNodes,  SLOT(onDropAttachments()        ));
-    QObject::connect(m_ptrPwdDlg,                            SIGNAL(ReencryptFinished()),   ui->m_Service_Tab,  SLOT(onAttachmentUpdated()      ));
+    QObject::connect( m_ptrPwdDlg,                           SIGNAL(Shutdown()),            this,               SLOT(close                  ()  ));
+    QObject::connect(m_pMainMenu->m_ptrCreateChangePassword, SIGNAL(triggered()),           this,               SLOT(onCreateChangePassword ()  ));
+    QObject::connect(m_pMainMenu->m_ptrLockAppScreen,        SIGNAL(triggered()),           this,               SLOT(onLockAppScreen        ()  ));
+    QObject::connect(m_ptrPwdDlg,                            SIGNAL(DropAttachments()),     ui->m_TreeOfNodes,  SLOT(onDropAttachments      ()  ));
+    QObject::connect(m_ptrPwdDlg,                            SIGNAL(ReencryptFinished()),   ui->m_Service_Tab,  SLOT(onAttachmentUpdated    ()  ));
 }
 
 void MainWindow::showEvent (QShowEvent* e)
@@ -326,7 +328,7 @@ void  MainWindow::onBackupDatabaseNow()
 void MainWindow::onStartBackup ()
 {
     statusBar()->showMessage(tr("Begin database backup..."));
-    showInterfaceElements(false);
+    enableInterfaceElements(false);
     return;
 }
 
@@ -335,7 +337,7 @@ void MainWindow::MainWindow::onErrorBackup  (QProcess::ProcessError err)
     QString str_message = QString("Backup did not finish successfuly! Error code: %1").arg(err);
     QMessageBox::critical(NULL, "Backup status", str_message, QMessageBox::Ok);
     //
-    showInterfaceElements(true);
+    enableInterfaceElements(true);
     return;
 }
 
@@ -348,30 +350,62 @@ void MainWindow::MainWindow::onFinishBackup (int i_finish_code)
         QMessageBox::critical(NULL, "Backup status", str_message, QMessageBox::Ok);
     }else
         QMessageBox::information(NULL, "Backup status", "Backup finish successfuly!", QMessageBox::Ok);
-    showInterfaceElements(true);
+    enableInterfaceElements(true);
     return;
 }
 
-void MainWindow::showInterfaceElements          (bool b_show)
+void MainWindow::enableInterfaceElements (bool b_enable)
 {
     //m_pMainMenu->m_ptrNodeToolBar->hide();
 
-    ui->m_TreeOfNodes->setEnabled   ( b_show );
-    ui->m_DBNameList->setEnabled    ( b_show );
-    ui->m_textEditor->setEnabled    ( b_show );
-    ui->m_Service_Tab->setEnabled   ( b_show );
+    ui->m_TreeOfNodes->setEnabled   ( b_enable );
+    ui->m_DBNameList->setEnabled    ( b_enable );
+    ui->m_textEditor->setEnabled    ( b_enable );
+    ui->m_Service_Tab->setEnabled   ( b_enable );
     //
-    m_pMainMenu->m_ptrNodeToolBar->setEnabled       ( b_show );
-    m_pMainMenu->m_ptrAttachmentToolBar->setEnabled ( b_show );
-    m_pMainMenu->m_ptrTreeToolBar->setEnabled       ( b_show );
-    m_pMainMenu->m_ptrEditorToolBar->setEnabled     ( b_show );
-    m_pMainMenu->m_ptrTableToolBar->setEnabled      ( b_show );
+    m_pMainMenu->m_ptrNodeToolBar->setEnabled       ( b_enable );
+    m_pMainMenu->m_ptrAttachmentToolBar->setEnabled ( b_enable );
+    m_pMainMenu->m_ptrTreeToolBar->setEnabled       ( b_enable );
+    m_pMainMenu->m_ptrEditorToolBar->setEnabled     ( b_enable );
+    m_pMainMenu->m_ptrTableToolBar->setEnabled      ( b_enable );
+    m_pMainMenu->m_ptrSecurityToolBar->setEnabled      ( b_enable );
     //
-    m_pMainMenu->m_ptrTreeControlMenu->setEnabled( b_show );
-    m_pMainMenu->m_ptrNodeControlMenu->setEnabled( b_show );
-    m_pMainMenu->m_ptrAttachmentMenu->setEnabled( b_show );
-    m_pMainMenu->m_ptrSecurity->setEnabled( b_show );
-    m_pMainMenu->m_ptrHelpMenu->setEnabled( b_show );
+    m_pMainMenu->m_ptrTreeControlMenu->setEnabled( b_enable );
+    m_pMainMenu->m_ptrNodeControlMenu->setEnabled( b_enable );
+    m_pMainMenu->m_ptrAttachmentMenu->setEnabled( b_enable );
+    m_pMainMenu->m_ptrSecurity->setEnabled( b_enable );
+    m_pMainMenu->m_ptrHelpMenu->setEnabled( b_enable );
+}
+
+void MainWindow::showInterfaceElements ( bool b_show )
+{
+    if (b_show)
+    {
+        ui->m_TreeOfNodes   ->show();
+        ui->m_DBNameList    ->show();
+        ui->m_textEditor    ->show();
+        ui->m_Service_Tab   ->show();
+        ui->m_EditorLabel   ->show();
+        ui->m_AttachmentLabel->show();
+
+    }else
+    {
+        ui->m_TreeOfNodes   ->hide();
+        ui->m_DBNameList    ->hide();
+        ui->m_textEditor    ->hide();
+        ui->m_Service_Tab   ->hide();
+        ui->m_EditorLabel   ->hide();
+        ui->m_AttachmentLabel->hide();
+    };
+}
+
+void  MainWindow::onLockAppScreen ()
+{
+    showInterfaceElements(false);
+    m_ptrPwdDlg->setDlgMode(PasswordDlg::UNLOCK_SCREEN);
+    m_ptrPwdDlg->exec();
+    showInterfaceElements(true);
+    return;
 }
 
 void  MainWindow::onCreateChangePassword ()
@@ -481,8 +515,6 @@ void MainWindow::setTextChangeSignal (bool b_changed)
     //because when we change the database in the combobox, we loose pointer to previous node.
     //
     ui->m_DBNameList->setEnabled(!m_bEditorTextChanged);
-    //
-
     //
     if (b_changed)
         emit changeDescription();

@@ -61,7 +61,7 @@ public slots:
     void onReleaseConn              ();
     void onTakeConn                 ();
     void onCheckPassword            (bool);
-    void onCreateChangePassword     ();
+//    void onCreateChangePassword     ();
     //void onEstablishConnectionToDB(const QString& str_host_name, const QString& str_db_name);
 
 signals:
@@ -69,6 +69,8 @@ signals:
     void saveDescription            ();
 
 private slots:
+    void onCreateChangePassword     ();
+    void onLockAppScreen            ();
     void onSearch                   ();
     void onDbAlreadyInUse           () const;
     void saveCurrentNodeDescriptor  ();
@@ -135,7 +137,8 @@ private:
     void conSignalsAndSlotsForEditor    ();
     void conSignalsAndSlots             ();
     //
-    void showInterfaceElements          (bool b_show = true);
+    void enableInterfaceElements        (bool b_enable = true);
+    void showInterfaceElements          (bool b_show);
 
     //
 };

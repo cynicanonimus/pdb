@@ -42,7 +42,8 @@ public:
     {
         ENTER_PASSWORD,
         CREATE_PASSWORD,
-        CHANGE_PASSWORD
+        CHANGE_PASSWORD,
+        UNLOCK_SCREEN
     };
     
 public:
