@@ -430,6 +430,7 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
     m_ptrDelNode                ->setEnabled(false);
     m_ptrInsertNewNode          ->setEnabled(false);
     m_ptrChangeNodeColor        ->setEnabled(false);
+    m_ptrSetNodeIcon            ->setEnabled(false);
     m_ptrImportAttach           ->setEnabled(false);
     m_ptrRestoreNode            ->setEnabled(false);
     m_ptrRestoreSubtree         ->setEnabled(false);
@@ -482,6 +483,7 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
         m_ptrDelNode                ->setEnabled(false);
         m_ptrInsertNewNode          ->setEnabled(false);
         m_ptrChangeNodeColor        ->setEnabled(false);
+        m_ptrSetNodeIcon            ->setEnabled(false);
         m_ptrImportAttach           ->setEnabled(false);
         m_ptrRestoreNode            ->setEnabled(false);
         m_ptrRestoreSubtree         ->setEnabled(false);
@@ -507,6 +509,7 @@ void MnuMainWindow::onSelectedNodeChanged(TreeLeaf* ptr_to_current, bool has_cut
         m_ptrImportNode         ->setEnabled(true);
         m_ptrInsertNewNode      ->setEnabled(true);
         m_ptrChangeNodeColor    ->setEnabled(true);
+        m_ptrSetNodeIcon        ->setEnabled(true);
         m_ptrImportAttach       ->setEnabled(true);
         //
         if (b_is_root_node)
@@ -1134,6 +1137,14 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrChangeNodeColor  ->setStatusTip(tr("Change color of the current node"));
     m_ptrChangeNodeColor  ->setEnabled(false);
     //
+    m_ptrSetNodeIcon  = new QAction(tr("Node icon..."), this);
+    m_ptrSetNodeIcon  ->setIconVisibleInMenu(true);
+    m_ptrSetNodeIcon  ->setIcon(QIcon(":/images/images/photo.png"));
+    //m_ptrSetNodeIcon  ->setShortcut(QKeySequence (Qt::ALT + Qt::Key_Insert));
+    m_ptrSetNodeIcon  ->setStatusTip(tr("Set, remove or change icon of the node"));
+    m_ptrSetNodeIcon  ->setEnabled(false);
+
+    //
     m_ptrCutNode        = new QAction(tr("Cut node"), this);
     m_ptrCutNode        ->setIconVisibleInMenu(true);
     m_ptrCutNode        ->setIcon(QIcon(":/images/images/cut.png"));
@@ -1209,6 +1220,8 @@ void MnuMainWindow::createNodeControlMenu()
     m_ptrNodeToolBar->addAction(m_ptrInsertNewNode);
     m_ptrNodeToolBar->addSeparator();
     m_ptrNodeToolBar->addAction(m_ptrChangeNodeColor);
+    m_ptrNodeToolBar->addSeparator();
+    m_ptrNodeToolBar->addAction(m_ptrSetNodeIcon);
     m_ptrNodeToolBar->addSeparator();
     m_ptrNodeToolBar->addAction(m_ptrDelNode);
     m_ptrNodeToolBar->addSeparator();
@@ -1568,6 +1581,8 @@ void MnuMainWindow::assemblyNodeMenu(QMenu* ptr_node_menu)
     ptr_node_menu->addAction(m_ptrInsertNewNode);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrChangeNodeColor);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrSetNodeIcon);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrDelNode);
     ptr_node_menu->addSeparator();

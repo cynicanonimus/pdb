@@ -173,6 +173,7 @@ void MainWindow::conSignalsAndSlotsForNodes ()
     QObject::connect( m_pMainMenu->m_ptrRestoreSubtree, SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onRestoreSubtree    () ) );
     QObject::connect( m_pMainMenu->m_ptrInsertNewNode,  SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onInsertNewItem     () ) );
     QObject::connect( m_pMainMenu->m_ptrChangeNodeColor,SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onChangeColor       () ) );
+    QObject::connect( m_pMainMenu->m_ptrSetNodeIcon,    SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onChangeIcon        () ) );
     //
     QObject::connect( m_pMainMenu->m_ptrCutNode,        SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onCutNode()            ) );
     QObject::connect( m_pMainMenu->m_ptrPasteNode,      SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onPasteNode()          ) );

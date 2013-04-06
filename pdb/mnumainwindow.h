@@ -148,6 +148,8 @@ public:
     //
     QAction*    m_ptrChangeNodeColor;
     //
+    QAction*    m_ptrSetNodeIcon;
+    //
     QAction*    m_ptrCutNode;
     QAction*    m_ptrPasteNode;
     //

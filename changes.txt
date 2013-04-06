@@ -46,3 +46,4 @@ Date 		CommitID		Changes
 04.04.2013	04.04.2013-1		Implement lock screen 
 --------------------------------------------------------------------------------------------------------
 06.04.2013	06.04.2013-1		Make new database table (icons_tbl)
+06.04.2013      06.04.2013-2		Add some new classes for icon support (not finished yet)            

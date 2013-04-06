@@ -37,6 +37,7 @@
 #include "attachimportorreplacedlg.h"
 #include "askchangesdetailsdlg.h"
 #include "dlgaskencryptmethod.h"
+#include "dlgmanageicons.h"
 //
 using namespace std;
 //
@@ -258,6 +259,13 @@ void MyTree::onChangeColor ()
     {
         ptr_actual_item->setColor(color.name(), true);
     };
+}
+
+void MyTree::onChangeIcon()
+{
+    DlgManageIcons dlg;
+    dlg.exec();
+    return;
 }
 
 void MyTree::onImportNode ()

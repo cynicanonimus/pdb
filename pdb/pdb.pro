@@ -57,7 +57,9 @@ SOURCES += main.cpp\
     dlginserthtml.cpp \
     htmlsyntaxhighlighter.cpp \
     dlgaskencryptmethod.cpp \
-    iconloader.cpp
+    iconloader.cpp \
+    dlgmanageicons.cpp \
+    iconmanager.cpp
 
 HEADERS  += mainwindow.h \
     GDefinitions.h \
@@ -101,7 +103,9 @@ HEADERS  += mainwindow.h \
     dlginserthtml.h \
     htmlsyntaxhighlighter.h \
     dlgaskencryptmethod.h \
-    iconloader.h
+    iconloader.h \
+    dlgmanageicons.h \
+    iconmanager.h
 
 FORMS    += mainwindow.ui \
     notificationdialog.ui \
@@ -114,7 +118,8 @@ FORMS    += mainwindow.ui \
     askchangesdetailsdlg.ui \
     dlginserttable.ui \
     dlginserthtml.ui \
-    dlgaskencryptmethod.ui
+    dlgaskencryptmethod.ui \
+    dlgmanageicons.ui
 
 RESOURCES += \
     pdb_res.qrc

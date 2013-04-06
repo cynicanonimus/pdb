@@ -72,5 +72,6 @@
         <file>images/colorwheel.png</file>
         <file>images/keys.png</file>
         <file>images/lock_screen.png</file>
+        <file>images/photo.png</file>
     </qresource>
 </RCC>
