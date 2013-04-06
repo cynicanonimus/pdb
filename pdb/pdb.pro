@@ -56,7 +56,8 @@ SOURCES += main.cpp\
     dlginserttable.cpp \
     dlginserthtml.cpp \
     htmlsyntaxhighlighter.cpp \
-    dlgaskencryptmethod.cpp
+    dlgaskencryptmethod.cpp \
+    iconloader.cpp
 
 HEADERS  += mainwindow.h \
     GDefinitions.h \
@@ -99,7 +100,8 @@ HEADERS  += mainwindow.h \
     dlginserttable.h \
     dlginserthtml.h \
     htmlsyntaxhighlighter.h \
-    dlgaskencryptmethod.h
+    dlgaskencryptmethod.h \
+    iconloader.h
 
 FORMS    += mainwindow.ui \
     notificationdialog.ui \

@@ -8,6 +8,7 @@
 		<table>node_tbl</table>
 		<table>root_tbl</table>
 		<table>service_tbl</table>
+		<table>icons_tbl</table>
 	</mandatory_tables>
 		<!--  -->
 	<database type="MySql">
@@ -29,19 +30,23 @@
 			DROP TABLE IF EXISTS `attachments`;
 		</statement>
 
-		<statement id="1">
+		<statement id="10">
 			DROP TABLE IF EXISTS `service_tbl`;
 		</statement>
 
-		<statement id="2">
+		<statement id="15">
 			DROP TABLE IF EXISTS `node_tbl`;		
 		</statement>
 
-		<statement id="3">
+		<statement id="20">
 			DROP TABLE IF EXISTS `root_tbl`;
 		</statement>
 
-		<statement id="4">
+		<statement id="21">
+			DROP TABLE IF EXISTS `icons_tbl`;
+		</statement>
+
+		<statement id="25">
 			CREATE TABLE `service_tbl` (
 			  `id_param` int(11) NOT NULL AUTO_INCREMENT,
 			  `is_already_in_use` tinyint(1) NOT NULL DEFAULT '0',
@@ -50,7 +55,7 @@
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		</statement>
 
-		<statement id="5">
+		<statement id="30">
 			CREATE TABLE `root_tbl` (
 			  `id_tree` int(11) NOT NULL AUTO_INCREMENT,
 			  `tree_name` varchar(255) NOT NULL,
@@ -62,7 +67,7 @@
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		</statement>
 
-		<statement id="6">
+		<statement id="35">
 			CREATE TABLE `node_tbl` (
 			  `id_node` int(11) NOT NULL AUTO_INCREMENT,
 			  `id_parent` int(11) NOT NULL,
@@ -80,7 +85,7 @@
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		</statement>
 
-		<statement id="7">
+		<statement id="40">
 			CREATE TABLE `attachments` (
 			  `id_attach` int(11) NOT NULL AUTO_INCREMENT,
 			  `id_parent` int(11) NOT NULL,
@@ -98,6 +103,16 @@
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		</statement>
 
+		<statement id="45">
+			CREATE TABLE `icons_tbl` (
+			  `id_icon` int(11) NOT NULL AUTO_INCREMENT,
+			  `icon_name` varchar(255) NOT NULL,
+			  `icon_hash` varchar(255) NOT NULL,
+			  `icon_body` longblob NOT NULL,
+			  PRIMARY KEY (`id_icon`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		</statement>
+
  	</database>
 	<database type="Oracle">
 		<!-- drive name for main application -->
@@ -112,19 +127,23 @@
 			drop table ATTACHMENTS purge;
 		</statement>
 
-		<statement id="1">
+		<statement id="10">
 			drop table SERVICE_TBL purge;
 		</statement>
 
-		<statement id="2">
+		<statement id="15">
 			drop table NODE_TBL purge;		
 		</statement>
 
-		<statement id="3">
+		<statement id="20">
 			drop table ROOT_TBL purge;
 		</statement>
 
-		<statement id="4">
+		<statement id="21">
+			drop table ICONS_TBL;
+		</statement>
+
+		<statement id="25">
 			CREATE TABLE SERVICE_TBL (
 			  ID_PARAM number(11) NOT NULL,
 			  IS_ALREADY_IN_USE number(1) DEFAULT 0 NOT NULL,
@@ -133,7 +152,11 @@
 			);
 		</statement>
 
-		<statement id="5">
+		<statement id="26">
+			DROP TABLE IF EXISTS `icons_tbl`;
+		</statement>
+
+		<statement id="30">
 			create table ROOT_TBL (
 			  ID_TREE number(11) NOT NULL,
 			  TREE_NAME varchar2(255) NOT NULL,
@@ -145,7 +168,7 @@
 			);
 		</statement>
 
-		<statement id="6">
+		<statement id="35">
 			CREATE TABLE NODE_TBL (
 			  ID_NODE number(11) NOT NULL,
 			  ID_PARENT number(11) NOT NULL,
@@ -163,7 +186,7 @@
 			);
 		</statement>
 
-		<statement id="7">
+		<statement id="40">
 			CREATE TABLE ATTACHMENTS (
 			  ID_ATTACH number(11) NOT NULL,
 			  ID_PARENT number(11) NOT NULL,
@@ -180,6 +203,17 @@
 			  CONSTRAINT ATTACHMENTS_IBFK_1 FOREIGN KEY (ID_PARENT) REFERENCES NODE_TBL (ID_NODE) ON DELETE CASCADE
 			);
 		</statement>
+
+		<statement id="45">
+			CREATE TABLE ICONS_TBL (
+			  ID_ICON number(11) NOT NULL,
+			  ICON_NAME varchar2(255) NOT NULL,
+			  ICON_HASH varchar2(255) NOT NULL,
+			  ICON_BODY blob NOT NULL,
+			  PRIMARY KEY (ID_ICON)
+			);
+		</statement>
+
 	</database>
 	<database type="SQLite">
 		<driver>QSQLITE</driver>
@@ -198,19 +232,23 @@
 			DROP TABLE IF EXISTS `attachments`;
 		</statement>
 
-		<statement id="1">
+		<statement id="10">
 			DROP TABLE IF EXISTS `service_tbl`;
 		</statement>
 
-		<statement id="2">
+		<statement id="15">
 			DROP TABLE IF EXISTS `node_tbl`;
 		</statement>
 
-		<statement id="3">
+		<statement id="20">
 			DROP TABLE IF EXISTS `root_tbl`;
 		</statement>
 
-		<statement id="4">
+		<statement id="21">
+			DROP TABLE IF EXISTS `icons_tbl`;
+		</statement>
+
+		<statement id="25">
 			CREATE TABLE `service_tbl` (
 			  `id_param` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			  `is_already_in_use` INTEGER(1) NOT NULL DEFAULT '0',
@@ -218,7 +256,7 @@
 			);
 		</statement>
 
-		<statement id="5">
+		<statement id="30">
 			CREATE TABLE `root_tbl` (
 			  `id_tree` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			  `tree_name` TEXT NOT NULL,
@@ -229,7 +267,7 @@
 			);
 		</statement>
 
-		<statement id="50">
+		<statement id="35">
 			CREATE TRIGGER `update_root_tbl_timestamp`
 			  AFTER UPDATE ON `root_tbl`
 			  FOR EACH ROW
@@ -238,7 +276,7 @@
 			  END;
 		</statement>
 
-		<statement id="6">
+		<statement id="40">
 			CREATE TABLE `node_tbl` (
 			  `id_node` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			  `id_parent` INTEGER NOT NULL,
@@ -263,11 +301,11 @@
 			  END;
 		</statement>
 
-		<statement id="61">
+		<statement id="65">
 			CREATE INDEX `tree_ind` ON `node_tbl` (`id_tree`);
 		</statement>
 
-		<statement id="7">
+		<statement id="70">
 			CREATE TABLE `attachments` (
 			  `id_attach` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 			  `id_parent` INTEGER NOT NULL,
@@ -283,7 +321,7 @@
 			);
 		</statement>
 
-		<statement id="70">
+		<statement id="75">
 			CREATE TRIGGER `update_attachments_timestamp`
 			  AFTER UPDATE ON `attachments`
 			  FOR EACH ROW
@@ -292,7 +330,16 @@
 			  END;
 		</statement>
 
-		<statement id="71">
+		<statement id="76">
+			CREATE TABLE `icons_tbl` (
+			  `id_icon` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			  `icon_name` TEXT NOT NULL,
+			  `icon_hash` TEXT NOT NULL,
+			  `icon_body` BLOB NOT NULL
+			);
+		</statement>
+
+		<statement id="80">
 			CREATE INDEX `attach_ind` ON `attachments` (`id_parent`);
 		</statement>
 	</database>

@@ -893,13 +893,6 @@ void MnuMainWindow::createSecurityMenu()
     m_ptrLockAppScreen      ->setShortcut(QKeySequence (Qt::Key_F10));
     m_ptrLockAppScreen      ->setStatusTip(tr("Lock application screen"));
     m_ptrLockAppScreen      ->setEnabled(false);
-/*
-    if ( ServicesCfg::getInstance().getPassword().length() == 0 )
-
-    else
-        m_ptrLockAppScreen      ->setEnabled(true);
-*/
-    //
     //
     if (NULL == m_ptrSecurityToolBar)
         m_ptrSecurityToolBar = new QToolBar;
