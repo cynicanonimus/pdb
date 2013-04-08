@@ -184,7 +184,7 @@ void MyEditor::onInsertImageLink()
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),
                                               m_strLastLoadDir,
-                                              tr("JPG (*.jpg *.jpeg);;BMP (*.bmp);;PNG (*.png);;All Files (*)"));
+                                              "JPG (*.jpg *.jpeg);;BMP (*.bmp);;PNG (*.png);;All Files (*)");
     if (fn.isEmpty())
         return;
     //

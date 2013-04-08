@@ -1,4 +1,5 @@
 #include "iconloader.h"
+#include "iconmanager.h"
 
 IconLoader::IconLoader(QObject *parent) :
     QThread(parent)
@@ -8,5 +9,5 @@ IconLoader::IconLoader(QObject *parent) :
 
 void IconLoader::run()
 {
-
-};
+    IconManager::getInstance().init();
+}

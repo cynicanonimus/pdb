@@ -41,7 +41,8 @@ private slots:
     void onSetNothing   ();
 
 private:
-    void makeLayout();
+    void makeLayout     ();
+    void fillList       ();
 
 private:
     Ui::DlgManageIcons *ui;

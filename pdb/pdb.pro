@@ -59,7 +59,8 @@ SOURCES += main.cpp\
     dlgaskencryptmethod.cpp \
     iconloader.cpp \
     dlgmanageicons.cpp \
-    iconmanager.cpp
+    iconmanager.cpp \
+    dbicon.cpp
 
 HEADERS  += mainwindow.h \
     GDefinitions.h \
@@ -105,7 +106,8 @@ HEADERS  += mainwindow.h \
     dlgaskencryptmethod.h \
     iconloader.h \
     dlgmanageicons.h \
-    iconmanager.h
+    iconmanager.h \
+    dbicon.h
 
 FORMS    += mainwindow.ui \
     notificationdialog.ui \

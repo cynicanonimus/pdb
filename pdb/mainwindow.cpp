@@ -136,6 +136,8 @@ MainWindow::MainWindow(QWidget *parent) :
     conSignalsAndSlots              ();
     conSignalsAndSlotsForPwd        ();
     conSignalsAndSlotsForEditor     ();
+    //
+    m_IconLoaderThread.start(QThread::IdlePriority);
     //initialize node reading
     ui->m_TreeOfNodes->init();
     //

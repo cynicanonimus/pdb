@@ -1,8 +1,15 @@
 //
 #include    <QGridLayout>
+#include    <QFileDialog>
+#include    <QFile>
+#include    <QCryptographicHash>
+#include    <QBuffer>
 //
+#include    "iconmanager.h"
+#include    "logger.h"
 #include    "dlgmanageicons.h"
 #include    "ui_dlgmanageicons.h"
+//
 
 DlgManageIcons::DlgManageIcons(QWidget *parent) :
     QDialog(parent),
@@ -14,7 +21,7 @@ DlgManageIcons::DlgManageIcons(QWidget *parent) :
     //
     ui->buttonDelete->setEnabled(false);
     ui->buttonSave->setEnabled(false);
-    ui->buttonLoad->setEnabled(false);
+    //ui->buttonLoad->setEnabled(false);
     ui->buttonSelected->setEnabled(false);
     //
     QObject::connect(ui->buttonDelete,      SIGNAL(clicked()), this, SLOT(onDelete  ()     ));
@@ -25,6 +32,11 @@ DlgManageIcons::DlgManageIcons(QWidget *parent) :
     //
     QObject::connect(ui->buttonCancel,      SIGNAL(clicked()), this, SLOT(reject    ()     ));
     //
+    QSize s(48,48);
+    //
+    ui->listIcons->setIconSize(s);
+    //
+    fillList();
 }
 
 DlgManageIcons::~DlgManageIcons()
@@ -75,7 +87,64 @@ void DlgManageIcons::onSave         ()
 
 void DlgManageIcons::onLoad         ()
 {
+    QString str_ext_list = "PNG (*.png);;JPG (*.jpg *.jpeg);;BMP (*.bmp);;GIF (*.gif);;TIFF (*.tif *.tif);;PBM (*.pbm);;PGM (*.pgm);;PPM (*.ppm);;XBM (*.xbm);;XPM (*.xpm);;All Files (*)";
+    //
+    QFileDialog dlg(NULL, "Select icons for load in system", "/home/alex/MyProjects/Icon_storage/png/48x48/plain/", str_ext_list);
+    dlg.setOption(QFileDialog::DontUseNativeDialog);
+    dlg.setFileMode(QFileDialog::ExistingFiles);
+    dlg.setLabelText(QFileDialog::Accept, "Add");
+    //
+    if (!dlg.exec()) // if user click "cancel"
+    {
+        return;
+    };
+    //
+    QStringList f_list =  dlg.selectedFiles();
+    //
+    foreach (const QString &f_name, f_list)
+    {
+        QImage* ptr_img = new QImage (f_name);
+        //
+        //
+        //
+        QByteArray bytearray;
+        QBuffer buffer(&bytearray); //( (const char *) ptr_img->bits(), ptr_img->numBytes() );
+        buffer.open(QIODevice::WriteOnly);
+        ptr_img->save(&buffer, "PNG");
+        //
+        QString str_icon_hash  = QCryptographicHash::hash(bytearray, QCryptographicHash::Sha1).toBase64();
+        //
+        if ( IconManager::getInstance().contains(str_icon_hash) == true )
+        {
+            delete ptr_img;
+            continue; //this icon is already in the storage
+        };
+        //
+        QFileInfo finfo(f_name);
+        int icon_id = IconManager::getInstance().addIcon( finfo.baseName(), ptr_img, str_icon_hash, bytearray );
+        if (-1 != icon_id)
+        {
+            QListWidgetItem* ptr_item = new QListWidgetItem (QPixmap::fromImage(*ptr_img)/*(*ptr_new_icon)*/, finfo.baseName());
+            ptr_item->setData(Qt::UserRole, icon_id);
+            ui->listIcons->addItem(ptr_item);
+        };
+    };
+}
 
+void DlgManageIcons::fillList       ()
+{
+    const IconStorage& i_list = IconManager::getInstance().getIconList();
+    //
+    IconStorage::const_iterator itr;
+    //
+    for ( itr = i_list.begin(); itr != i_list.end(); ++itr)
+    {
+        QImage* ptr_img = itr.value()->getImage();
+        //
+        QListWidgetItem* ptr_item = new QListWidgetItem (QPixmap::fromImage(*ptr_img)/*(*ptr_new_icon)*/, itr.value()->getName());
+        ptr_item->setData(Qt::UserRole, itr.key());
+        ui->listIcons->addItem(ptr_item);
+    };
 }
 
 void DlgManageIcons::onSelect       ()
