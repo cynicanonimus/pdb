@@ -42,6 +42,7 @@ private slots:
     void onSelect           ();
     void onSetNothing       ();
     void onListItemChanged  ( QListWidgetItem*,QListWidgetItem* );
+    void onSearchTextChanged(QString);
 
 
 private:

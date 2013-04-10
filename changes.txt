@@ -51,3 +51,4 @@ Date 		CommitID		Changes
 08.04.2013	08.04.2013-1		Implement load icon into DB from file in Icon dialog           
 --------------------------------------------------------------------------------------------------------
 10.04.2013      10.04.2013-1		Implement manage icons for nodes (quick search not finished yet)
+10.04.2013      10.04.2013-2            Implement manage icons for nodes (finished compeletely)

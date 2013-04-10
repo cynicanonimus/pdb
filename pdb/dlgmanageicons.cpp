@@ -29,13 +29,14 @@ DlgManageIcons::DlgManageIcons(QWidget *parent) :
     //ui->buttonLoad->setEnabled(false);
     ui->buttonSelected->setEnabled(false);
     //
-    QObject::connect(ui->buttonDelete,      SIGNAL(clicked()), this, SLOT(onDelete  ()     ));
-    QObject::connect(ui->buttonSave,        SIGNAL(clicked()), this, SLOT(onSave    ()     ));
-    QObject::connect(ui->buttonLoad,        SIGNAL(clicked()), this, SLOT(onLoad    ()     ));
-    QObject::connect(ui->buttonSelected,    SIGNAL(clicked()), this, SLOT(onSelect  ()     ));
-    QObject::connect(ui->buttonSetNothing,  SIGNAL(clicked()), this, SLOT(onSetNothing  () ));
+    QObject::connect(ui->buttonDelete,          SIGNAL(clicked()),              this,    SLOT(onDelete  ()                      ));
+    QObject::connect(ui->buttonSave,            SIGNAL(clicked()),              this,    SLOT(onSave    ()                      ));
+    QObject::connect(ui->buttonLoad,            SIGNAL(clicked()),              this,    SLOT(onLoad    ()                      ));
+    QObject::connect(ui->buttonSelected,        SIGNAL(clicked()),              this,    SLOT(onSelect  ()                      ));
+    QObject::connect(ui->buttonSetNothing,      SIGNAL(clicked()),              this,    SLOT(onSetNothing  ()                  ));
     //
-    QObject::connect(ui->buttonCancel,      SIGNAL(clicked()), this, SLOT(reject    ()     ));
+    QObject::connect(ui->buttonCancel,          SIGNAL(clicked()),              this,    SLOT(reject    ()                      ));
+    QObject::connect(ui->lineEditQuickSearch,   SIGNAL(textChanged(QString)),   this,    SLOT(onSearchTextChanged(QString)      ));
     //
     QObject::connect(ui->listIcons,         SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(onListItemChanged(QListWidgetItem*,QListWidgetItem*) ));
     //
@@ -80,6 +81,19 @@ void DlgManageIcons::makeLayout()
 
     //ui->labelQuickSearch
 
+}
+
+void DlgManageIcons::onSearchTextChanged(QString str_text)
+{
+    for (unsigned int i = 0; i < ui->listIcons->count(); i++)
+    {
+        const QString str_item_text = ui->listIcons->item(i)->text();
+        if ( str_item_text.contains(str_text,Qt::CaseInsensitive) == true )
+        {
+            ui->listIcons->setCurrentRow(i);
+            break;
+        };
+    };
 }
 
 void DlgManageIcons::onListItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
