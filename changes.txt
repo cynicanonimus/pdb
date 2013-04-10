@@ -48,4 +48,6 @@ Date 		CommitID		Changes
 06.04.2013	06.04.2013-1		Make new database table (icons_tbl)
 06.04.2013      06.04.2013-2		Add some new classes for icon support (not finished yet)
 --------------------------------------------------------------------------------------------------------
-08.04.2013	08.04.2013-1		Implement load icon into DB from file in Icon dialog            
+08.04.2013	08.04.2013-1		Implement load icon into DB from file in Icon dialog           
+--------------------------------------------------------------------------------------------------------
+10.04.2013      10.04.2013-1		Implement manage icons for nodes (quick search not finished yet)

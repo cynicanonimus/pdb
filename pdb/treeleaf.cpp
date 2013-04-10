@@ -20,6 +20,7 @@
 #include "dbacccesssafe.h"
 #include "mytree.h"
 #include "logger.h"
+#include "iconmanager.h"
 #include "../CommonInclude/pdb/pdb_style.h"
 //
 #include <QtSql>
@@ -29,6 +30,7 @@
 #include <QMessageBox>
 #include <QTextDocumentWriter>
 #include <QPrinter>
+#include <QPixmap>
 //
 // create from user interface
 //
@@ -45,6 +47,7 @@ TreeLeaf::TreeLeaf(TreeLeaf*        prtParentLeaf,
   ,QTreeWidgetItem(prtParentLeaf)
   ,m_bIsExpandedDB (true)           //
   ,m_bIsExpandedActually (false)    //
+  ,m_iIconID(-1)
 {
     if (prtParentLeaf)
         setInitialSettings(prtParentLeaf->getID(), str_name, i_tree_id);
@@ -66,22 +69,21 @@ TreeLeaf::TreeLeaf(TreeLeaf*        prtParentLeaf,
     //
     m_ptrParentTree = (MyTree *) parent_tree;
     Q_ASSERT (m_ptrParentTree);
-};
-
+}
 //
 // create from database, non-root leaf
 //
 TreeLeaf::TreeLeaf(TreeLeaf*        prtParentLeaf,
-                  int               i_id,                  // node index in the node_tbl
-                  int               i_parent_node_id,      // parent node ID
-                  int               i_tree_id,
-                  const QString&    str_name,              // node name
-                  const QString&    str_node_color,        // color of the node
-                  const QString&    str_html_descriptor,   // node text descriptor
-                  bool              b_is_active,           // is node "deleted" or not
-                  bool              b_is_expanded,         // index of the parent element in the root_tbl
-                  const QDateTime&  dt_last_change,
-                  QObject*          parent_tree
+                  int               i_id,                   // node index in the node_tbl
+                  int               i_parent_node_id,       // parent node ID
+                  int               i_tree_id,              // icon id
+                  int               i_icon_id,              // node name
+                  const QString&    str_name,               // color of the node
+                  const QString&    str_node_color,         // node text descriptor
+                  const QString &str_html_descriptor,       // is node "deleted" or not
+                  bool              b_is_active,            // index of the parent element in the root_tbl
+                  bool b_is_expanded,
+                  const QDateTime &dt_last_change, QObject *parent_tree
                ):
     AbstractDatabaseObject(i_id,
                            b_is_active,
@@ -89,7 +91,8 @@ TreeLeaf::TreeLeaf(TreeLeaf*        prtParentLeaf,
                            parent_tree)
   ,QTreeWidgetItem(prtParentLeaf)
   ,m_bIsExpandedDB (b_is_expanded)
-  ,m_bIsExpandedActually (b_is_expanded)//
+  ,m_bIsExpandedActually (b_is_expanded)
+  ,m_iIconID(i_icon_id)
 {
     if (str_node_color.length() > 0)
     {
@@ -1010,6 +1013,7 @@ void TreeLeaf::run()
         break;
     case AbstractDatabaseObject::OBJECT_DELETING:
         setObjectStatus(OBJECT_DELETED);
+        IconManager::getInstance().minusInUse(m_iIconID);
         deleteAllAttachments();
         setActiveStatus_DB(false);
         setItemColor();
@@ -1492,4 +1496,25 @@ void TreeLeaf::addAttachment (Attachment* ptr_attachment)
     //register changing of parent_id into database
     //
     m_vAttachments.push_back(ptr_attachment);
-};
+}
+
+void TreeLeaf::setIconByID (int i_icon_id)
+{
+    if ( -1 != i_icon_id )
+    {
+        if (m_iIconID != i_icon_id)
+        {
+            IconManager::getInstance().minusInUse(m_iIconID);
+            //add need to update in DB here
+        };
+        //
+        m_iIconID = i_icon_id;
+
+    };
+    //
+    if (-1 != m_iIconID)
+    {
+        QImage* ptr_img =  IconManager::getInstance().getIcon(m_iIconID, true);
+        this->setIcon(0, QPixmap::fromImage(*ptr_img));
+    };
+}

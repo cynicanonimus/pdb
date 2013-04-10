@@ -95,6 +95,61 @@ bool IconManager::contains (const QString& str_icon_hash) const
     return b_contains;
 }
 
+QImage* IconManager::getIcon (int i_icon_id, bool b_increase_countrer)
+{
+    QImage* ptr_icon = NULL;
+    m_IconStorageAccess.lockForRead();
+    //
+    if ( m_lIconList.contains(i_icon_id) == true )
+    {
+        ptr_icon = m_lIconList[i_icon_id]->getImage(b_increase_countrer);
+    }
+
+
+    m_IconStorageAccess.unlock();
+    return ptr_icon;
+}
+
+void IconManager::deleteIcon  (int i_icon_id)
+{
+    if ( m_lIconList.contains(i_icon_id) == true )
+    {
+        m_IconStorageAccess.lockForWrite();
+        //
+        m_lIconList[i_icon_id]->clear();
+        delete m_lIconList[i_icon_id];
+        m_lIconList.remove(i_icon_id);
+        //
+        m_IconStorageAccess.unlock();
+        //
+        DBAcccessSafe   db_safe;
+        //
+        QSqlDatabase* ptr_db = db_safe.getDB();
+        //
+        if (NULL == ptr_db)
+            return;
+        //
+        QSqlQuery qry(*ptr_db);
+        //
+        const QString str_del_str = "delete from icons_tbl WHERE id_icon = :ID;";
+        //
+        if ( false == qry.prepare( str_del_str ) )
+        {
+            const QString str_message = QString("Unable to delete icon from database, error - '%1'").arg( qry.lastError().text() );
+            Logger::getInstance().logIt( en_LOG_ERRORS, str_message, &str_del_str );
+            return;
+        };
+        //
+        qry.bindValue( ":ID",     i_icon_id       );
+        //
+        if ( !qry.exec() )
+        {
+            Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_del_str );
+            return;
+        };
+    };
+}
+
 void IconManager::init()
 {
     if ( m_lIconList.size() > 0 )
@@ -154,14 +209,6 @@ bool IconManager::isInUse         (int i_icon_id)
     };
     //
     return false;
-}
-
-void IconManager::plusInUse       (int i_icon_id)
-{
-    if ( m_lIconList.contains(i_icon_id) == true )
-    {
-        m_lIconList[i_icon_id]->plusInUse();
-    };
 }
 
 void IconManager::minusInUse      (int i_icon_id)

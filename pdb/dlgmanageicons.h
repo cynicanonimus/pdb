@@ -19,6 +19,7 @@
 #include <QDialog>
 //
 QT_FORWARD_DECLARE_CLASS(QGridLayout)
+QT_FORWARD_DECLARE_CLASS(QListWidgetItem)
 
 namespace Ui {
 class DlgManageIcons;
@@ -31,23 +32,28 @@ class DlgManageIcons : public QDialog
 public:
     explicit DlgManageIcons(QWidget *parent = 0);
     ~DlgManageIcons();
-
-
-private slots:
-    void onDelete       ();
-    void onSave         ();
-    void onLoad         ();
-    void onSelect       ();
-    void onSetNothing   ();
-
-private:
-    void makeLayout     ();
-    void fillList       ();
-
-private:
-    Ui::DlgManageIcons *ui;
     //
-    QGridLayout*    m_ptrLayout;
+    int  getSelectedIconID  () const                                    {return m_iSelectedIconID;}
+    //
+private slots:
+    void onDelete           ();
+    void onSave             ();
+    void onLoad             ();
+    void onSelect           ();
+    void onSetNothing       ();
+    void onListItemChanged  ( QListWidgetItem*,QListWidgetItem* );
+
+
+private:
+    void makeLayout         ();
+    void fillList           ();
+
+private:
+    Ui::DlgManageIcons* ui;
+    //
+    QGridLayout*        m_ptrLayout;
+    QString             m_strExtList;
+    int                 m_iSelectedIconID;
 };
 
 #endif // DLGMANAGEICONS_H

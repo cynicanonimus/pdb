@@ -34,12 +34,16 @@ public:
     //
     // adds new icon into database, returns id of the icon ( -1 means "database error")
     //
-    int                 addIcon     (const QString& str_icon_name, QImage* ptr_icon, const QString &str_icon_hash, QByteArray &icon_byte_array);
-    bool                contains    (const QString& str_icon_hash) const;
     void                init();
+    int                 addIcon     (const QString& str_icon_name, QImage* ptr_icon, const QString &str_icon_hash, QByteArray &icon_byte_array);
+    void                deleteIcon  (int i_icon_id);
+    bool                contains    (const QString& str_icon_hash) const;
+
     const IconStorage&  getIconList ()                                                      {return m_lIconList;}
+    QImage*             getIcon     (int i_icon_id, bool b_increase_countrer);
+
     bool                isInUse     (int i_icon_id);
-    void                plusInUse   (int i_icon_id);
+    //void                plusInUse   (int i_icon_id);
     void                minusInUse  (int i_icon_id);
 
 signals:

@@ -4,6 +4,7 @@
 #include    <QFile>
 #include    <QCryptographicHash>
 #include    <QBuffer>
+#include    <QMessageBox>
 //
 #include    "iconmanager.h"
 #include    "logger.h"
@@ -17,7 +18,11 @@ DlgManageIcons::DlgManageIcons(QWidget *parent) :
 {
     ui->setupUi(this);
     //
+    m_iSelectedIconID = -1;
+    //
     makeLayout();
+    //
+    m_strExtList = "PNG (*.png);;JPG (*.jpg *.jpeg);;BMP (*.bmp);;GIF (*.gif);;TIFF (*.tif *.tif);;PBM (*.pbm);;PGM (*.pgm);;PPM (*.ppm);;XBM (*.xbm);;XPM (*.xpm);;All Files (*)";
     //
     ui->buttonDelete->setEnabled(false);
     ui->buttonSave->setEnabled(false);
@@ -31,6 +36,8 @@ DlgManageIcons::DlgManageIcons(QWidget *parent) :
     QObject::connect(ui->buttonSetNothing,  SIGNAL(clicked()), this, SLOT(onSetNothing  () ));
     //
     QObject::connect(ui->buttonCancel,      SIGNAL(clicked()), this, SLOT(reject    ()     ));
+    //
+    QObject::connect(ui->listIcons,         SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(onListItemChanged(QListWidgetItem*,QListWidgetItem*) ));
     //
     QSize s(48,48);
     //
@@ -75,21 +82,123 @@ void DlgManageIcons::makeLayout()
 
 }
 
+void DlgManageIcons::onListItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
+{
+    if (current)
+    {
+        ui->buttonSave->setEnabled(true);
+        int i_icon_id = current->data(Qt::UserRole).toInt();
+        if ( IconManager::getInstance().isInUse(i_icon_id) == true)
+        {
+            ui->buttonDelete->setEnabled(false);
+        }else
+        {
+            ui->buttonDelete->setEnabled(false);
+            ui->buttonDelete->setEnabled(true);
+        };
+        ui->buttonSelected->setEnabled(true);
+    }else
+    {
+        ui->buttonSave->setEnabled(false);
+        ui->buttonSelected->setEnabled(false);
+    };
+}
+
 void DlgManageIcons::onDelete       ()
 {
+    QListWidgetItem* ptr_current_item = ui->listIcons->currentItem();
+    if (NULL == ptr_current_item)
+        return;
+    //
+    int i_icon_id = ptr_current_item->data(Qt::UserRole).toInt();
+    //
+    IconManager::getInstance().deleteIcon(i_icon_id);
+    //
+    int i_row = ui->listIcons->row(ptr_current_item);
+    //
+    ptr_current_item = ui->listIcons->takeItem(i_row);
+    if (ptr_current_item)
+        delete ptr_current_item;
+
+    //TODO remove item from list
+    //ui->listIcons->removeItemWidget(ui->listIcons->currentItem());
+    //ui->listIcons->
+
 
 }
 
 void DlgManageIcons::onSave         ()
 {
-
+    QListWidgetItem* ptr_current_item = ui->listIcons->currentItem();
+    if (NULL == ptr_current_item)
+        return;
+    //
+    QFileDialog dlg(NULL, "Select file to save icon", "/home/alex/", "PNG (*.png)");
+    dlg.setOption(QFileDialog::DontUseNativeDialog);
+    //dlg.setFileMode(QFileDialog::ExistingFile);
+    dlg.setLabelText(QFileDialog::Accept, "Save");
+    //
+    if (!dlg.exec()) // if user click "cancel"
+    {
+        return;
+    };
+    //
+    //check if file already exist
+    QStringList f_list = dlg.selectedFiles();
+    //check file extension
+    QString str_f_name = f_list[0];
+    //
+    if ( str_f_name.endsWith(".png",Qt::CaseInsensitive) == false )
+    {
+        str_f_name += ".png";
+    };
+    //
+    if (QFile::exists(str_f_name) == true)
+    {
+        QString str_message = "File ";
+        str_message+= str_f_name;
+        str_message+= " already exists. Overwrite?";
+        int i_resp = QMessageBox::question(NULL, "Overwriting file", str_message, QMessageBox::Yes, QMessageBox::No);
+        if (QMessageBox::No == i_resp)
+            return;
+    };
+    //
+    int i_icon_id = ptr_current_item->data(Qt::UserRole).toInt();
+    QImage* ptr_img = IconManager::getInstance().getIcon(i_icon_id, false);
+    if (NULL == ptr_img)
+        return;
+    //
+    QByteArray bytearray;
+    QBuffer buffer(&bytearray); //( (const char *) ptr_img->bits(), ptr_img->numBytes() );
+    buffer.open(QIODevice::WriteOnly);
+    ptr_img->save(&buffer, "PNG");
+    //
+    QFile f_icon (str_f_name);
+    if ( f_icon.open(QIODevice::WriteOnly) == false )
+    {
+        return;
+    };
+    //
+    if( -1 == f_icon.write(bytearray) )
+    {
+        QString str_message = "Can not write file ";
+        str_message += str_f_name;
+        QMessageBox::critical(NULL, "Error", str_message, QMessageBox::Ok);
+    }else
+    {
+        QString str_message = "Icon saved in the file ";
+        str_message += str_f_name;
+        QMessageBox::information(NULL, "Success", str_message, QMessageBox::Ok);
+    };
+    //
+    f_icon.close();
+    //
+    return;
 }
 
 void DlgManageIcons::onLoad         ()
 {
-    QString str_ext_list = "PNG (*.png);;JPG (*.jpg *.jpeg);;BMP (*.bmp);;GIF (*.gif);;TIFF (*.tif *.tif);;PBM (*.pbm);;PGM (*.pgm);;PPM (*.ppm);;XBM (*.xbm);;XPM (*.xpm);;All Files (*)";
-    //
-    QFileDialog dlg(NULL, "Select icons for load in system", "/home/alex/MyProjects/Icon_storage/png/48x48/plain/", str_ext_list);
+    QFileDialog dlg(NULL, "Select icons for load in system", "/home/alex/MyProjects/Icon_storage/png/48x48/plain/", m_strExtList);
     dlg.setOption(QFileDialog::DontUseNativeDialog);
     dlg.setFileMode(QFileDialog::ExistingFiles);
     dlg.setLabelText(QFileDialog::Accept, "Add");
@@ -139,7 +248,7 @@ void DlgManageIcons::fillList       ()
     //
     for ( itr = i_list.begin(); itr != i_list.end(); ++itr)
     {
-        QImage* ptr_img = itr.value()->getImage();
+        QImage* ptr_img = itr.value()->getImage(false);
         //
         QListWidgetItem* ptr_item = new QListWidgetItem (QPixmap::fromImage(*ptr_img)/*(*ptr_new_icon)*/, itr.value()->getName());
         ptr_item->setData(Qt::UserRole, itr.key());
@@ -149,7 +258,14 @@ void DlgManageIcons::fillList       ()
 
 void DlgManageIcons::onSelect       ()
 {
-    this->accept();
+    QListWidgetItem* ptr_current_item = ui->listIcons->currentItem();
+    //
+    if( NULL != ptr_current_item)
+    {
+        m_iSelectedIconID = ptr_current_item->data(Qt::UserRole).toInt();
+        this->accept();
+    };
+    //do nothing.
 }
 void DlgManageIcons::onSetNothing   ()
 {

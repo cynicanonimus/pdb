@@ -29,13 +29,21 @@ void DBIcon::operator=(DBIcon const& obj)
 
 DBIcon::~DBIcon()
 {
-    if (m_ptrImage)
-        delete m_ptrImage;
+
 }
 
 void DBIcon::clear()
 {
+    if (m_ptrImage)
+        delete m_ptrImage;
+}
 
+QImage* DBIcon::getImage (bool b_increase_counter)
+{
+    if (b_increase_counter)
+        plusInUse();
+
+    return m_ptrImage;
 }
 
 bool DBIcon::isHashMatched(const QString& str_hash) const

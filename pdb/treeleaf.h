@@ -55,6 +55,7 @@ public:
                       int               i_id,                     // node index in the node_tbl
                       int               i_parent_node_id,         // parent node ID
                       int               i_tree_id,
+                      int               i_icon_id,                // id of the icon
                       const QString&    str_name,                 // node name
                       const QString&    str_node_color,           // color of the node
                       const QString&    str_html_descriptor,      // node text descriptor
@@ -126,6 +127,8 @@ public:
                                                           bool              b_recursive_export,
                                                           bool              b_include_attach,
                                                           bool              b_export_encrypted);
+    //
+    void                    setIconByID                 (int i_icon_id = -1);
     //
     // move to open section because need to ask root node.
     // warning! this is recurcive call
@@ -209,6 +212,7 @@ private:
     QString         m_strDatabaseNodeName;
     //
     QString         m_strNodeColor;
+    int             m_iIconID;
     //bool          m_bIsInternalNameAssigment;
 //
 

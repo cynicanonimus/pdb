@@ -34,16 +34,19 @@ public:
     //void        setHash (const QString& str_hash);
     bool            isHashMatched   (const QString& str_hash) const;
     void            clear           ();
-    QImage*         getImage        ()      {return m_ptrImage;}
+    QImage*         getImage        (bool b_increase_counter);
     const QString&  getName         ()      {return m_strIconName;}
     //
     bool            isInUse         ()      { return (m_uiInUseCounter>0);}
-    void            plusInUse       ()      { ++m_uiInUseCounter; }
     void            minusInUse      ()      { --m_uiInUseCounter; }
     //
 signals:
     
 public slots:
+
+private:
+
+    void            plusInUse       ()      { ++m_uiInUseCounter; }
 
 private:
     unsigned int    m_uiInUseCounter;
