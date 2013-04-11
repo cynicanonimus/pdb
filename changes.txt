@@ -54,3 +54,4 @@ Date 		CommitID		Changes
 10.04.2013      10.04.2013-2            Implement manage icons for nodes (finished compeletely)
 --------------------------------------------------------------------------------------------------------
 11.04.2013      11.04.2013-1 		make some changes in the icons management
+11.04.2013      11.04.2013-2		Fix error with the predefined icon path

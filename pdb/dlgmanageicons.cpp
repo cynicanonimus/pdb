@@ -40,6 +40,7 @@ DlgManageIcons::DlgManageIcons(QWidget *parent) :
     //
     QObject::connect(ui->listIcons,         SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(onListItemChanged(QListWidgetItem*,QListWidgetItem*) ));
     //
+    //take the size from settings!
     QSize s(48,48);
     //
     ui->listIcons->setIconSize(s);
@@ -215,7 +216,7 @@ void DlgManageIcons::onSave         ()
 
 void DlgManageIcons::onLoad         ()
 {
-    QFileDialog dlg(NULL, "Select icons for load in system", "/home/alex/MyProjects/Icon_storage/png/48x48/plain/", m_strExtList);
+    QFileDialog dlg(NULL, "Select icons for load in system", NULL, m_strExtList);
     dlg.setOption(QFileDialog::DontUseNativeDialog);
     dlg.setFileMode(QFileDialog::ExistingFiles);
     dlg.setLabelText(QFileDialog::Accept, "Add");
