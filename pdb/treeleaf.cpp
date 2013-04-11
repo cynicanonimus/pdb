@@ -47,7 +47,7 @@ TreeLeaf::TreeLeaf(TreeLeaf*        prtParentLeaf,
   ,QTreeWidgetItem(prtParentLeaf)
   ,m_bIsExpandedDB (true)           //
   ,m_bIsExpandedActually (false)    //
-  ,m_iIconID(-1)
+  ,m_iIconID(0)
 {
     if (prtParentLeaf)
         setInitialSettings(prtParentLeaf->getID(), str_name, i_tree_id);
@@ -909,7 +909,7 @@ void TreeLeaf::setNewParent(TreeLeaf* ptr_new_parent)
         //
         Logger::getInstance().logIt(en_LOG_MOVE_NODE, str_message );
     };
-};
+}
 
 void TreeLeaf::setNewTreeID(unsigned int ui_tree_id)
 {
@@ -928,7 +928,31 @@ void TreeLeaf::setNewTreeID(unsigned int ui_tree_id)
         if (ptr_child_leaf)
             ptr_child_leaf->setNewTreeID(ui_tree_id);
     };
-};
+}
+
+void TreeLeaf::updateIconID_DB ()
+{
+    DBAcccessSafe   db_safe;
+    //
+    QSqlDatabase* ptr_db = db_safe.getDB();
+    if (NULL == ptr_db)
+        return;
+    //
+    QSqlQuery qry(*ptr_db);
+    //
+    QString str_update_string = QString( "UPDATE node_tbl SET id_icon = %1 WHERE id_node = %2;").arg(m_iIconID).arg(m_iID);
+    //
+    if (! qry.prepare( str_update_string ) )
+    {
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
+        return;
+    };
+    //
+    if( !qry.exec() )
+    {
+        Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
+    };
+}
 
 void TreeLeaf::updateTreeID_DB()
 {
@@ -952,7 +976,7 @@ void TreeLeaf::updateTreeID_DB()
     {
         Logger::getInstance().logIt( en_LOG_ERRORS, qry.lastError().text(), &str_update_string );
     };
-};
+}
 
 void TreeLeaf::updateParentInfoIn_DB()
 {
@@ -1500,21 +1524,37 @@ void TreeLeaf::addAttachment (Attachment* ptr_attachment)
 
 void TreeLeaf::setIconByID (int i_icon_id)
 {
-    if ( -1 != i_icon_id )
+    if ( -1 != i_icon_id ) //we set new icon only for this node here
     {
         if (m_iIconID != i_icon_id)
         {
+            //free resource of old icon
             IconManager::getInstance().minusInUse(m_iIconID);
-            //add need to update in DB here
+            //assing new icon ID
+            m_iIconID = i_icon_id;
+            //set new icon
+            QImage* ptr_img =  IconManager::getInstance().getIcon(m_iIconID, true);
+            if (ptr_img)
+                this->setIcon(0, QPixmap::fromImage(*ptr_img));
+            //
+            //update info in the DB
+            updateIconID_DB();
         };
-        //
-        m_iIconID = i_icon_id;
-
+    }else //we pass "-1" in the procedure, it is mass assign
+    {
+        if (0 != m_iIconID)
+        {
+            QImage* ptr_img =  IconManager::getInstance().getIcon(m_iIconID, true);
+            this->setIcon(0, QPixmap::fromImage(*ptr_img));
+        };
+        //ask all childs to do the same
+        for (int i = 0; i < this->childCount(); i++)
+        {
+            TreeLeaf* ptr_actual = (TreeLeaf*) this->child(i);
+            Q_ASSERT ( ptr_actual );
+            //
+            ptr_actual->setIconByID();
+        };
     };
     //
-    if (-1 != m_iIconID)
-    {
-        QImage* ptr_img =  IconManager::getInstance().getIcon(m_iIconID, true);
-        this->setIcon(0, QPixmap::fromImage(*ptr_img));
-    };
 }

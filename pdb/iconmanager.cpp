@@ -198,6 +198,8 @@ void IconManager::init()
         //m_vAttachments.push_back(ptr_new_attachment);
     }; // while( qry.next() )
     m_IconStorageAccess.unlock();
+    //
+    emit InitDone();
 }
 
 

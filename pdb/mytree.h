@@ -32,7 +32,7 @@
 #include "GDefinitions.h"
 #include "treeleaf.h"
 //
-#include <vector>
+//#include <vector>
 
 class RootOfTree;
 
@@ -109,6 +109,8 @@ public slots:
     //
     void onCascadeExpand        ();
     void onCascadeCollapse      ();
+    //
+    void onSetIconNodes         ();
 
 
 private slots:
@@ -205,9 +207,10 @@ private:
     //
     //KIND_OF_MOVEMENT    m_enDragType;
     //
-    std::vector <TreeLeaf*>  m_vOrpheline;
+    //std::vector <TreeLeaf*>  m_vOrpheline;
     //
     QMutex              m_UpdateAttachmentInfoLocker; //lock access to leafAttachmentUpdated
+    QMutex              m_IconLoadLocker;
     //
     bool                m_bBeginDrag;
     QPoint              m_pointDearStartPosition;

@@ -175,7 +175,8 @@ private:
     bool                    updateColor_DB          ();
     bool                    updateDescriptor_DB     ();
     void                    updateTreeID_DB         ();
-    void                    updateExpandState_DB    ();
+    void                    updateIconID_DB         ();
+   void                     updateExpandState_DB    ();
     void                    getAttachments_DB       ();
     //CHANGE IT, make restore-delete
     void                    deleteAllAttachments_DB ();

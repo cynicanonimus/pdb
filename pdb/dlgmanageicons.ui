@@ -70,12 +70,12 @@
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="buttonSelected">
+  <widget class="QPushButton" name="buttonAcceptSelected">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>200</y>
-     <width>93</width>
+     <x>10</x>
+     <y>270</y>
+     <width>141</width>
      <height>25</height>
     </rect>
    </property>
@@ -92,15 +92,15 @@
     </size>
    </property>
    <property name="text">
-    <string>Set selected</string>
+    <string>Accept</string>
    </property>
   </widget>
   <widget class="QPushButton" name="buttonSetNothing">
    <property name="geometry">
     <rect>
-     <x>330</x>
-     <y>230</y>
-     <width>93</width>
+     <x>300</x>
+     <y>270</y>
+     <width>111</width>
      <height>25</height>
     </rect>
    </property>
@@ -117,21 +117,21 @@
     </size>
    </property>
    <property name="text">
-    <string>Set No Icon</string>
+    <string>No Icon</string>
    </property>
   </widget>
   <widget class="QPushButton" name="buttonCancel">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>170</x>
      <y>270</y>
-     <width>311</width>
+     <width>111</width>
      <height>25</height>
     </rect>
    </property>
    <property name="minimumSize">
     <size>
-     <width>311</width>
+     <width>5</width>
      <height>25</height>
     </size>
    </property>

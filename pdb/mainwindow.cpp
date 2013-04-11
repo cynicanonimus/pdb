@@ -30,6 +30,7 @@
 #include "treesearchdlg.h"
 #include "servicescfg.h"
 #include "logger.h"
+#include "iconmanager.h"
 //
 #include <QMessageBox>
 #include <QtSql/QSqlDatabase>
@@ -137,9 +138,10 @@ MainWindow::MainWindow(QWidget *parent) :
     conSignalsAndSlotsForPwd        ();
     conSignalsAndSlotsForEditor     ();
     //
-    m_IconLoaderThread.start(QThread::IdlePriority);
     //initialize node reading
     ui->m_TreeOfNodes->init();
+    //
+    m_IconLoaderThread.start(QThread::IdlePriority);
     //
     ServicesCfg::getInstance().getDataAndCheckInstance();
     //
@@ -228,6 +230,9 @@ void MainWindow::conSignalsAndSlotsForTree ()
     QObject::connect( ui->m_TreeOfNodes,    SIGNAL (updateAttachmentList() ),                       ui->m_Service_Tab,  SLOT( onAttachmentUpdated()                         ));
     QObject::connect( ui->m_TreeOfNodes,    SIGNAL (treeSelectionChanged(TreeLeaf*, TreeLeaf*) ),   this,               SLOT( onSelectedNodeChanged(TreeLeaf*,TreeLeaf*)    ));
     QObject::connect( ui->m_TreeOfNodes,    SIGNAL ( showPopupMenu()    ),                          m_pMainMenu,        SLOT( showRightClickPopupNodeMenu()                 ));
+    //
+    QObject::connect( (&IconManager::getInstance()), SIGNAL(InitDone()), ui->m_TreeOfNodes, SLOT(onSetIconNodes()   ));
+
 }
 
 void MainWindow::conSignalsAndSlotsForDBList()

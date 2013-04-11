@@ -27,12 +27,12 @@ DlgManageIcons::DlgManageIcons(QWidget *parent) :
     ui->buttonDelete->setEnabled(false);
     ui->buttonSave->setEnabled(false);
     //ui->buttonLoad->setEnabled(false);
-    ui->buttonSelected->setEnabled(false);
+    ui->buttonAcceptSelected->setEnabled(false);
     //
     QObject::connect(ui->buttonDelete,          SIGNAL(clicked()),              this,    SLOT(onDelete  ()                      ));
     QObject::connect(ui->buttonSave,            SIGNAL(clicked()),              this,    SLOT(onSave    ()                      ));
     QObject::connect(ui->buttonLoad,            SIGNAL(clicked()),              this,    SLOT(onLoad    ()                      ));
-    QObject::connect(ui->buttonSelected,        SIGNAL(clicked()),              this,    SLOT(onSelect  ()                      ));
+    QObject::connect(ui->buttonAcceptSelected,  SIGNAL(clicked()),              this,    SLOT(onSelect  ()                      ));
     QObject::connect(ui->buttonSetNothing,      SIGNAL(clicked()),              this,    SLOT(onSetNothing  ()                  ));
     //
     QObject::connect(ui->buttonCancel,          SIGNAL(clicked()),              this,    SLOT(reject    ()                      ));
@@ -43,6 +43,15 @@ DlgManageIcons::DlgManageIcons(QWidget *parent) :
     QSize s(48,48);
     //
     ui->listIcons->setIconSize(s);
+    //
+    ui->lineEditQuickSearch->setToolTip("Search icon by name");
+    //
+    ui->buttonDelete->setToolTip("Delete selected icon from the list and database");
+    ui->buttonSave->setToolTip("Export selected icon to the file");
+    ui->buttonLoad->setToolTip("Load new icon from file");
+    //
+    ui->buttonAcceptSelected->setToolTip("Assign selected icon to the node");
+    ui->buttonSetNothing->setToolTip("Remove icon of current tree node. Has effect after restart application");
     //
     fillList();
 }
@@ -72,20 +81,18 @@ void DlgManageIcons::makeLayout()
     m_ptrLayout->addWidget(ui->buttonLoad,i_row,6,1,2);
     i_row++;
     i_row++;
-    m_ptrLayout->addWidget(ui->buttonSelected,i_row,6,1,2);
     i_row++;
-    m_ptrLayout->addWidget(ui->buttonSetNothing,i_row,6,1,2);
-    //
     i_row++;
-    m_ptrLayout->addWidget(ui->buttonCancel,i_row,0,1,7);
-
-    //ui->labelQuickSearch
-
+    i_row++;
+    i_row++;
+    m_ptrLayout->addWidget(ui->buttonAcceptSelected,i_row,0,1,2);   // 0-1
+    m_ptrLayout->addWidget(ui->buttonCancel,i_row,2,1,2);           // 2-3
+    m_ptrLayout->addWidget(ui->buttonSetNothing,i_row,4,1,2);       // 4-5
 }
 
 void DlgManageIcons::onSearchTextChanged(QString str_text)
 {
-    for (unsigned int i = 0; i < ui->listIcons->count(); i++)
+    for (int i = 0; i < ui->listIcons->count(); i++)
     {
         const QString str_item_text = ui->listIcons->item(i)->text();
         if ( str_item_text.contains(str_text,Qt::CaseInsensitive) == true )
@@ -110,16 +117,20 @@ void DlgManageIcons::onListItemChanged(QListWidgetItem* current, QListWidgetItem
             ui->buttonDelete->setEnabled(false);
             ui->buttonDelete->setEnabled(true);
         };
-        ui->buttonSelected->setEnabled(true);
+        ui->buttonAcceptSelected->setEnabled(true);
     }else
     {
         ui->buttonSave->setEnabled(false);
-        ui->buttonSelected->setEnabled(false);
+        ui->buttonAcceptSelected->setEnabled(false);
     };
 }
 
 void DlgManageIcons::onDelete       ()
 {
+    int i_resp = QMessageBox::warning(NULL, "Delete icon", "Sure?", QMessageBox::Yes, QMessageBox::No);
+    if (QMessageBox::No == i_resp)
+        return;
+    //
     QListWidgetItem* ptr_current_item = ui->listIcons->currentItem();
     if (NULL == ptr_current_item)
         return;
@@ -133,12 +144,6 @@ void DlgManageIcons::onDelete       ()
     ptr_current_item = ui->listIcons->takeItem(i_row);
     if (ptr_current_item)
         delete ptr_current_item;
-
-    //TODO remove item from list
-    //ui->listIcons->removeItemWidget(ui->listIcons->currentItem());
-    //ui->listIcons->
-
-
 }
 
 void DlgManageIcons::onSave         ()
@@ -206,8 +211,6 @@ void DlgManageIcons::onSave         ()
     };
     //
     f_icon.close();
-    //
-    return;
 }
 
 void DlgManageIcons::onLoad         ()
@@ -281,7 +284,9 @@ void DlgManageIcons::onSelect       ()
     };
     //do nothing.
 }
+
 void DlgManageIcons::onSetNothing   ()
 {
-
+    m_iSelectedIconID = 0;
+    this->accept();
 }

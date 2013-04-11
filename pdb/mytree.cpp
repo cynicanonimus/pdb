@@ -26,6 +26,8 @@
 #include <QListView>
 #include <qlistview.h>
 //
+#include <vector>
+//
 #include "../CommonInclude/pdb/VariantPtr.h"
 //
 #include "../CommonInclude/pdb/pdb_style.h"
@@ -89,6 +91,11 @@ MyTree::MyTree(QWidget* parent) : QTreeWidget (parent)
     m_bDeleteFilesAfterAttachment   = settings.value(g_str_DELETE_AFTER_UPLOAD).value<bool>();
     m_bProtectAttachment            = settings.value(g_str_SEC_PROTECT).value<bool>();
     m_bEncryptAttachment            = settings.value(g_str_SEC_MARK_CRYPT).value<bool>();
+    //
+    //make it configurable later!
+    //
+    QSize s(20,20);
+    this->setIconSize(s);
  }
 
 MyTree::~MyTree()
@@ -196,6 +203,21 @@ void MyTree::removeAddedRootsFromTheTree()
         if (NULL == ptr_remove_element)
             break;
     };
+}
+
+void MyTree::onSetIconNodes ()
+{
+    m_IconLoadLocker.lock();
+    //
+    for (int i = 0; i < m_ptrTreeComboBox->count(); i++)
+    {
+        QVariant root_back_data = m_ptrTreeComboBox->itemData(i);
+        RootOfTree* ptr_root    = VariantPtr<RootOfTree>::asPtr( root_back_data );
+        //
+        ptr_root->getChildLeaf()->setIconByID();
+    };
+    //
+    m_IconLoadLocker.unlock();
 }
 
 void MyTree::onDropAttachments ()
@@ -1013,7 +1035,11 @@ void MyTree::init()
 {
     getRootsFromDatabase_DB();
     //
+    m_IconLoadLocker.lock();
+    //
     getLeafsFromDatabase_DB();
+    //
+    m_IconLoadLocker.unlock();
     //
     this->setSortingEnabled(true);
     //
@@ -1041,8 +1067,7 @@ void MyTree::init()
     {
         m_ptrTreeComboBox->setCurrentIndex(-1);
     };
-    //
-};
+}
 
 int MyTree::getLastUsedRootID_DB    () const
 {
@@ -1172,16 +1197,18 @@ bool  MyTree::getRootsFromDatabase_DB()
     b_res = true;
     //
     return b_res;
-};
+}
 
 void MyTree::addNewRoot (RootOfTree* ptr_new_root)
 {
     QVariant new_tree_root = VariantPtr<RootOfTree>::asQVariant(ptr_new_root);
     m_ptrTreeComboBox->addItem(ptr_new_root->getName(), new_tree_root);
-};
+}
 
 bool MyTree::getLeafsFromDatabase_DB()
 {
+    std::vector <TreeLeaf*>  v_orpheline_nodes;
+    //
     DBAcccessSafe   db_safe;
     //
     QSqlDatabase* ptr_db = db_safe.getDB();
@@ -1300,7 +1327,7 @@ bool MyTree::getLeafsFromDatabase_DB()
                 //
                 if (b_it_is_orpheline)
                 {
-                    m_vOrpheline.push_back(ptr_new_leaf);
+                    v_orpheline_nodes.push_back(ptr_new_leaf);
                 };
             };
         };//while( qry.next() )
@@ -1319,7 +1346,7 @@ bool MyTree::getLeafsFromDatabase_DB()
         //
 
         //
-        for (itr = m_vOrpheline.begin(); itr != m_vOrpheline.end(); itr++)
+        for (itr = v_orpheline_nodes.begin(); itr != v_orpheline_nodes.end(); itr++)
         {
             int i_search_id = (*itr)->getParentID();
             //
@@ -1335,16 +1362,12 @@ bool MyTree::getLeafsFromDatabase_DB()
         };
     };
     //
-    if (i_found_counter != m_vOrpheline.size())
+    if (i_found_counter != v_orpheline_nodes.size())
     {
         Q_ASSERT ( FALSE );        //something wrong witth DB!!!
     };
     //
-    m_vOrpheline.erase(m_vOrpheline.begin(), m_vOrpheline.end());
-    //
-    // select 1-st database (change it later)
-    //
-    //onCurrentDBChanged (0);
+    // v_orpheline_nodes.erase(v_orpheline_nodes.begin(), v_orpheline_nodes.end());
     //
     return true;
 };
