@@ -46,7 +46,7 @@ ColorGraficElements::ColorGraficElements(QGroupBox* ptr_parent_frame, QGridLayou
     m_cl_FailAttachmentElementBack.setNamedColor("white");
     m_cl_FailAttachmentElementFront.setNamedColor("black");
     //
-    m_strAppStyleName = g_str_ar_APP_STYLES[4];
+    //m_strAppStyleName = g_str_ar_APP_STYLES[4];
     //
     m_strFrameName = tr("Color settings");
     //
@@ -338,6 +338,8 @@ void ColorGraficElements::writeData()
 {
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
+    settings.setValue(g_str_CLR_APP_STYLE, m_strAppStyleName);
+    //
     settings.setValue(g_str_CLR_NORNAL_FG, m_cl_NormalTreeElementFront);
     settings.setValue(g_str_CLR_NORNAL_BG, m_cl_NormalTreeElementBack);
     //
@@ -367,6 +369,11 @@ void ColorGraficElements::readData ()
     const QColor    black_color(0,0,0);
     //
     QColor          actual_color;
+    //
+    m_strAppStyleName = settings.value(g_str_CLR_APP_STYLE).value<QString>();
+    //
+    if (m_strAppStyleName.isEmpty())
+        m_strAppStyleName = g_str_ar_APP_STYLES[4];
     //
     actual_color = settings.value(g_str_CLR_NORNAL_FG).value<QColor>();
     m_cl_NormalTreeElementFront = actual_color.isValid() ? actual_color : black_color;
@@ -404,7 +411,7 @@ void ColorGraficElements::updateData (bool b_from_dialog, bool b_data_changed)
     if(b_from_dialog)
     {
 
-
+        return;
     }else
     {
         //

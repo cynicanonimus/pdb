@@ -55,3 +55,5 @@ Date 		CommitID		Changes
 --------------------------------------------------------------------------------------------------------
 11.04.2013      11.04.2013-1 		make some changes in the icons management
 11.04.2013      11.04.2013-2		Fix error with the predefined icon path
+--------------------------------------------------------------------------------------------------------
+12.04.2013      12.04.2013-1            Fix error with the application style in settings
