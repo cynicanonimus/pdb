@@ -49,8 +49,8 @@ MyTable::MyTable(QWidget *parent) :
     //
     QHeaderView *header = this->horizontalHeader();
     //
-    this->setColumnWidth(ITEM_LOCKED,   22);
-    this->setColumnWidth(ITEM_ENCRYPTED,22);
+    this->setColumnWidth(ITEM_LOCKED,   24);
+    this->setColumnWidth(ITEM_ENCRYPTED,24);
     this->setColumnWidth(ITEM_NAME,     145);
     this->setColumnWidth(ITEM_DATA,     150);
     this->setColumnWidth(ITEM_SIZE,     100);
@@ -62,6 +62,14 @@ MyTable::MyTable(QWidget *parent) :
     header->setResizeMode(ITEM_DATA,        QHeaderView::Fixed);
     header->setResizeMode(ITEM_SIZE,        QHeaderView::Fixed);
     header->setResizeMode(ITEM_STATUS,      QHeaderView::Fixed);
+    //
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    int i_attach_icon_size  =  settings.value(g_str_ATTACH_ICONS_SIZE).value<int>();
+    //
+    if (0 == i_attach_icon_size)
+        i_attach_icon_size = 16;
+    //
+    this->setIconSize(QSize(i_attach_icon_size, i_attach_icon_size));
     //
     m_bFillModeOn = false;
     //void 	cellClicked ( int row, int column )

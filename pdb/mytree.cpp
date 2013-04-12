@@ -92,10 +92,11 @@ MyTree::MyTree(QWidget* parent) : QTreeWidget (parent)
     m_bProtectAttachment            = settings.value(g_str_SEC_PROTECT).value<bool>();
     m_bEncryptAttachment            = settings.value(g_str_SEC_MARK_CRYPT).value<bool>();
     //
-    //make it configurable later!
+    int i_tree_icon_size    = settings.value(g_str_TREE_ICONS_SIZE).value<int>();
+    if (0 == i_tree_icon_size)
+        i_tree_icon_size = 16;
     //
-    QSize s(20,20);
-    this->setIconSize(s);
+    this->setIconSize(QSize(i_tree_icon_size, i_tree_icon_size));
  }
 
 MyTree::~MyTree()

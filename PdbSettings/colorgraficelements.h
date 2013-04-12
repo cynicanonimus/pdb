@@ -22,6 +22,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QComboBox>
+#include <QSpinBox>
 //
 #include <QObject>
 //
@@ -102,6 +103,12 @@ private:
     QLabel*         m_pLblFailAttachmentElement;
     QPushButton*    m_pBtnFail_B_AttachmentELement;
     QPushButton*    m_pBtnFail_F_AttachmentELement;
+    //
+    QLabel*         m_pLblTreeIconSize;
+    QSpinBox*       m_ptrTreeIconSize;
+    //
+    QLabel*         m_pLblTableIconSize;
+    QSpinBox*       m_ptrTableIconSize;
 
 //
 private:
@@ -125,6 +132,9 @@ private:
     //
     QColor  m_cl_FailAttachmentElementBack;
     QColor  m_cl_FailAttachmentElementFront;
+    //
+    int     m_i_TreeIconSize;
+    int     m_i_AttachIconSize;
 };
 
 #endif // COLORGRAFICELEMENTS_H

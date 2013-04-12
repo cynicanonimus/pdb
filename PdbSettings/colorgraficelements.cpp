@@ -278,7 +278,7 @@ void ColorGraficElements::createLayout()
     m_pBtnChange_F_NormalTreeELement = new QPushButton(str_front_label,  m_pParentFrame);
     addAndRegisterElement(m_pBtnChange_F_NormalTreeELement, i_row,2,1,1);
     //-----------------
-    i_row++;
+    i_row +=2;
     m_pLblDelTreeElement = new QLabel ("Deleted node");
     m_pLblDelTreeElement->setAlignment(Qt::AlignCenter);
     addAndRegisterElement(m_pLblDelTreeElement, i_row,0,1,1);
@@ -332,7 +332,31 @@ void ColorGraficElements::createLayout()
     //
     m_pBtnFail_F_AttachmentELement = new QPushButton(str_front_label,  m_pParentFrame);
     addAndRegisterElement(m_pBtnFail_F_AttachmentELement, i_row,2,1,1);
-};
+    //-----------------------------------------
+    i_row++;
+    m_pLblTreeIconSize = new QLabel ("Tree icons size");
+    m_pLblTreeIconSize->setAlignment(Qt::AlignLeft);
+    m_pLblTreeIconSize->setFixedSize(200,25);
+    addAndRegisterElement(m_pLblTreeIconSize, i_row,0,1,2);
+    //
+    m_ptrTreeIconSize = new QSpinBox();
+    addAndRegisterElement(m_ptrTreeIconSize, i_row,2,1,1);
+    m_ptrTreeIconSize->setMaximum(64);
+    m_ptrTreeIconSize->setMinimum(16);
+    m_ptrTreeIconSize->setValue(m_i_TreeIconSize);
+    //-----------------------------------------
+    i_row++;
+    m_pLblTableIconSize = new QLabel ("Attachment icons size");
+    m_pLblTableIconSize->setAlignment(Qt::AlignLeft);
+    m_pLblTableIconSize->setFixedSize(200,25);
+    addAndRegisterElement(m_pLblTableIconSize, i_row,0,1,2);
+    //
+    m_ptrTableIconSize = new QSpinBox();
+    addAndRegisterElement(m_ptrTableIconSize, i_row,2,1,1);
+    m_ptrTableIconSize->setMaximum(22);
+    m_ptrTableIconSize->setMinimum(16);
+    m_ptrTableIconSize->setValue(m_i_AttachIconSize);
+}
 
 void ColorGraficElements::writeData()
 {
@@ -357,6 +381,9 @@ void ColorGraficElements::writeData()
     //
     settings.setValue(g_str_CLR_ATTACH_FAIL_FG, m_cl_FailAttachmentElementFront );
     settings.setValue(g_str_CLR_ATTACH_FAIL_BG, m_cl_FailAttachmentElementBack );
+    //
+    settings.setValue(g_str_TREE_ICONS_SIZE, m_ptrTreeIconSize->value() );
+    settings.setValue(g_str_ATTACH_ICONS_SIZE, m_ptrTableIconSize->value() );
     //
     m_bChanged = false;
 };
@@ -404,6 +431,16 @@ void ColorGraficElements::readData ()
     m_cl_FailAttachmentElementFront     = actual_color.isValid() ? actual_color : black_color;
     actual_color = settings.value(g_str_CLR_ATTACH_FAIL_BG).value<QColor>();
     m_cl_FailAttachmentElementBack      = actual_color.isValid() ? actual_color : white_color;
+    //
+    m_i_TreeIconSize    = settings.value(g_str_TREE_ICONS_SIZE).value<int>();
+    m_i_AttachIconSize  =  settings.value(g_str_ATTACH_ICONS_SIZE).value<int>();
+    //
+    if (0 == m_i_TreeIconSize)
+        m_i_TreeIconSize = 16;
+    //
+    if (0 == m_i_AttachIconSize)
+        m_i_AttachIconSize = 16;
+    //
 }
 
 void ColorGraficElements::updateData (bool b_from_dialog, bool b_data_changed)

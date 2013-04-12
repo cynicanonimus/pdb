@@ -57,3 +57,5 @@ Date 		CommitID		Changes
 11.04.2013      11.04.2013-2		Fix error with the predefined icon path
 --------------------------------------------------------------------------------------------------------
 12.04.2013      12.04.2013-1            Fix error with the application style in settings
+--------------------------------------------------------------------------------------------------------
+13.04.2013      13.04.2013-1		Implement size of the icons in the settings and in the main app
