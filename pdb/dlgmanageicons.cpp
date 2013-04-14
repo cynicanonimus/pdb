@@ -93,15 +93,28 @@ void DlgManageIcons::makeLayout()
 
 void DlgManageIcons::onSearchTextChanged(QString str_text)
 {
-    for (int i = 0; i < ui->listIcons->count(); i++)
+    if (str_text.length() > 0)
     {
-        const QString str_item_text = ui->listIcons->item(i)->text();
-        if ( str_item_text.contains(str_text,Qt::CaseInsensitive) == true )
+        for (int i = 0; i < ui->listIcons->count(); i++)
         {
-            ui->listIcons->setCurrentRow(i);
-            break;
+            const QString str_item_text = ui->listIcons->item(i)->text();
+            //
+            if ( str_item_text.contains(str_text,Qt::CaseInsensitive) == false )
+            {
+                ui->listIcons->item(i)->setHidden(true);
+            }else
+                ui->listIcons->item(i)->setHidden(false);
+        };
+    }else
+    {
+        for (int i = 0; i < ui->listIcons->count(); i++)
+        {
+            ui->listIcons->item(i)->setHidden(false);
         };
     };
+
+    //
+    ui->listIcons->setCurrentRow(0);
 }
 
 void DlgManageIcons::onListItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
