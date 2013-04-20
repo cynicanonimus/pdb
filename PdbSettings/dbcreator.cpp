@@ -284,7 +284,7 @@ bool DBCreator::readDbFileDescription()
             delete ptr_xml_file;
         return false;
     };
-    //declare xml-document
+    //
     QDomDocument xml_document ("database_descriptor");
     xml_document.setContent(ptr_xml_file);
     //
@@ -294,4 +294,4 @@ bool DBCreator::readDbFileDescription()
         delete ptr_xml_file;
     //
     return b_xml_res;
-};
+}

@@ -1,4 +1,4 @@
-list of changes in te project pdb. 
+list of changes in the project pdb. 
 
 Date 		CommitID		Changes
 
@@ -61,3 +61,5 @@ Date 		CommitID		Changes
 13.04.2013      13.04.2013-1		Implement size of the icons in the settings and in the main app
 --------------------------------------------------------------------------------------------------------
 14.04.2013      14.04.2013-1		Implement quick filtering in the icon dialog
+--------------------------------------------------------------------------------------------------------
+20.04.2013      20.04.2013-1		Add text of the licence to the every file

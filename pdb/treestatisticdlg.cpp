@@ -48,17 +48,17 @@ void TreeStatisticDlg::keyPressEvent (QKeyEvent * event)
     };
     //
     QDialog::keyPressEvent(event);
-};
+}
 
 void TreeStatisticDlg::setNodeAmount          (unsigned int ui_node_amount)
 {
     ui->m_EditNodesAmount->setText(QString::number(ui_node_amount));
-};
+}
 
 void TreeStatisticDlg::setAttachmentsAmount   (unsigned int ui_attachment_amount)
 {
     ui->m_editAttachmentsAmount->setText(QString::number(ui_attachment_amount));
-};
+}
 
 void TreeStatisticDlg::setAttachmentsSize     (unsigned int ui_attachment_size)
 {
@@ -66,9 +66,9 @@ void TreeStatisticDlg::setAttachmentsSize     (unsigned int ui_attachment_size)
     QString str_size = cLocale.toString( ui_attachment_size );
 
     ui->m_EditSizeofAttachments->setText(str_size);
-};
+}
 
 void TreeStatisticDlg::onOK()
 {
     close();
-};
+}
