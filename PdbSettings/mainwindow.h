@@ -26,6 +26,7 @@
 #include "nodesandattachmentsgraficeelements.h"
 #include "loggetelements.h"
 #include "securityelements.h"
+#include "scannersettings.h"
 //
 namespace Ui {
 class MainWindow;
@@ -59,6 +60,7 @@ private:
     NodesAndAttachmentsGraficeElements* m_pNodesAndAttachmentsGrafic;
     LoggetElements*                     m_ptrLogger;
     SecurityElements*                   m_ptrSecurity;
+    ScannerSettings*                    m_ptrScanner;
     //
     //TmpStorageSettings      m_Settings;
     //

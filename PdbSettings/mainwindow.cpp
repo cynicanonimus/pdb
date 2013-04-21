@@ -37,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pNodesAndAttachmentsGrafic = NULL;
     m_ptrLogger     = NULL;
     m_ptrSecurity   = NULL;
+    m_ptrScanner    = NULL;
     //
 //#define QT_DEBUG_PLUGINS = 1;
 //    QStringList str_list = QCoreApplication::libraryPaths ();
@@ -158,6 +159,10 @@ void MainWindow::createGraficeElements ()
     m_ptrSecurity->show(false);
     m_ptrSecurity->resetFlagChanged();
     //
+    m_ptrScanner = new ScannerSettings(ui->m_groupBoxDB, m_pGridLayout);
+    m_ptrScanner->show(false);
+    m_ptrScanner->resetFlagChanged();
+    //
     ui->m_groupBoxDB->setLayout(m_pGridLayout);
     //
 
@@ -206,7 +211,13 @@ void MainWindow::createSettingsTree()
     QVariant security_page =  VariantPtr<AbstractGraficeElements>::asQVariant( m_ptrSecurity );
     ptr_att_security->setData(1,0,security_page);
     //
-    ui->m_TreeOfSettings->addTopLevelItem(ptr_att_security);
+    QTreeWidgetItem* ptr_scanner = new QTreeWidgetItem(ui->m_TreeOfSettings);
+    ptr_scanner->setFlags(Qt::ItemIsEnabled|Qt::ItemIsSelectable);
+    ptr_scanner->setText(0,QObject::trUtf8("Scanner settings"));
+    QVariant scanner_page =  VariantPtr<AbstractGraficeElements>::asQVariant( m_ptrScanner );
+    ptr_scanner->setData(1,0,scanner_page);
+    //
+    ui->m_TreeOfSettings->addTopLevelItem(ptr_scanner);
 }
 
 void MainWindow::closeEvent(QCloseEvent* e)

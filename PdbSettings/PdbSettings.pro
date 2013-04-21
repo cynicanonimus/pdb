@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     dbcreator.cpp \
     dbstructuredescriptor.cpp \
     ../CommonInclude/pdb/DBSettings.cpp \
-    ../CommonInclude/pdb/cryptosupport.cpp
+    ../CommonInclude/pdb/cryptosupport.cpp \
+    scannersettings.cpp
 
 HEADERS  += mainwindow.h \
     dbgraficelements.h \
@@ -44,6 +45,7 @@ HEADERS  += mainwindow.h \
     ../CommonInclude/pdb/DBSettings.h \
     ../CommonInclude/pdb/DBSettingsStream.h \
     ../CommonInclude/pdb/cryptosupport.h \
-    ../CommonInclude/pdb/VariantPtr.h
+    ../CommonInclude/pdb/VariantPtr.h \
+    scannersettings.h
 
 FORMS    += mainwindow.ui

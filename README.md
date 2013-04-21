@@ -4,7 +4,17 @@ PDB is  cross-platform client-server personal information manager.
 Closest analog is TreePad.
 
 Client side - Qt.
-Server side - any SQL server.
+Server side - SQL server (Right now tested with MySql, Oracle, SQLLite).
+
+Product features: 
+
+1. Save and manage unlimited number of documents and trees of documents. 
+2. Support transparent documents encryption
+3. Powerfull search for documents. 
+4. Support SSH-tunnels to the database. 
+5. Build-in text editor. 
+6. Import directories structure with all files, export tree of documents as directories structure. 
+
 
 How to build the project: 
 
@@ -17,4 +27,5 @@ How to build the project:
 7. Do not forget to click "Apply changes"
 8. Check if you have drivers for your database. 
 9. For Linux: put path to your database driver in $PATH, or put your database driver into known path 
-10. Launch executable file  pdb. 
+10. Launch executable file pdb. 
+11. Enjoy. :)
