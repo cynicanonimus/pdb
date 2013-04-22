@@ -22,17 +22,18 @@
 #include <QObject>
 #include <QTreeWidgetItem>
 #include <QTextDocument>
-#include <QRunnable>
+//#include <QRunnable>
 #include <vector>
 #include <QMutex>
 //
 #include "../CommonInclude/pdb/pdb_style.h"
+#include "advthreadjob.h"
 #include "abstractdatabaseobject.h"
 #include "attachment.h"
 //
 class MyTree;
 //
-class TreeLeaf : public AbstractDatabaseObject, public QTreeWidgetItem, public QRunnable
+class TreeLeaf : public AbstractDatabaseObject, public QTreeWidgetItem, public AdvThreadJob//QRunnable
 {
     Q_OBJECT
 public:
@@ -136,7 +137,7 @@ public:
     bool                    isPossibleToDeleteNode  (bool b_silence, bool b_force = false);
     bool                    isPossibleToExportNode  () const;
 //
-    void                    run();
+    bool                    exec();
 //
 public:
     //

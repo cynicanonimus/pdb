@@ -18,13 +18,13 @@
 #include "iconloader.h"
 #include "iconmanager.h"
 
-IconLoader::IconLoader(QObject *parent) :
-    QThread(parent)
+IconLoader::IconLoader()
 {
 
 }
 
-void IconLoader::run()
+bool IconLoader::exec()
 {
     IconManager::getInstance().init();
+    return true;
 }

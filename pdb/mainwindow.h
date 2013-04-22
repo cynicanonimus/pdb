@@ -32,8 +32,6 @@
 #include "passworddlg.h"
 #include "globaltreeoperationshandler.h"
 #include "tunnelmaker.h"
-#include "iconloader.h"
-
 //
 class TreeLeaf;
 class TreeSearchDlg;
@@ -108,7 +106,7 @@ private:
     QLabel*             m_ptrDbInUseLabel;
     //
     QProcess*           m_ptrBackupProcess;
-    IconLoader          m_IconLoaderThread;
+    //IconLoader          m_IconLoaderThread;
 private:
     //
     // init graphic elements of the main window

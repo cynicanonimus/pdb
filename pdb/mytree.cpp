@@ -692,7 +692,7 @@ void MyTree::execGlobalProtectionOperation ( bool b_protect )
         else
         {
             m_ptrEncrypter->setAction(CryptoThread::UNPROTECT_IT);
-            m_ptrProgress->setWindowTitle("Encrypt list of attachments");
+            m_ptrProgress->setWindowTitle("Unprotect list of attachments");
         };
         //
         m_ptrEncrypter->addAttacmentsToProcessList(v_attachments);

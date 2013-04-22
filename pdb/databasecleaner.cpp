@@ -29,7 +29,7 @@ DatabaseCleaner::DatabaseCleaner(QObject *parent) :
 {
 }
 
-void DatabaseCleaner::run()
+bool DatabaseCleaner::exec()
 {
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
@@ -43,7 +43,8 @@ void DatabaseCleaner::run()
     {
         clearAttachments();
     }
-
+    //
+    return true;
 }
 
 bool DatabaseCleaner::clearTrees()

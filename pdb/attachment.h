@@ -23,7 +23,7 @@
 //
 #include <QObject>
 #include <QDateTime>
-#include <QRunnable>
+//#include <QRunnable>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QProcess>
@@ -31,10 +31,11 @@
 #include <vector>
 //
 #include "abstractdatabaseobject.h"
+#include "advthreadjob.h"
 
 class TreeLeaf;
 //
-class Attachment : public AbstractDatabaseObject, public QRunnable
+class Attachment : public AbstractDatabaseObject, public AdvThreadJob//QRunnable
 {
     Q_OBJECT
 public:
@@ -88,7 +89,7 @@ public:
     //
     //overloaded function of QRunnable, executed in the thread pool
     //
-    void                    run             ();
+    bool                    exec            ();
     //
 private slots:
     //

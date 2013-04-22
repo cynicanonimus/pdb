@@ -16,6 +16,8 @@
     along with pdb.  If not, see <http://www.gnu.org/licenses/>.
 */
 //
+// this class represents icon object in the table icons_tbl (database)
+//
 #include <QObject>
 #include <QImage>
 //
@@ -33,11 +35,11 @@ public:
     //
     //void        setHash (const QString& str_hash);
     bool            isHashMatched   (const QString& str_hash) const;
-    void            clear           ();
+    void            destroy         ();
     QImage*         getImage        (bool b_increase_counter);
     const QString&  getName         ()      {return m_strIconName;}
     //
-    bool            isInUse         ()      { return (m_uiInUseCounter>0);}
+    bool            isInUse         ()      { return (m_uiInUseCounter > 0);}
     void            minusInUse      ()      { --m_uiInUseCounter; }
     //
 signals:

@@ -17,6 +17,7 @@
 //
 #include "../CommonInclude/pdb/pdb_style.h"
 #include "../CommonInclude/pdb/VariantPtr.h"
+//
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "treeleaf.h"
@@ -31,6 +32,8 @@
 #include "servicescfg.h"
 #include "logger.h"
 #include "iconmanager.h"
+#include "advthreadpool.h"
+#include "iconloader.h"
 //
 #include <QMessageBox>
 #include <QtSql/QSqlDatabase>
@@ -73,9 +76,6 @@ MainWindow::MainWindow(QWidget *parent) :
     addToolBar(Qt::TopToolBarArea,      m_pMainMenu->m_ptrTableToolBar);
     addToolBar(Qt::BottomToolBarArea,   m_pMainMenu->m_ptrSecurityToolBar);
     //
-    //m_pMainMenu->m_ptrTreeToolBar->isVisible()
-
-    //
     statusBar()->addPermanentWidget(m_ptrDbInUseLabel);
     //
     restoreWindowParams();
@@ -109,6 +109,9 @@ MainWindow::MainWindow(QWidget *parent) :
         str_header += "]";
         //
         setWindowTitle(str_header);
+        //
+        const int i_optimal_thread_amount = std::min(ConnectionManager::getInstance().getConnNumber(), QThread::idealThreadCount());
+        AdvThreadPool::getInstance().init(i_optimal_thread_amount);
     }else
     {
         QMessageBox box;
@@ -141,7 +144,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //initialize node reading
     ui->m_TreeOfNodes->init();
     //
-    m_IconLoaderThread.start(QThread::IdlePriority);
+    IconLoader* ptr_icon_loader = new IconLoader();
+    AdvThreadPool::getInstance().execute(ptr_icon_loader);
+    //m_IconLoaderThread.start(QThread::IdlePriority);
     //
     ServicesCfg::getInstance().getDataAndCheckInstance();
     //
@@ -611,6 +616,13 @@ void MainWindow::saveCurrentNodeDescriptor ()
 
 void MainWindow::closeEvent(QCloseEvent *e)
 {
+    DatabaseCleaner* ptr_cleaner = new DatabaseCleaner();
+    statusBar()->showMessage(tr("DB cleaner...."));
+    //QThreadPool::globalInstance()->start(ptr_cleaner);
+    AdvThreadPool::getInstance().execute(ptr_cleaner);
+    //
+    AdvThreadPool::getInstance().stop();
+    //
     saveWindowParams ();
     saveCurrentNodeDescriptor ();
     //
@@ -624,15 +636,11 @@ void MainWindow::closeEvent(QCloseEvent *e)
     //
     m_dlgWaiting.show();
     //
-    DatabaseCleaner* ptr_cleaner = new DatabaseCleaner();
-    //
-    statusBar()->showMessage(tr("DB cleaner...."));
-    QThreadPool::globalInstance()->start(ptr_cleaner);
     //mark actual db is not in use now
     ServicesCfg::getInstance().dropInstance();
     //
     statusBar()->showMessage(tr("Stop engine...."));
-    QThreadPool::globalInstance()->waitForDone();
+    //QThreadPool::globalInstance()->waitForDone();
     //
     m_dlgWaiting.hide();
     //

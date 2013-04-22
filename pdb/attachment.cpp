@@ -15,6 +15,7 @@
     along with pdb.  If not, see <http://www.gnu.org/licenses/>.
 */
 //
+#include "advthreadpool.h"
 #include "attachment.h"
 #include "dbacccesssafe.h"
 #include "treeleaf.h"
@@ -27,7 +28,7 @@
 #include <QFile>
 #include <QSettings>
 #include <QtSql>
-#include <QThreadPool>
+//#include <QThreadPool>
 #include <QMutexLocker>
 #include <QMessageBox>
 #include <QTime>
@@ -111,7 +112,7 @@ void Attachment::makeAttachmentName(QString str_full_path_name)
     m_strAttachName = pathInfo.fileName();
 }
 
-void Attachment::run()
+bool Attachment::exec()
 {
     QMutexLocker locker (&m_RunLocker);
     //
@@ -119,14 +120,14 @@ void Attachment::run()
     switch (getObjectStatus())
     {
     case OBJECT_OK:
-        return; //do nothing
+        return true; //do nothing
     case OBJECT_DELETED:
-        return; //do nothing
+        return true; //do nothing
     case OBJECT_NOT_DEFINED:
-        return; //do nothing
+        return true; //do nothing
     case OBJECT_ATTACHMENT_INSERT:
         insert_new_attacment ();
-        return;
+        return true;
     case OBJECT_NAME_UPDATING:
         {
             const bool b_rename = updateName_DB();
@@ -140,10 +141,10 @@ void Attachment::run()
             };
             setObjectStatus(OBJECT_OK);
         }
-        return;
+        return true;
     default:
         Q_ASSERT ( false );
-        return;
+        return false;
     };
 }
 
@@ -479,7 +480,8 @@ bool Attachment::rename_it(const QString &str_name)
     m_strAttachName = str_name;
     //
     setObjectStatus(OBJECT_NAME_UPDATING);
-    QThreadPool::globalInstance()->start(this);
+    AdvThreadPool::getInstance().execute(this);
+    //QThreadPool::globalInstance()->start(this);
     //
     return true;
 }

@@ -154,6 +154,11 @@ void ConnectionManager::init()
     }
 }
 
+int ConnectionManager::getConnNumber  () const
+{
+    return m_stDBSettings.m_ConnNumbers [ m_stDBSettings.getCurrentPage() ];
+}
+
 const QString& ConnectionManager::getHostName () const
 {
     return m_stDBSettings.m_DbHosts[m_stDBSettings.getActivePage()];

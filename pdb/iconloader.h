@@ -19,17 +19,17 @@
 //
 // this class loads icons from database in separate thread.
 //
-#include <QThread>
+//#include <QThread>
+#include "advthreadjob.h"
 //
-class IconLoader : public QThread
+class IconLoader : public AdvThreadJob//QThread
 {
-        Q_OBJECT
 public:
-    IconLoader(QObject *parent = 0);
+    IconLoader();
     //
 public:
     //
-    void run();
+    bool exec();
 
 private:
 };

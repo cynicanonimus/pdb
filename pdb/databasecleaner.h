@@ -18,8 +18,9 @@
 */
 //
 #include <QObject>
-#include <QRunnable>
-class DatabaseCleaner : public QObject, public QRunnable
+#include "advthreadjob.h"
+//#include <QRunnable>
+class DatabaseCleaner : public QObject, public AdvThreadJob//QRunnable
 {
     Q_OBJECT
 public:
@@ -30,7 +31,7 @@ signals:
 public slots:
 
 public:
-    void run();
+    bool exec();
 
 private:
     bool clearAttachments();

@@ -125,3 +125,11 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     pdb_res.qrc
+
+unix:!macx:!symbian|win32: LIBS += -L$$PWD/../../ThreadPoolProject/AdvThreadPool/ -lAdvThreadPool
+
+INCLUDEPATH += $$PWD/../../ThreadPoolProject/AdvThreadPool
+DEPENDPATH += $$PWD/../../ThreadPoolProject/AdvThreadPool
+
+win32: PRE_TARGETDEPS += $$PWD/../../ThreadPoolProject/AdvThreadPool/AdvThreadPool.lib
+else:unix:!macx:!symbian: PRE_TARGETDEPS += $$PWD/../../ThreadPoolProject/AdvThreadPool/libAdvThreadPool.a

@@ -65,3 +65,5 @@ Date 		CommitID		Changes
 20.04.2013      20.04.2013-1		Add text of the licence to the every file
 --------------------------------------------------------------------------------------------------------
 21.04.2013      21.04.2013-1		Modify README.md. Prepare to make changes in the PDBSettings
+--------------------------------------------------------------------------------------------------------
+22.04.2013      22.04.2013-1		Implement own threadpool AdvThreadPool instead of standard, fix some small bugs.

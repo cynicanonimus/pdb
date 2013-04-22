@@ -48,7 +48,7 @@ DBIcon::~DBIcon()
 
 }
 
-void DBIcon::clear()
+void DBIcon::destroy()
 {
     if (m_ptrImage)
         delete m_ptrImage;

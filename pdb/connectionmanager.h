@@ -37,10 +37,11 @@ class ConnectionManager : public QObject
 public:
     ~ConnectionManager();
     //
-    static ConnectionManager&   getInstance ();
-    void                        shutdown    ();
-    const QString&              getHostName () const;
-    const QString&              getDBName   () const;
+    static ConnectionManager&   getInstance     ();
+    void                        shutdown        ();
+    const QString&              getHostName     () const;
+    const QString&              getDBName       () const;
+    int                         getConnNumber   () const;
     //
     enum eConnMgrStatus {STATE_UNKNOWN, STATE_OK, STATE_NOT_OK};
     //

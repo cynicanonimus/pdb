@@ -34,7 +34,7 @@ IconManager::~IconManager()
     //
     for ( itr = m_lIconList.begin(); itr != m_lIconList.end(); ++itr)
     {
-        (*itr)->clear();
+        (*itr)->destroy();
         delete (*itr);
     };
 }
@@ -133,7 +133,7 @@ void IconManager::deleteIcon  (int i_icon_id)
     {
         m_IconStorageAccess.lockForWrite();
         //
-        m_lIconList[i_icon_id]->clear();
+        m_lIconList[i_icon_id]->destroy();
         delete m_lIconList[i_icon_id];
         m_lIconList.remove(i_icon_id);
         //

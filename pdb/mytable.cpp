@@ -601,7 +601,7 @@ void MyTable::protect_unprotect_array(bool b_protect, const Attachment::Attachme
     else
     {
         m_ptrEncrypter->setAction(CryptoThread::UNPROTECT_IT);
-        m_ptrProgress->setWindowTitle("Encrypt list of attachments");
+        m_ptrProgress->setWindowTitle("Unprotect list of attachments");
     };
     //
     m_ptrEncrypter->addAttacmentsToProcessList(list);

@@ -15,6 +15,7 @@
     along with pdb.  If not, see <http://www.gnu.org/licenses/>.
 */
 //
+#include "advthreadpool.h"
 #include "treeleaf.h"
 #include "mytree.h"
 #include "dbacccesssafe.h"
@@ -26,7 +27,7 @@
 #include <QtSql>
 #include <QSettings>
 #include <QColor>
-#include <QThreadPool>
+//#include <QThreadPool>
 #include <QMessageBox>
 #include <QTextDocumentWriter>
 #include <QPrinter>
@@ -533,7 +534,8 @@ void TreeLeaf::addAttachments  (const QStringList& file_name_list, bool b_delete
         //add created attachment into database
         Attachment* ptr_attachment = (*itr_attach);
         //
-        QThreadPool::globalInstance()->start(ptr_attachment);
+        AdvThreadPool::getInstance().execute(ptr_attachment);
+        //QThreadPool::globalInstance()->start(ptr_attachment);
     };
   };
     //inform parent tree (for updating the status of attachments through message)
@@ -573,7 +575,8 @@ bool TreeLeaf::rename_it (const QString &str_name)
     //
     setObjectStatus(OBJECT_NAME_UPDATING);
     //
-    QThreadPool::globalInstance()->start(this);
+    //QThreadPool::globalInstance()->start(this);
+    AdvThreadPool::getInstance().execute(this);
     //
     return true;
 }
@@ -598,7 +601,8 @@ void  TreeLeaf::setDescriptor  (const QString& str_descriptor, bool b_is_html)
     //
     setObjectStatus(OBJECT_DESCRIPTOR_UPDATING);
     //
-    QThreadPool::globalInstance()->start(this);
+    //QThreadPool::globalInstance()->start(this);
+    AdvThreadPool::getInstance().execute(this);
 }
 
 void TreeLeaf::dropAttachments             (bool b_recursive)
@@ -920,7 +924,8 @@ void TreeLeaf::setNewTreeID(unsigned int ui_tree_id)
     //
     setObjectStatus(OBJECT_TREE_ID_UPDATING);
     //
-    QThreadPool::globalInstance()->start(this);
+    //QThreadPool::globalInstance()->start(this);
+    AdvThreadPool::getInstance().execute(this);
     //
     for (int i = 0; i < this->childCount(); i++)
     {
@@ -1004,14 +1009,14 @@ void TreeLeaf::updateParentInfoIn_DB()
 //
 // Thread pool processes
 //
-void TreeLeaf::run()
+bool TreeLeaf::exec()
 {
     QMutexLocker locker(&m_RunLocker);
     //
     switch(getObjectStatus())
     {
     case AbstractDatabaseObject::OBJECT_OK:
-        return;
+        return true;
     case AbstractDatabaseObject::OBJECT_NAME_UPDATING:
         {
             bool b_update_name = updateName_DB();
@@ -1046,9 +1051,9 @@ void TreeLeaf::run()
             QString str_message = QString("(id = %1) name='%2'").arg(m_iID).arg(this->text(0));
             Logger::getInstance().logIt(en_LOG_DELETE_NODE, str_message );
         }
-        return;
+        return true;
     case AbstractDatabaseObject::OBJECT_ATTACHMENT_INSERT: //do nothing
-        return;
+        return true;
     default:
 /*
 #ifdef QT_DEBUG
@@ -1056,9 +1061,11 @@ void TreeLeaf::run()
 #endif
 */
         Q_ASSERT( FALSE );
+        return false;
     };
     //
     setObjectStatus(AbstractDatabaseObject::OBJECT_OK);
+    return true;
     //
 //    m_RunLocker.unlock();
 }
@@ -1228,7 +1235,8 @@ bool TreeLeaf::delete_it(bool b_silence)
         //
         setActiveStatus_DB(false);
 */
-        QThreadPool::globalInstance()->start(this);
+//        QThreadPool::globalInstance()->start(this);
+        AdvThreadPool::getInstance().execute (this);
         //
         for (int i = 0; i < this->childCount(); i++)
         {

@@ -18,14 +18,15 @@ Product features:
 
 How to build the project: 
 
-1. Download all sources. 
-2. Launch QtCreator, open file pdb/pdb.pro. Make full rebuild. 
-3. Launch QtCreator, open file PdbSettings/ PdbSettings.pro Make full rebuild. 
-4. Copy executable files pdb and PdbSettings and file dbdescription.xml into same directory. 
-5. Check  dbdescription.xml. If your database is not described, describe it once and let me know. :) 
-6. Launch  PdbSettings, make all settings ("Database", "color and application style"... etc)
-7. Do not forget to click "Apply changes"
-8. Check if you have drivers for your database. 
-9. For Linux: put path to your database driver in $PATH, or put your database driver into known path 
-10. Launch executable file pdb. 
-11. Enjoy. :)
+1. Download all sources (include AdvThreadPool from https://github.com/cynicanonimus/AdvThreadPool !)
+2. Launch QtCreator, open file AdvThreadPool.pro. 
+3. Launch QtCreator, open file pdb/pdb.pro. Make full rebuild. 
+4. Launch QtCreator, open file PdbSettings/ PdbSettings.pro Make full rebuild. 
+5. Copy executable files pdb and PdbSettings and file dbdescription.xml into same directory. 
+6. Check  dbdescription.xml. If your database is not described, describe it once and let me know. :) 
+7. Launch  PdbSettings, make all settings ("Database", "color and application style"... etc)
+8. Do not forget to click "Apply changes"
+9. Check if you have drivers for your database. 
+10. For Linux: put path to your database driver in $PATH, or put your database driver into known path 
+11. Launch executable file pdb. 
+12. Enjoy. :)
