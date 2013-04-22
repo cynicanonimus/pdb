@@ -60,6 +60,7 @@ public slots:
     void onReleaseConn              ();
     void onTakeConn                 ();
     void onCheckPassword            (bool);
+    void onUpdateLog                (QString);
 //    void onCreateChangePassword     ();
     //void onEstablishConnectionToDB(const QString& str_host_name, const QString& str_db_name);
 
@@ -82,10 +83,29 @@ private slots:
 
 private:
     Ui::MainWindow* ui;
-    //Сплиттеры главного окна
-    QSplitter*          m_pMainVSplitter; //разделитель включает слева m_pComboBoxTreeVSplitter, а справа m_pEditorServiceBarHSplitter
-    QSplitter*          m_pComboBoxTreeVSplitter;
-    QSplitter*          m_pEditorServiceBarHSplitter;
+    //Main window splitters
+    /*
+
+      +-----+------------+
+      !     !            !
+      +- 3 -+            !
+      !     !            !
+      !     1            !
+      !     !            !
+      !     +-----2------+
+      !     !            !
+      !     !            !
+      +-----+-- 4 -------+
+      !                  !
+      ! diagnostic widget!
+      +------------------+
+
+    */
+    QSplitter*          m_pMainVSplitter;               // 1 разделитель включает слева m_pComboBoxTreeVSplitter, а справа m_pEditorServiceBarHSplitter
+    QSplitter*          m_pComboBoxTreeVSplitter;       // 3
+    QSplitter*          m_pEditorServiceBarHSplitter;   // 2
+    QSplitter*          m_pBottomHorisontalSplitter;     // 4
+
     //tree mnu and own elements
     MnuMainWindow*      m_pMainMenu;
     //
@@ -113,6 +133,7 @@ private:
     void initMainVSplitter              ();
     void initComboBoxTreeVSplitter      ();
     void initEditorServiceBarHSplitter  ();
+    void initBottomHorisontalSplitter   ();
     //
     void setTextChangeSignal            (bool b_changed);
     //

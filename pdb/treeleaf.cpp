@@ -518,8 +518,9 @@ void TreeLeaf::addAttachments  (const QStringList& file_name_list, bool b_delete
                 placeStatusBarMsg( tr("Importing ") + (*constIterator) + tr("...") );
             }else
             {
-                //TODO: put in into log
-                placeStatusBarMsg( tr("Attach ") + (*constIterator) + tr(" rejected. Too big.") );
+                QString str_message = tr("Attach ") + (*constIterator) + tr(" rejected. Too big.");
+                Logger::getInstance().logIt(en_LOG_ERRORS, str_message );
+                placeStatusBarMsg( str_message );
             };
         };
     };

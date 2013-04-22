@@ -142,6 +142,7 @@ void Logger::writeBeginLog()
     (*m_ptrOutStream)<<" database: [ "<<db_settings.m_DbNames   [db_settings.getCurrentPage()]<<" ]   ";
     (*m_ptrOutStream)<<" user: [ "    <<db_settings.m_UserNames [db_settings.getCurrentPage()]<<" ]   ";
     (*m_ptrOutStream)<<" ====";
+    //
 }
 
 void Logger::logIt(unsigned int ui_err_code, const QString &str_message, const QString* ptr_str_query)
@@ -156,15 +157,45 @@ void Logger::logIt(unsigned int ui_err_code, const QString &str_message, const Q
     if ( NULL == m_ptrOutStream )
         return;
     //
+    QString str_html_record;
+    //
+    const QString str_time_stamp = QDateTime::currentDateTime().toString();
+    //use the red colours for the errors
+    if (en_LOG_ERRORS == ui_err_code)
+    {
+        str_html_record ="<b><font color=\"red\">";
+    };
+    //
+    str_html_record += str_time_stamp;
+    //
     if ( ptr_str_query )
     {
-        (*m_ptrOutStream)<<"\n"<<QDateTime::currentDateTime().toString()<<"Query: "<<(*ptr_str_query)<<" Error: "<<str_message;
+        (*m_ptrOutStream)<<"\n"<<str_time_stamp<<" Query: "<<(*ptr_str_query)<<" Error: "<<str_message;
+        //
+        str_html_record += " Query: ";
+        str_html_record += (*ptr_str_query);
+        str_html_record += " Error: ";
+        str_html_record += str_message;
     }else
     {
-        (*m_ptrOutStream)<<"\n"<<QDateTime::currentDateTime().toString()<<" "<<getLogString(ui_err_code)<<": "<<str_message;
+        (*m_ptrOutStream)<<"\n"<<str_time_stamp<<" "<<getLogString(ui_err_code)<<": "<<str_message;
+        str_html_record += getLogString(ui_err_code);
+        str_html_record += ": ";
+        str_html_record += str_message;
     };
     //
     m_ptrOutStream->flush();
+    //
+    if (en_LOG_ERRORS == ui_err_code)
+    {
+        str_html_record +="</font></b>";
+    };
+    //
+    str_html_record +="<br>";
+    //
+    emit newLogEvent(str_html_record);
+
+
 }
 
 

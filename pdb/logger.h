@@ -43,7 +43,7 @@ private:
     void        operator=(Logger const&);
 
 signals:
-    
+    void        newLogEvent(QString);
 public slots:
 
 private:

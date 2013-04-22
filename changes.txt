@@ -67,3 +67,4 @@ Date 		CommitID		Changes
 21.04.2013      21.04.2013-1		Modify README.md. Prepare to make changes in the PDBSettings
 --------------------------------------------------------------------------------------------------------
 22.04.2013      22.04.2013-1		Implement own threadpool AdvThreadPool instead of standard, fix some small bugs.
+22.04.2013      22.04.2013-2		Implement log-window in the application	

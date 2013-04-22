@@ -83,10 +83,12 @@ MainWindow::MainWindow(QWidget *parent) :
     initComboBoxTreeVSplitter();
     initEditorServiceBarHSplitter();
     initMainVSplitter();
+    initBottomHorisontalSplitter();
     //
     m_dlgWaiting.setModal(false);
     //
-    this->setCentralWidget(m_pMainVSplitter);
+    //this->setCentralWidget(m_pMainVSplitter);
+    this->setCentralWidget(m_pBottomHorisontalSplitter);
     //pass pointer on combobox into the tree
     ui->m_TreeOfNodes->setTreeComboBox(ui->m_DBNameList);
     //pass pointer on combobox into the tree global functions object
@@ -298,6 +300,8 @@ void MainWindow::conSignalsAndSlots ()
     QObject::connect(this,                              SIGNAL(saveDescription()),  m_pMainMenu, SLOT (onSaveDescription()   ));
     //
     QObject::connect( &(ServicesCfg::getInstance()),    SIGNAL (DbInUse() ), this, SLOT (onDbAlreadyInUse() ));
+    QObject::connect(&(Logger::getInstance()), SIGNAL(newLogEvent(QString)), this, SLOT(onUpdateLog(QString) ));
+
 }
 
 void MainWindow::conSignalsAndSlotsForPwd ()
@@ -561,6 +565,29 @@ void MainWindow::showTextOfDescription          (TreeLeaf* ptr_to_node)
     ui->m_textEditor->setHtml(ptr_to_node->getDescriptor().toHtml());
     ui->m_textEditor->setEnabled(true);
     setTextChangeSignal(false);
+}
+
+void MainWindow::onUpdateLog (QString str_log)
+{
+    ui->textDiagnostic->insertHtml(str_log);
+}
+
+void MainWindow::initBottomHorisontalSplitter ()
+{
+    m_pBottomHorisontalSplitter = new QSplitter(Qt::Vertical);
+    //
+    m_pBottomHorisontalSplitter->addWidget(m_pMainVSplitter);
+    m_pBottomHorisontalSplitter->addWidget(ui->textDiagnostic);
+    //
+    ui->textDiagnostic->setMaximumHeight(200);
+    ui->textDiagnostic->setReadOnly(true);
+/*
+    const QString str_html1 = "<b><font color=\"red\">This boldtext is red</font></b><br>";
+    const QString str_html2 = "<i>this is italic</i><br>";
+
+    ui->textDiagnostic->insertHtml(str_html1);
+    ui->textDiagnostic->insertHtml(str_html2);
+*/
 }
 
 void MainWindow::initMainVSplitter()

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>798</width>
-    <height>561</height>
+    <width>628</width>
+    <height>571</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -151,7 +151,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>250</y>
+      <y>200</y>
       <width>251</width>
       <height>24</height>
      </rect>
@@ -182,7 +182,7 @@
     <property name="geometry">
      <rect>
       <x>320</x>
-      <y>300</y>
+      <y>230</y>
       <width>256</width>
       <height>192</height>
      </rect>
@@ -207,6 +207,16 @@
     </property>
     <property name="alternatingRowColors">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textDiagnostic">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>440</y>
+      <width>104</width>
+      <height>75</height>
+     </rect>
     </property>
    </widget>
   </widget>
