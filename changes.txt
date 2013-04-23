@@ -68,3 +68,5 @@ Date 		CommitID		Changes
 --------------------------------------------------------------------------------------------------------
 22.04.2013      22.04.2013-1		Implement own threadpool AdvThreadPool instead of standard, fix some small bugs.
 22.04.2013      22.04.2013-2		Implement log-window in the application	
+--------------------------------------------------------------------------------------------------------
+23.04.2013      23.04.2013-1            Fix db clean error on exit

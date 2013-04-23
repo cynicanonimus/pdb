@@ -34,6 +34,7 @@
 #include "iconmanager.h"
 #include "advthreadpool.h"
 #include "iconloader.h"
+#include "waiter.h"
 //
 #include <QMessageBox>
 #include <QtSql/QSqlDatabase>
@@ -644,9 +645,9 @@ void MainWindow::saveCurrentNodeDescriptor ()
 void MainWindow::closeEvent(QCloseEvent *e)
 {
     DatabaseCleaner* ptr_cleaner = new DatabaseCleaner();
-    statusBar()->showMessage(tr("DB cleaner...."));
-    //QThreadPool::globalInstance()->start(ptr_cleaner);
+    ptr_cleaner->setPriority(QThread::HighPriority);
     AdvThreadPool::getInstance().execute(ptr_cleaner);
+    statusBar()->showMessage(tr("DB cleaner...."));
     //
     AdvThreadPool::getInstance().stop();
     //
