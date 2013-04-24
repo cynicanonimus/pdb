@@ -1759,6 +1759,14 @@ void MnuMainWindow::assemblyViewMenu( QMenu* ptr_node_menu )
     m_ptrToolbarsMenu->addSeparator();
     //
     m_ptrToolbarsMenu->addAction(m_ptrMnuSecurityToolBar);
+    //
+    ptr_node_menu->addSeparator();
+    //
+    m_ptrLogWindow  = new QAction("Show log", this);
+    m_ptrLogWindow  ->setCheckable(true);
+    m_ptrLogWindow  ->setToolTip(tr("Show/hide log window with service messages"));
+    //
+    ptr_node_menu->addAction(m_ptrLogWindow);
 }
 
 void MnuMainWindow::assemblySecurityMenu( QMenu* ptr_node_menu )

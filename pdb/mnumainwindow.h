@@ -262,6 +262,7 @@ public:
     //----------------------------- View - main menu  -----------------------------
     QMenu*      m_ptrViewMenu;
     QMenu*      m_ptrToolbarsMenu;
+    QAction*    m_ptrLogWindow;
     //
     QAction*    m_ptrMnuNodeToolBar;
     QAction*    m_ptrMnuAttachmentToolBar;

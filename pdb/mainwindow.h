@@ -80,6 +80,8 @@ private slots:
     void onStartBackup              ();
     void onErrorBackup              (QProcess::ProcessError);
     void onFinishBackup             (int);
+    //
+    void onSwitchServiceWindow      ();
 
 private:
     Ui::MainWindow* ui;

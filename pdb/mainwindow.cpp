@@ -145,6 +145,7 @@ MainWindow::MainWindow(QWidget *parent) :
     conSignalsAndSlotsForEditor     ();
     //
     //initialize node reading
+    //
     ui->m_TreeOfNodes->init();
     //
     IconLoader* ptr_icon_loader = new IconLoader();
@@ -302,6 +303,8 @@ void MainWindow::conSignalsAndSlots ()
     //
     QObject::connect( &(ServicesCfg::getInstance()),    SIGNAL (DbInUse() ), this, SLOT (onDbAlreadyInUse() ));
     QObject::connect(&(Logger::getInstance()), SIGNAL(newLogEvent(QString)), this, SLOT(onUpdateLog(QString) ));
+    //
+    QObject::connect(m_pMainMenu->m_ptrLogWindow,   SIGNAL(triggered()), this, SLOT(onSwitchServiceWindow() ));
 
 }
 
@@ -319,6 +322,14 @@ void MainWindow::showEvent (QShowEvent* e)
     QMainWindow::showEvent(e);
     //
     m_pMainMenu->syncToolbarsVisibilityAndMenu();
+    //
+    if (ui->textDiagnostic->isVisible() == true)
+    {
+        m_pMainMenu->m_ptrLogWindow->setChecked(true);
+    }else
+    {
+        m_pMainMenu->m_ptrLogWindow->setChecked(false);
+    };
 }
 
 void  MainWindow::onBackupDatabaseNow()
@@ -337,10 +348,19 @@ void  MainWindow::onBackupDatabaseNow()
     QObject::connect(m_ptrBackupProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(onErrorBackup(QProcess::ProcessError)    ));
     //
     m_ptrBackupProcess->start(str_backup_cmd);
-    //
-    //QMessageBox box;
-    //box.setText("Backup not ready yet, sorry");
-    //box.exec();
+}
+
+void MainWindow::onSwitchServiceWindow ()
+{
+    if (ui->textDiagnostic->isVisible() == true)
+    {
+        ui->textDiagnostic->setVisible(false);
+        m_pMainMenu->m_ptrLogWindow->setChecked(false);
+    }else
+    {
+        ui->textDiagnostic->setVisible(true);
+        m_pMainMenu->m_ptrLogWindow->setChecked(true);
+    };
 }
 
 void MainWindow::onStartBackup ()
