@@ -6,6 +6,7 @@
 #include <QGridLayout>
 #include <QCheckBox>
 #include <QLabel>
+#include <QList>
 #include <QLineEdit>
 #include <QSpacerItem>
 //
@@ -43,20 +44,11 @@ private:
     QLabel*         m_ptrLHeader;
     QLabel*         m_ptrRHeader;
     //
-    QLineEdit*      mm_ptrConfigName0;
-    QLineEdit*      mm_ptrConfigLine0;
+    QList <QLineEdit*> m_ConfigName;
+    QList <QLineEdit*> m_ConfigLine;
     //
-    QLineEdit*      mm_ptrConfigName1;
-    QLineEdit*      mm_ptrConfigLine1;
-    //
-    QLineEdit*      mm_ptrConfigName2;
-    QLineEdit*      mm_ptrConfigLine2;
-    //
-    QLineEdit*      mm_ptrConfigName3;
-    QLineEdit*      mm_ptrConfigLine3;
-    //
-    QLineEdit*      mm_ptrConfigName4;
-    QLineEdit*      mm_ptrConfigLine4;
+    QStringList     m_strNames;
+    QStringList     m_strScanConfigs;
 };
 
 #endif // SCANNERSETTINGS_H

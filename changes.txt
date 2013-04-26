@@ -73,6 +73,6 @@ Date 		CommitID		Changes
 --------------------------------------------------------------------------------------------------------
 24.04.2013	24.04.2013-1		Make switcher on/off for Log-window
 --------------------------------------------------------------------------------------------------------
-25.04.2013      25.04.2013-1 		Intermediate update. Preparing for direct scan functionality25.04.2013      25.04.2013-1 		Intermediate update. Preparing for direct scan functionality
+25.04.2013      25.04.2013-1 		Intermediate update. Preparing for direct scan functionality.
 --------------------------------------------------------------------------------------------------------
-
+26.04.2013      26.04.2013-1            Intermediate update. Preparing for direct scan functionality.

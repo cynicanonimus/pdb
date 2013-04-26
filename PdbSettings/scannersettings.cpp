@@ -9,7 +9,9 @@ ScannerSettings::ScannerSettings(QGroupBox *ptr_parent_frame, QGridLayout *ptr_l
     m_ptrEnableDirectScanning   = NULL;
     m_ptrLHeader                = NULL;
     m_ptrRHeader                = NULL;
-
+    //
+    m_strNames<<""<<""<<""<<""<<"";
+    m_strScanConfigs<<""<<""<<""<<""<<"";
     //
     readData();
     //
@@ -29,28 +31,31 @@ ScannerSettings::~ScannerSettings()
 
 void ScannerSettings::onEnableClick(bool state)
 {
-    mm_ptrConfigName0->setEnabled(state);
-    mm_ptrConfigLine0->setEnabled(state);
-    //
-    mm_ptrConfigName1->setEnabled(state);
-    mm_ptrConfigLine1->setEnabled(state);
-    //
-    mm_ptrConfigName2->setEnabled(state);
-    mm_ptrConfigLine2->setEnabled(state);
-    //
-    mm_ptrConfigName3->setEnabled(state);
-    mm_ptrConfigLine3->setEnabled(state);
-    //
-    mm_ptrConfigName4->setEnabled(state);
-    mm_ptrConfigLine4->setEnabled(state);
-    //
-    updateData(true, true);
+    for (unsigned int i = 0; i < 5; i++ )
+    {
+        m_ConfigName[i]->setEnabled(state);
+        m_ConfigLine[i]->setEnabled(state);
+    };
 }
 
 void ScannerSettings::writeData()
 {
+    updateData(true);
+    //
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     settings.setValue(g_str_SCANNER_ENABLE,    m_bEnableScanner);
+    //
+    settings.beginWriteArray("scanner_settings");
+    for (int i = 0; i < m_strNames.size(); ++i)
+    {
+        settings.setArrayIndex(i);
+        settings.setValue("config_name", m_strNames.at(i));
+        settings.setValue("config_string", m_strScanConfigs.at(i));
+    }
+    settings.endArray();
+    //
+    m_bChanged = false;
+
 }
 
 void ScannerSettings::readData()
@@ -58,6 +63,15 @@ void ScannerSettings::readData()
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     //
     m_bEnableScanner  = settings.value(g_str_SCANNER_ENABLE).value<bool>();
+    //
+    int size = settings.beginReadArray("scanner_settings");
+    for (int i = 0; i < size; ++i)
+    {
+        settings.setArrayIndex(i);
+        m_strNames[i]       = settings.value("config_name").toString();
+        m_strScanConfigs[i] = settings.value("config_string").toString();
+    }
+    settings.endArray();
 }
 
 void ScannerSettings::createLayout()
@@ -74,54 +88,25 @@ void ScannerSettings::createLayout()
     addAndRegisterElement(m_ptrLHeader, i_row,0,1,2, Qt::AlignTop);
     //...
     m_ptrRHeader = new QLabel("Scanner command");
-    addAndRegisterElement(m_ptrRHeader, i_row,2,1,3, Qt::AlignTop);
+    addAndRegisterElement(m_ptrRHeader, i_row,2,1,3, Qt::AlignTop|Qt::AlignCenter);
     //-------------------
+    //const int height = 25;
+    const int width = 385;
+    //
     i_row++;
-    mm_ptrConfigName0   = new QLineEdit("Configuration N 1");
-    mm_ptrConfigName0->setToolTip(str_tooltip);
-    addAndRegisterElement(mm_ptrConfigName0, i_row,0,1,2, Qt::AlignTop);
-    //...
-    mm_ptrConfigLine0   = new QLineEdit("");
-    mm_ptrConfigLine0->setToolTip("define command line here");
-    addAndRegisterElement(mm_ptrConfigLine0, i_row,2,1,3, Qt::AlignTop);
-    //-------------------
-    i_row++;
-    mm_ptrConfigName1   = new QLineEdit("Configuration N 2");
-    mm_ptrConfigName1->setToolTip(str_tooltip);
-    addAndRegisterElement(mm_ptrConfigName1, i_row,0,1,2, Qt::AlignTop);
-    //...
-    mm_ptrConfigLine1   = new QLineEdit("");
-    mm_ptrConfigLine1->setToolTip("define command line here");
-    addAndRegisterElement(mm_ptrConfigLine1, i_row,2,1,3, Qt::AlignTop);
-    //-------------------
-    i_row++;
-    mm_ptrConfigName2   = new QLineEdit("Configuration N 3");
-    mm_ptrConfigName2->setToolTip(str_tooltip);
-    addAndRegisterElement(mm_ptrConfigName2, i_row,0,1,2, Qt::AlignTop);
-    //...
-    mm_ptrConfigLine2   = new QLineEdit("");
-    mm_ptrConfigLine2->setToolTip("define command line here");
-    addAndRegisterElement(mm_ptrConfigLine2, i_row,2,1,3, Qt::AlignTop);
-    //-------------------
-    i_row++;
-    mm_ptrConfigName3   = new QLineEdit("Configuration N 4");
-    mm_ptrConfigName3->setToolTip(str_tooltip);
-    addAndRegisterElement(mm_ptrConfigName3, i_row,0,1,2, Qt::AlignTop);
-    //...
-    mm_ptrConfigLine3   = new QLineEdit("");
-    mm_ptrConfigLine3->setToolTip("define command line here");
-    addAndRegisterElement(mm_ptrConfigLine3, i_row,2,1,3, Qt::AlignTop);
-    //-------------------
-    i_row++;
-    mm_ptrConfigName4   = new QLineEdit("Configuration N 5");
-    mm_ptrConfigName4->setToolTip(str_tooltip);
-    addAndRegisterElement(mm_ptrConfigName4, i_row,0,1,2, Qt::AlignTop);
-    //...
-    mm_ptrConfigLine4   = new QLineEdit("");
-    mm_ptrConfigLine4->setToolTip("define command line here");
-    addAndRegisterElement(mm_ptrConfigLine4, i_row,2,1,3, Qt::AlignTop);
-
-
+    //
+    for (int i = 0; i < 5; ++i)
+    {
+        m_ConfigName.append(new QLineEdit("Configuration N 1"));
+        m_ConfigName[i]->setToolTip(str_tooltip);
+        addAndRegisterElement(m_ConfigName[i], i_row,0,1,2, Qt::AlignTop);
+        //...
+        m_ConfigLine.append( new QLineEdit(""));
+        m_ConfigLine[i] ->setToolTip("define command line here");
+        m_ConfigLine[i] ->setFixedWidth(width);
+        addAndRegisterElement(m_ConfigLine[i] , i_row,2,1,3, Qt::AlignTop);
+        i_row++;
+    };
 }
 
 void ScannerSettings::updateData (bool b_from_dialog, bool b_data_changed)
@@ -132,11 +117,26 @@ void ScannerSettings::updateData (bool b_from_dialog, bool b_data_changed)
             m_bEnableScanner = true;
         else
             m_bEnableScanner  = false;
+        //
+        for (int i = 0; i < m_ConfigName.size(); ++i)
+        {
+            m_strNames[i]       = m_ConfigName[i]->text();
+            m_strScanConfigs[i] = m_ConfigLine[i]->text();
+        };
     }else
     {
         if (m_bEnableScanner)
             m_ptrEnableDirectScanning->setCheckState(Qt::Checked);
         else
             m_ptrEnableDirectScanning->setCheckState(Qt::Unchecked);
+        //
+        for (int i = 0; i < m_ConfigName.size(); ++i)
+        {
+            m_ConfigName[i]->setText(m_strNames[i]);
+            m_ConfigLine[i]->setText(m_strScanConfigs[i]);
+        };
+
     };
+    //
+    m_bChanged = b_data_changed;
 }
