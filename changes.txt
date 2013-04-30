@@ -82,4 +82,5 @@ Date 		CommitID		Changes
 30.04.2013      30.04.2013-3		Fix problem with toolbars control menu (right button on toolbars)
 30.04.2013      30.04.2013-4		Fix problem with non-selected attachment
 30.04.2013      30.04.2013-5		Fix syntax error in MyTable::onCancelAsyncOperations
+30.04.2013      30.04.2013-6 		Add lost icons
 --------------------------------------------------------------------------------------------------------
