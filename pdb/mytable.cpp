@@ -557,7 +557,7 @@ void MyTable::initOnDemand        ()
     m_ptrProgress->setMinimumWidth(380);
 }
 
-void MyTable::MyTable::onCancelAsyncOperations ()
+void MyTable::onCancelAsyncOperations ()
 {
     m_ptrProgress->close();
 }
