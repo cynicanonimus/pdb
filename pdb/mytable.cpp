@@ -453,12 +453,16 @@ void MyTable::onProtectSelected       ()
     //
     getSelectedAttaches(v_attachments);
     //
-    protect_unprotect_array(true,v_attachments);
-    //
-    refreshCurrentAttachmentsList();
+    if (v_attachments.size() > 0 )
+    {
+        protect_unprotect_array(true,v_attachments);
+        //
+        refreshCurrentAttachmentsList();
+        //
+        emit selectionChanged(v_attachments);
+    };
     //
     m_bFillModeOn = false;
-    emit selectionChanged(v_attachments);
 }
 
 void MyTable::onDropProtectSelected   ()
@@ -470,12 +474,16 @@ void MyTable::onDropProtectSelected   ()
     //
     getSelectedAttaches(v_attachments);
     //
-    protect_unprotect_array(false,v_attachments);
-    //
-    refreshCurrentAttachmentsList();
+    if (v_attachments.size() > 0 )
+    {
+        protect_unprotect_array(false,v_attachments);
+        //
+        refreshCurrentAttachmentsList();
+        //
+        emit selectionChanged(v_attachments);
+    };
     //
     m_bFillModeOn = false;
-    emit selectionChanged(v_attachments);
 }
 
 void MyTable::onEncryptAllAttachments ()
@@ -485,7 +493,8 @@ void MyTable::onEncryptAllAttachments ()
     //
     //getSelectedAttaches(v_attachments);
     //
-    encrypt_decrypt_array(true, v_attachments);
+    if (v_attachments.size() > 0 )
+        encrypt_decrypt_array(true, v_attachments);
     //
     return;
 }
@@ -497,7 +506,8 @@ void MyTable::onDecryptAllAttachments ()
     //
     //getSelectedAttaches(v_attachments);
     //
-    encrypt_decrypt_array(false, v_attachments);
+    if (v_attachments.size() > 0 )
+        encrypt_decrypt_array(false, v_attachments);
     //
     return;
 }
@@ -509,7 +519,8 @@ void MyTable::onEncryptSelected       ()
     //
     getSelectedAttaches(v_attachments);
     //
-    encrypt_decrypt_array(true, v_attachments);
+    if (v_attachments.size() > 0 )
+        encrypt_decrypt_array(true, v_attachments);
     //
     return;
 }
@@ -521,7 +532,8 @@ void MyTable::onDecryptSelected       ()
     //
     getSelectedAttaches(v_attachments);
     //
-    encrypt_decrypt_array(false, v_attachments);
+    if (v_attachments.size() > 0 )
+        encrypt_decrypt_array(false, v_attachments);
     //
     return;
 }
@@ -743,7 +755,8 @@ void MyTable::onExportAttachment()
     Attachment::AttachmentsList v_attachments;
     getSelectedAttaches(v_attachments);
     //
-    makeAttachmentsExport(v_attachments);
+    if (v_attachments.size() > 0 )
+        makeAttachmentsExport(v_attachments);
 }
 
 void MyTable::onViewAttachment()
@@ -753,7 +766,8 @@ void MyTable::onViewAttachment()
     Attachment::AttachmentsList v_attachments;
     getSelectedAttaches(v_attachments);
     //
-    makeViewExport(settings.value(g_str_ATTACH_TMP_PATH).toString(), v_attachments);
+    if (v_attachments.size() > 0 )
+        makeViewExport(settings.value(g_str_ATTACH_TMP_PATH).toString(), v_attachments);
 }
 
 void MyTable::makeViewExport( const QString&                        str_export_path,
@@ -870,17 +884,25 @@ void MyTable::onReplaceAttachment()
         Attachment::AttachmentsList v_attachments;
         getSelectedAttaches(v_attachments);
         //
-        bool b_res_replacement = v_attachments[0]->replace_it( file_list.at(0),
-                                                               m_bDeleteAfterAttachReplacement,
-                                                               m_bProtectAttachReplacement,
-                                                               ui_encrypt_type);
-        //
-        if (b_res_replacement)
+        if (v_attachments.size() > 0 )
         {
+            bool b_res_replacement = v_attachments[0]->replace_it( file_list.at(0),
+                                                                   m_bDeleteAfterAttachReplacement,
+                                                                   m_bProtectAttachReplacement,
+                                                                   ui_encrypt_type);
             QMessageBox box;
-            box.setText(tr("Attachment replaced."));
+            //
+            if (b_res_replacement)
+            {
+                box.setText(tr("Attachment replaced."));
+            }else
+            {
+                box.setText(tr("Can not replace attachment."));
+            };
+            //
             box.exec();
         };
+
     };
 }
 
@@ -888,16 +910,19 @@ void MyTable::onCutAttachment ()
 {
     Attachment::AttachmentsList v_attachments;
     //
-    getSelectedAttaches(v_attachments);
-    //
-    QString str_msg;
-    //
-    str_msg=tr("Choose another node and click \"Paste attachment\" or just Ctrl+P");
-    //
-    m_ptrStatusBar->showMessage(str_msg);
-    //
-    emit attachmentForCutSelected (v_attachments);
-};
+    if (v_attachments.size() > 0 )
+    {
+        getSelectedAttaches(v_attachments);
+        //
+        QString str_msg;
+        //
+        str_msg=tr("Choose another node and click \"Paste attachment\" or just Ctrl+P");
+        //
+        m_ptrStatusBar->showMessage(str_msg);
+        //
+        emit attachmentForCutSelected (v_attachments);
+    };
+}
 
 void MyTable::mouseDoubleClickEvent (QMouseEvent *event)
 {
