@@ -208,16 +208,17 @@ void MainWindow::conSignalsAndSlotsForNodes ()
 
 void MainWindow::conSignalsAndSlotsForAttach()
 {
-    QObject::connect(m_pMainMenu->m_ptrImportAttach,    SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onImportAttach () ) );
-    QObject::connect(m_pMainMenu->m_ptrDeleteAttach,    SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onDeleteAttachment()  ));
-    QObject::connect(m_pMainMenu->m_ptrRestoreAttach,   SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onRestoreAttachment() ));
-    QObject::connect(m_pMainMenu->m_ptrExportAttach,    SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onExportAttachment()  ));
-    QObject::connect(m_pMainMenu->m_ptrReplaceAttach,   SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onReplaceAttachment() ));
+    QObject::connect(m_pMainMenu->m_ptrImportAttach,    SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onImportAttach     ()  ));
+    QObject::connect(m_pMainMenu->m_ptrDeleteAttach,    SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onDeleteAttachment ()  ));
+    QObject::connect(m_pMainMenu->m_ptrRestoreAttach,   SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onRestoreAttachment()  ));
+    QObject::connect(m_pMainMenu->m_ptrExportAttach,    SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onExportAttachment ()  ));
+    QObject::connect(m_pMainMenu->m_ptrReplaceAttach,   SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onReplaceAttachment()  ));
     //
-    QObject::connect(m_pMainMenu->m_ptrCutAttach,       SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onCutAttachment()     ));
-    QObject::connect(m_pMainMenu->m_ptrPasteAttach,     SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onPasteAttachments()  ));
+    QObject::connect(m_pMainMenu->m_ptrCutAttach,       SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onCutAttachment    ()  ));
+    QObject::connect(m_pMainMenu->m_ptrPasteAttach,     SIGNAL(triggered()), ui->m_TreeOfNodes, SLOT( onPasteAttachments ()  ));
     //
-    QObject::connect(m_pMainMenu->m_ptrViewAttach,      SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onViewAttachment  ()  ));
+    QObject::connect(m_pMainMenu->m_ptrViewAttach,      SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onViewAttachment   ()  ));
+    QObject::connect(m_pMainMenu->m_ptrDirectScan,      SIGNAL(triggered()), ui->m_TreeOfNodes,   SLOT( onDirectScan     ()  ));
     //protection operations with attachment(s)
     QObject::connect(m_pMainMenu->m_ptrProtectAllAttachmentsOfNode,     SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onProtectAllAttachments() ));
     QObject::connect(m_pMainMenu->m_ptrUn_ProtectAllAttachmentsOfNode,  SIGNAL(triggered()), ui->m_Service_Tab, SLOT( onDropProtectAllAttachments() ));
@@ -370,7 +371,7 @@ void MainWindow::onStartBackup ()
     return;
 }
 
-void MainWindow::MainWindow::onErrorBackup  (QProcess::ProcessError err)
+void MainWindow::onErrorBackup  (QProcess::ProcessError err)
 {
     QString str_message = QString("Backup did not finish successfuly! Error code: %1").arg(err);
     QMessageBox::critical(NULL, "Backup status", str_message, QMessageBox::Ok);
@@ -379,7 +380,7 @@ void MainWindow::MainWindow::onErrorBackup  (QProcess::ProcessError err)
     return;
 }
 
-void MainWindow::MainWindow::onFinishBackup (int i_finish_code)
+void MainWindow::onFinishBackup (int i_finish_code)
 {
     statusBar()->showMessage(tr("Database backup finished."));
     if (0 != i_finish_code)

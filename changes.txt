@@ -76,3 +76,5 @@ Date 		CommitID		Changes
 25.04.2013      25.04.2013-1 		Intermediate update. Preparing for direct scan functionality.
 --------------------------------------------------------------------------------------------------------
 26.04.2013      26.04.2013-1            Intermediate update. Preparing for direct scan functionality.
+--------------------------------------------------------------------------------------------------------
+30.04.2013      30.40.2013-1		Fix syntax error in MainWindow.cpp
