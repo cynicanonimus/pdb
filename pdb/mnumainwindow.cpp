@@ -890,6 +890,8 @@ void MnuMainWindow::createAttachmentControlMenu()
     m_ptrAttachmentToolBar->addAction(m_ptrViewAttach);
     m_ptrAttachmentToolBar->addSeparator();
     m_ptrAttachmentToolBar->addAction(m_ptrDirectScan);
+    //
+    m_ptrAttachmentToolBar->setWindowTitle(tr("Operations with attachments"));
 }
 
 void MnuMainWindow::createSecurityMenu()
@@ -914,6 +916,9 @@ void MnuMainWindow::createSecurityMenu()
     m_ptrSecurityToolBar->addAction(m_ptrCreateChangePassword);
     m_ptrSecurityToolBar->addSeparator();
     m_ptrSecurityToolBar->addAction(m_ptrLockAppScreen);
+    //
+    m_ptrSecurityToolBar->setWindowTitle(tr("Security toolbar"));
+
 }
 
 void MnuMainWindow::createToolBarSubMenu()
@@ -1109,6 +1114,9 @@ void MnuMainWindow::createTreeControlMenu()
     m_ptrTreeToolBar->addAction(m_ptrBackupDatabase);
     m_ptrTreeToolBar->addSeparator();
     m_ptrTreeToolBar->addAction(m_ptrExitApp);
+    //
+    m_ptrTreeToolBar->setWindowTitle(tr("Operations with tree"));
+
 }
 //
 void MnuMainWindow::createNodeControlMenu()
@@ -1481,6 +1489,7 @@ void MnuMainWindow::createEditorMenu()
     m_ptrEditorToolBar->addSeparator();
     m_ptrEditorToolBar->addAction(m_ptrInsertHTML);
     //
+    m_ptrEditorToolBar->setWindowTitle(tr("Editor toolbar"));
     //m_ptrEditorToolBar->addSeparator();
     //m_ptrEditorToolBar->addAction(m_ptrZoomIn);
 }
@@ -1560,6 +1569,7 @@ void MnuMainWindow::createTableSubMenu ()
     m_ptrTableToolBar ->addSeparator();
     m_ptrTableToolBar ->addAction(m_ptrTableSettings);
     m_ptrTableToolBar ->addSeparator();
+    m_ptrTableToolBar->setWindowTitle(tr("Tables toolbar"));
 }
 
 void MnuMainWindow::assemblyTreeMenu(QMenu* ptr_node_menu)
