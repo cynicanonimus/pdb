@@ -60,7 +60,11 @@ SOURCES += main.cpp\
     iconloader.cpp \
     dlgmanageicons.cpp \
     iconmanager.cpp \
-    dbicon.cpp
+    dbicon.cpp \
+    dlgscanimage.cpp \
+    dlgrotateparams.cpp \
+    imagelabel.cpp \
+    dlgsavescan.cpp
 
 HEADERS  += mainwindow.h \
     GDefinitions.h \
@@ -107,7 +111,11 @@ HEADERS  += mainwindow.h \
     iconloader.h \
     dlgmanageicons.h \
     iconmanager.h \
-    dbicon.h
+    dbicon.h \
+    dlgscanimage.h \
+    dlgrotateparams.h \
+    imagelabel.h \
+    dlgsavescan.h
 
 FORMS    += mainwindow.ui \
     notificationdialog.ui \
@@ -121,7 +129,10 @@ FORMS    += mainwindow.ui \
     dlginserttable.ui \
     dlginserthtml.ui \
     dlgaskencryptmethod.ui \
-    dlgmanageicons.ui
+    dlgmanageicons.ui \
+    dlgscanimage.ui \
+    dlgrotateparams.ui \
+    dlgsavescan.ui
 
 RESOURCES += \
     pdb_res.qrc

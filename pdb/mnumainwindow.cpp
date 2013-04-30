@@ -859,6 +859,15 @@ void MnuMainWindow::createAttachmentControlMenu()
     m_ptrViewAttach    ->setStatusTip(tr("Open and view attachments"));
     m_ptrViewAttach    ->setEnabled(false);
     //
+    m_ptrDirectScan    = new QAction(tr("Scan..."), this);
+    m_ptrDirectScan    ->setIconVisibleInMenu(true);
+    m_ptrDirectScan    ->setIcon(QIcon(":/images/images/scanner.png"));
+    //m_ptrDirectScan    ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_O));
+    m_ptrDirectScan    ->setStatusTip(tr("Scan new document and add it as attachment"));
+    //TODO
+    //m_ptrDirectScan    ->setEnabled(false);
+
+    //
     if (NULL == m_ptrAttachmentToolBar)
         m_ptrAttachmentToolBar = new QToolBar;
     //
@@ -879,6 +888,8 @@ void MnuMainWindow::createAttachmentControlMenu()
     m_ptrAttachmentToolBar->addAction(m_ptrPasteAttach);
     m_ptrAttachmentToolBar->addSeparator();
     m_ptrAttachmentToolBar->addAction(m_ptrViewAttach);
+    m_ptrAttachmentToolBar->addSeparator();
+    m_ptrAttachmentToolBar->addAction(m_ptrDirectScan);
 }
 
 void MnuMainWindow::createSecurityMenu()
@@ -1623,6 +1634,8 @@ void MnuMainWindow::assemblyAttachMenu( QMenu* ptr_node_menu )
     ptr_node_menu->addAction(m_ptrPasteAttach);
     ptr_node_menu->addSeparator();
     ptr_node_menu->addAction(m_ptrViewAttach);
+    ptr_node_menu->addSeparator();
+    ptr_node_menu->addAction(m_ptrDirectScan);
 }
 
 void MnuMainWindow::assemblyNodeCryptoSubMenu(QMenu* ptr_menu)

@@ -33,6 +33,7 @@
 #include "../CommonInclude/pdb/pdb_style.h"
 #include "logger.h"
 #include "dlgexportparams.h"
+#include "dlgscanimage.h"
 #include "connectionmanager.h"
 #include "dbacccesssafe.h"
 #include "rootoftree.h"
@@ -204,6 +205,20 @@ void MyTree::removeAddedRootsFromTheTree()
         if (NULL == ptr_remove_element)
             break;
     };
+}
+
+void  MyTree::onDirectScan ()
+{
+    DlgScanImage dlg;
+    //
+    if (dlg.exec() == QDialog::Accepted)
+    {
+
+       //make new  attachment here
+    };
+    //
+
+    return;
 }
 
 void MyTree::onSetIconNodes ()

@@ -15,9 +15,12 @@ public:
     explicit ImageLabel(QWidget *parent = 0);
     ~ImageLabel();
     //
-    void mousePressEvent    (QMouseEvent *);
-    void mouseMoveEvent     (QMouseEvent *);
-    void mouseReleaseEvent  (QMouseEvent *);
+    const QRect*    getSelection       ();
+    void            dropSelection      ();
+    //
+    void            mousePressEvent    (QMouseEvent *);
+    void            mouseMoveEvent     (QMouseEvent *);
+    void            mouseReleaseEvent  (QMouseEvent *);
 
 signals:
     void CropAllowed(bool);

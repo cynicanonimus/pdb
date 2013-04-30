@@ -261,7 +261,7 @@ void DlgManageIcons::onLoad         ()
     {
         QImage* ptr_img = new QImage (f_name);
         //
-        //
+        //save icon to bytearray
         //
         QByteArray bytearray;
         QBuffer buffer(&bytearray); //( (const char *) ptr_img->bits(), ptr_img->numBytes() );

@@ -111,6 +111,8 @@ public slots:
     void onCascadeCollapse      ();
     //
     void onSetIconNodes         ();
+    //
+    void onDirectScan           ();
 
 
 private slots:

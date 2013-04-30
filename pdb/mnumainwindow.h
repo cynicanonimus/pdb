@@ -250,6 +250,8 @@ public:
     //
     QAction*    m_ptrViewAttach;
     //
+    QAction*    m_ptrDirectScan;
+    //
     QToolBar*    m_ptrAttachmentToolBar;
     //----------------------------- protection - submenu of the Attach menu  -----------------------------
     QMenu*      m_ptrAttachProtectionSubMenu;

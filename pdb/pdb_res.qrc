@@ -73,5 +73,11 @@
         <file>images/keys.png</file>
         <file>images/lock_screen.png</file>
         <file>images/photo.png</file>
+        <file>images/scanner.png</file>
+        <file>images/zoom_1_1.png</file>
+        <file>images/zoom_in.png</file>
+        <file>images/zoom_out.png</file>
+        <file>images/rotate.png</file>
+        <file>images/crop.png</file>
     </qresource>
 </RCC>

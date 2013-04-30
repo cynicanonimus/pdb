@@ -45,12 +45,12 @@ void ScannerSettings::writeData()
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
     settings.setValue(g_str_SCANNER_ENABLE,    m_bEnableScanner);
     //
-    settings.beginWriteArray("scanner_settings");
+    settings.beginWriteArray(g_str_SCANNER_SETTINGS);
     for (int i = 0; i < m_strNames.size(); ++i)
     {
         settings.setArrayIndex(i);
-        settings.setValue("config_name", m_strNames.at(i));
-        settings.setValue("config_string", m_strScanConfigs.at(i));
+        settings.setValue(g_str_SCANNER_COFIG_NAME, m_strNames.at(i));
+        settings.setValue(g_str_SCANNER_COFIG_STR, m_strScanConfigs.at(i));
     }
     settings.endArray();
     //
@@ -64,12 +64,12 @@ void ScannerSettings::readData()
     //
     m_bEnableScanner  = settings.value(g_str_SCANNER_ENABLE).value<bool>();
     //
-    int size = settings.beginReadArray("scanner_settings");
+    int size = settings.beginReadArray(g_str_SCANNER_SETTINGS);
     for (int i = 0; i < size; ++i)
     {
         settings.setArrayIndex(i);
-        m_strNames[i]       = settings.value("config_name").toString();
-        m_strScanConfigs[i] = settings.value("config_string").toString();
+        m_strNames[i]       = settings.value(g_str_SCANNER_COFIG_NAME).toString();
+        m_strScanConfigs[i] = settings.value(g_str_SCANNER_COFIG_STR).toString();
     }
     settings.endArray();
 }

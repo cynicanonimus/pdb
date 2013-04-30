@@ -90,8 +90,11 @@ const static QString  g_str_SEC_SCHRED_CMD  =   "security/schred_cmd";
 const static QString  g_str_SEC_MARK_CRYPT  =   "security/mark_crypt";
 //------------------------------------------------------------------------
 const static QString  g_str_SCANNER_ENABLE  =   "scanner/scanner_enable";
-
+const static QString  g_str_SCANNER_SETTINGS=   "scanner_settings";
+const static QString  g_str_SCANNER_COFIG_NAME = "config_name";
+const static QString  g_str_SCANNER_COFIG_STR  = "config_string";
 //
+
 enum ExportFormat
 {
     en_TXT,
