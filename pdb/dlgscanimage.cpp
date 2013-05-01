@@ -1,14 +1,43 @@
+//
+/*
+ This file is part of project pdb.
+
+    pdb is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License.
+
+    pdb is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with pdb.  If not, see <http://www.gnu.org/licenses/>.
+*/
+//
 #include "dlgscanimage.h"
 #include "ui_dlgscanimage.h"
 #include "dlgrotateparams.h"
 #include "dlgsavescan.h"
+#include "imagelabel.h"
 //
+#include <QSpinBox>
+#include <QScrollArea>
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QTransform>
+#include <QToolBar>
 #include <QBuffer>
+#include <QAction>
+#include <QComboBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QToolButton>
+#include <QScrollBar>
+#include <QCheckBox>
+#include <QMenu>
 //
 DlgScanImage::DlgScanImage(QWidget *parent) :
     QDialog(parent),
@@ -28,6 +57,7 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     m_ptrZoom_1_1   = NULL;
     //
     m_ptrWidthBox   = NULL;
+    m_Proportional  = NULL;
     m_ptrHeightBox  = NULL;
     m_pResize       = NULL;
     //
@@ -47,7 +77,8 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     const int i_screen_width = QApplication::desktop()->width();
     const int i_screen_height = QApplication::desktop()->height();
     //
-    this->resize(i_screen_width/2, i_screen_height);
+    this->resize(900, i_screen_height);
+    this->setMinimumWidth(900);
     //
     debugOpen();
     //
@@ -74,6 +105,8 @@ DlgScanImage::~DlgScanImage()
     if ( m_ptrZoom_1_1  ) delete m_ptrZoom_1_1;
     //
     if ( m_ptrWidthBox  ) delete  m_ptrWidthBox;
+    if ( m_SpaceLbl     ) delete m_SpaceLbl;
+    if ( m_Proportional ) delete m_Proportional;
     if ( m_ptrHeightBox ) delete  m_ptrHeightBox;
     if ( m_pResize      ) delete  m_pResize;
     //
@@ -89,7 +122,9 @@ DlgScanImage::~DlgScanImage()
 
 void DlgScanImage::makeToolBar ()
 {
-    m_ptrScanLabel = new QLabel("Choose predefined configuration: ");
+    m_ptrToolBar    = new QToolBar("Options", this);
+    //
+    m_ptrScanLabel = new QLabel("Scanner params: ");
     //
     m_ptrScanMode   = new QComboBox(this);
     m_ptrScanMode   ->addItem("400 DPI, Full color ");
@@ -107,6 +142,35 @@ void DlgScanImage::makeToolBar ()
     m_ptrRotate       ->setIcon(QIcon(":/images/images/rotate.png"));
     //m_ptrRotate    ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_O));
     m_ptrRotate       ->setStatusTip(tr("Rotate image on defined angle"));
+    //
+    /*
+// make the dropdown toolbutton and the associated menu
+QToolBar *ptbar = new QToolBar(...);
+QToolButton *ptbut = new QToolButton( ptbar );
+
+QMenu *pmenu = new QMenu( ptbut );
+ptbut->setMenu( pmenu );
+ptbut->setPopupMode( QToolButton::MenuButtonPopup );
+
+// now make the actions
+QAction *pact1 = new QAction( ...
+QAction *pact2 = new QAction( ...
+...
+
+// add the actions to the menu
+pmenu->addAction( pact1 );
+pmenu->addAction( pact2 );
+...
+
+// make one of the actions the default, otherwise only a small triangle is shown
+ptbar->setDefaultAction( pact2 );
+    */
+
+    m_ptrZoom       = new QToolButton();
+    m_ptrZoom->setIcon(QIcon(":/images/images/zoom_in.png"));
+    QMenu*  pmenu   = new QMenu( m_ptrZoom );
+    m_ptrZoom->setMenu(pmenu);
+    m_ptrZoom->setPopupMode( QToolButton::MenuButtonPopup );
     //
     m_ptrZoomIn     = new QAction(tr("Zoom in"), this);
     m_ptrZoomIn     ->setIconVisibleInMenu(true);
@@ -129,16 +193,25 @@ void DlgScanImage::makeToolBar ()
     m_ptrZoom_1_1   ->setStatusTip(tr("Zoom 1:1"));
     m_ptrZoom_1_1   ->setEnabled(true);
     //
+    pmenu->addAction(m_ptrZoomIn);
+    pmenu->addAction(m_ptrZoomOut);
+    pmenu->addAction(m_ptrZoom_1_1);
+    pmenu->setDefaultAction(m_ptrZoomIn);
+    //
     m_ptrCrop   = new QAction(tr("Crop to selection"), this);
     m_ptrCrop   ->setIconVisibleInMenu(true);
     m_ptrCrop   ->setIcon(QIcon(":/images/images/crop.png"));
             //m_ptrZoom_1_1   ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_Minus));
     m_ptrCrop   ->setStatusTip(tr("Crop image to selection"));
     m_ptrCrop   ->setEnabled(false);
-
     //
     m_ptrWidthLabel = new QLabel(" W: ");
     m_ptrWidthBox   = new QSpinBox();
+    //
+    m_SpaceLbl      = new QLabel("  ");
+    //
+    m_Proportional = new QCheckBox("keep proportions");
+    m_Proportional->setChecked(true);
     //
     m_ptrHeightLabel = new QLabel(" H: ");
     m_ptrHeightBox  = new QSpinBox();
@@ -160,7 +233,6 @@ void DlgScanImage::makeToolBar ()
     m_ptrExit       ->setStatusTip(tr("Exit"));
     m_ptrExit       ->setEnabled(true);
     //
-    m_ptrToolBar    = new QToolBar("Options", this);
     m_ptrToolBar   ->addWidget(m_ptrScanLabel);
     m_ptrToolBar   ->addWidget(m_ptrScanMode);
     m_ptrToolBar   ->addSeparator();
@@ -168,16 +240,24 @@ void DlgScanImage::makeToolBar ()
     m_ptrToolBar   ->addSeparator();
     m_ptrToolBar   ->addAction(m_ptrRotate);
     m_ptrToolBar   ->addSeparator();
+    //
+    m_ptrToolBar   ->addWidget(m_ptrZoom);
+/*
     m_ptrToolBar   ->addAction(m_ptrZoomIn);
     m_ptrToolBar   ->addSeparator();
     m_ptrToolBar   ->addAction(m_ptrZoomOut);
     m_ptrToolBar   ->addSeparator();
     m_ptrToolBar   ->addAction(m_ptrZoom_1_1);
+*/
     m_ptrToolBar   ->addSeparator();
     m_ptrToolBar   ->addAction(m_ptrCrop);
     m_ptrToolBar   ->addSeparator();
     m_ptrToolBar   ->addWidget(m_ptrWidthLabel);
     m_ptrToolBar   ->addWidget(m_ptrWidthBox);
+    //
+    m_ptrToolBar   ->addWidget(m_SpaceLbl);
+    m_ptrToolBar   ->addWidget(m_Proportional);
+    //
     m_ptrToolBar   ->addWidget(m_ptrHeightLabel);
     m_ptrToolBar   ->addWidget(m_ptrHeightBox);
     m_ptrToolBar   ->addWidget(m_pResize);
@@ -350,8 +430,14 @@ void DlgScanImage::onWidthChanged(int i_width)
     if (false == m_bIgnoreResize)
     {
         m_bIgnoreResize = true;
-        int i_new_height = i_width / m_d_WH_Ratio;
-        m_ptrHeightBox->setValue(i_new_height);
+        if (m_Proportional->isChecked() == true)
+        {
+            int i_new_height = i_width / m_d_WH_Ratio;
+            m_ptrHeightBox->setValue(i_new_height);
+        }else
+        {
+            m_d_WH_Ratio = (double) i_width / (double) m_ptrHeightBox->value();
+        };
         m_pResize   ->setEnabled(true);
         m_bIgnoreResize = false;
     };
@@ -362,8 +448,14 @@ void DlgScanImage::onHeightChanged(int i_height)
     if (false == m_bIgnoreResize)
     {
         m_bIgnoreResize = true;
-        int i_new_width = i_height * m_d_WH_Ratio;
-        m_ptrWidthBox->setValue(i_new_width);
+        if (m_Proportional->isChecked() == true)
+        {
+            int i_new_width = i_height * m_d_WH_Ratio;
+            m_ptrWidthBox->setValue(i_new_width);
+        }else
+        {
+            m_d_WH_Ratio = (double) m_ptrWidthBox->value() / (double) i_height;
+        };
         m_pResize   ->setEnabled(true);
         m_bIgnoreResize = false;
     };

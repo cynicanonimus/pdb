@@ -1,20 +1,38 @@
 #ifndef DLGSCANIMAGE_H
 #define DLGSCANIMAGE_H
+//
+/*
+ This file is part of project pdb.
 
-#include "imagelabel.h"
+    pdb is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License.
 
+    pdb is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with pdb.  If not, see <http://www.gnu.org/licenses/>.
+*/
+//
 #include <QDialog>
-#include <QToolBar>
-#include <QAction>
-#include <QComboBox>
-#include <QLabel>
-#include <QScrollArea>
-#include <QScrollBar>
-#include <QSpinBox>
-#include <QPushButton>
-//#include <QMouseEvent>
 #include <QByteArray>
 
+//
+QT_FORWARD_DECLARE_CLASS(ImageLabel)
+QT_FORWARD_DECLARE_CLASS(QToolBar)
+QT_FORWARD_DECLARE_CLASS(QAction)
+QT_FORWARD_DECLARE_CLASS(QComboBox)
+QT_FORWARD_DECLARE_CLASS(QLabel)
+QT_FORWARD_DECLARE_CLASS(QScrollArea)
+QT_FORWARD_DECLARE_CLASS(QPushButton)
+QT_FORWARD_DECLARE_CLASS(QSpinBox)
+QT_FORWARD_DECLARE_CLASS(QScrollBar)
+QT_FORWARD_DECLARE_CLASS(QCheckBox)
+QT_FORWARD_DECLARE_CLASS(QToolButton)
+//
 namespace Ui {
 class DlgScanImage;
 }
@@ -65,6 +83,7 @@ private:
     //
     QAction*        m_ptrRotate;
     //
+    QToolButton*    m_ptrZoom;
     QAction*        m_ptrZoomIn;
     QAction*        m_ptrZoomOut;
     QAction*        m_ptrZoom_1_1;
@@ -73,6 +92,9 @@ private:
     //
     QLabel*         m_ptrWidthLabel;
     QSpinBox*       m_ptrWidthBox;
+    //
+    QLabel*         m_SpaceLbl;
+    QCheckBox*      m_Proportional;
     //
     QLabel*         m_ptrHeightLabel;
     QSpinBox*       m_ptrHeightBox;

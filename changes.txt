@@ -84,3 +84,5 @@ Date 		CommitID		Changes
 30.04.2013      30.04.2013-5		Fix syntax error in MyTable::onCancelAsyncOperations
 30.04.2013      30.04.2013-6 		Add lost icons
 --------------------------------------------------------------------------------------------------------
+01.05.2013	01.05.2013-1 		Set all zoom buttons in the drop-down list on the combobox (scanning), add 
+					proportional/nonproportional resize for the image

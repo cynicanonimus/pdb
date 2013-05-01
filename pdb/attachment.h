@@ -23,7 +23,6 @@
 //
 #include <QObject>
 #include <QDateTime>
-//#include <QRunnable>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QProcess>
