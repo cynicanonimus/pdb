@@ -3,12 +3,14 @@
 
 #include <QObject>
 #include <QGroupBox>
-#include <QGridLayout>
+//#include <QGridLayout>
 #include <QCheckBox>
 #include <QLabel>
 #include <QList>
 #include <QLineEdit>
-#include <QSpacerItem>
+//#include <QSpacerItem>
+#include <QTableWidget>
+#include <QPushButton>
 //
 #include "abstractgraficeelements.h"
 //
@@ -27,7 +29,13 @@ signals:
 public slots:
 
 private slots:
-    void        onEnableClick(bool);
+    void        onEnableClick       (bool);
+    void        onAddNewRecord      ();
+    void        onRemoveRecord      ();
+    void        onRecordUp          ();
+    void        onRecordDown        ();
+    //
+    void        onItemSelectionChanged ();
 private:
 //
     void        readData        ();
@@ -43,6 +51,12 @@ private:
     //
     QLabel*         m_ptrLHeader;
     QLabel*         m_ptrRHeader;
+    //
+    QTableWidget*   m_ptrScannerSettings;
+    QPushButton*    m_ptrButtonUp;
+    QPushButton*    m_ptrButtonDown;
+    QPushButton*    m_ptrButtonAdd;
+    QPushButton*    m_ptrButtonRemove;
     //
     QList <QLineEdit*> m_ConfigName;
     QList <QLineEdit*> m_ConfigLine;

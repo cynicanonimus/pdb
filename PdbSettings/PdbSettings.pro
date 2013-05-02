@@ -49,3 +49,6 @@ HEADERS  += mainwindow.h \
     scannersettings.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    PdbSettings.qrc
