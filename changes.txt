@@ -88,3 +88,5 @@ Date 		CommitID		Changes
 					proportional/nonproportional resize for the image
 --------------------------------------------------------------------------------------------------------
 02.05.2013	02.05.2013-1		Some changes in cofiguration program. (not fimished yet, intermediate update)
+--------------------------------------------------------------------------------------------------------
+03.05.2013 	03.05.2013-1		Finish scanner settings in cofiguration program.

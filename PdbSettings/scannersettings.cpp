@@ -10,8 +10,8 @@ ScannerSettings::ScannerSettings(QGroupBox *ptr_parent_frame, QGridLayout *ptr_l
     m_ptrLHeader                = NULL;
     m_ptrRHeader                = NULL;
     //
-    m_strNames<<""<<""<<""<<""<<"";
-    m_strScanConfigs<<""<<""<<""<<""<<"";
+    //m_strNames<<""<<""<<""<<""<<"";
+    //m_strScanConfigs<<""<<""<<""<<""<<"";
     //
     readData();
     //
@@ -25,10 +25,12 @@ ScannerSettings::ScannerSettings(QGroupBox *ptr_parent_frame, QGridLayout *ptr_l
     QObject::connect( m_ptrButtonUp,        SIGNAL(clicked()),                  this, SLOT( onRecordUp    ()            ));
     QObject::connect( m_ptrButtonDown,      SIGNAL(clicked()),                  this, SLOT( onRecordDown  ()            ));
     //
-    // up
-    // down
-    //
     updateData(false, false);
+    /*
+    scanimage --help --device-name brother4
+    scanimage --device-name brother4 -p  --resolution 150 --mode gray > img_grayscale_150.pgm
+    ssh server scanimage --device-name brother4 -p  --resolution 600  > /home/alex/WindowsShare/img_color_600.pnm
+    */
     //
     onEnableClick(m_bEnableScanner);
 }
@@ -40,12 +42,48 @@ ScannerSettings::~ScannerSettings()
 
 void  ScannerSettings::onRecordUp   ()
 {
-
+    const int i_row  = m_ptrScannerSettings->currentRow();
+    //
+    if ( -1 == i_row )
+        return;
+    //
+    if ( 0 == i_row)
+        return;
+    //
+    const QString str_config_name       = m_ptrScannerSettings->item( i_row-1, 0 )->text();
+    const QString str_config_command    = m_ptrScannerSettings->item( i_row-1, 1 )->text();
+    //
+    m_ptrScannerSettings->item(i_row-1, 0)->setText(m_ptrScannerSettings->item( i_row, 0 )->text());
+    m_ptrScannerSettings->item(i_row-1, 1)->setText(m_ptrScannerSettings->item( i_row, 1 )->text());
+    //
+    m_ptrScannerSettings->item(i_row, 0)->setText(str_config_name);
+    m_ptrScannerSettings->item(i_row, 1)->setText(str_config_command);
+    //
+    m_ptrScannerSettings->setCurrentCell(i_row-1,m_ptrScannerSettings->currentColumn());
+    //
 }
 
 void  ScannerSettings::onRecordDown ()
 {
-
+    const int i_row  = m_ptrScannerSettings->currentRow();
+    //
+    if ( -1 == i_row )
+        return;
+    //
+    if ( (i_row + 1) > (m_ptrScannerSettings->rowCount() -1) )
+        return;
+    //
+    const QString str_config_name       = m_ptrScannerSettings->item( i_row, 0 )->text();
+    const QString str_config_command    = m_ptrScannerSettings->item( i_row, 1 )->text();
+    //
+    m_ptrScannerSettings->item(i_row, 0)->setText(m_ptrScannerSettings->item( i_row+1, 0 )->text());
+    m_ptrScannerSettings->item(i_row, 1)->setText(m_ptrScannerSettings->item( i_row+1, 1 )->text());
+    //
+    m_ptrScannerSettings->item(i_row+1, 0)->setText(str_config_name);
+    m_ptrScannerSettings->item(i_row+1, 1)->setText(str_config_command);
+    //
+    m_ptrScannerSettings->setCurrentCell(i_row+1,m_ptrScannerSettings->currentColumn());
+    //
 }
 
 void ScannerSettings::onRemoveRecord   ()
@@ -55,6 +93,8 @@ void ScannerSettings::onRemoveRecord   ()
         return;
     //
     m_ptrScannerSettings->removeRow(i_row);
+    //
+    onItemSelectionChanged ();
 }
 
 void ScannerSettings::onItemSelectionChanged ()
@@ -82,24 +122,51 @@ void ScannerSettings::onItemSelectionChanged ()
             m_ptrButtonUp->setEnabled(true);
         else
             m_ptrButtonUp->setEnabled(false);
+    }else
+    {
+        m_ptrButtonUp->setEnabled(false);
+        m_ptrButtonDown->setEnabled(false);
     };
 }
 
 void ScannerSettings::onAddNewRecord()
 {
     m_ptrScannerSettings->setRowCount(m_ptrScannerSettings->rowCount()+1);
-    //m_ptrScannerSettings->selectedItems()
+    onItemSelectionChanged ();
     return;
 }
 
 void ScannerSettings::onEnableClick(bool state)
 {
-    m_ptrButtonAdd->setEnabled(state);
+    m_ptrButtonAdd      ->setEnabled(state);
+    m_ptrButtonRemove   ->setEnabled(state);
+
+    if (false == state)
+    {
+        m_ptrButtonUp       ->setEnabled(state);
+        m_ptrButtonDown     ->setEnabled(state);
+    }else
+    {
+        onItemSelectionChanged ();
+    };
+    //
+    m_ptrScannerSettings->setEnabled(state);
     //may be something else later
+}
+
+bool ScannerSettings::isTableCorrect()
+{
+    bool b_res = true;
+
+
+    return b_res;
 }
 
 void ScannerSettings::writeData()
 {
+    if ( isTableCorrect() == false )
+        return;
+    //
     updateData(true);
     //
     QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
@@ -109,8 +176,8 @@ void ScannerSettings::writeData()
     for (int i = 0; i < m_strNames.size(); ++i)
     {
         settings.setArrayIndex(i);
-        settings.setValue(g_str_SCANNER_COFIG_NAME, m_strNames.at(i));
-        settings.setValue(g_str_SCANNER_COFIG_STR, m_strScanConfigs.at(i));
+        settings.setValue(g_str_SCANNER_COFIG_NAME, m_strNames[i]);
+        settings.setValue(g_str_SCANNER_COFIG_STR, m_strScanConfigs[i]);
     }
     settings.endArray();
     //
@@ -124,12 +191,15 @@ void ScannerSettings::readData()
     //
     m_bEnableScanner  = settings.value(g_str_SCANNER_ENABLE).value<bool>();
     //
+    m_strNames.erase        ( m_strNames.begin(), m_strNames.end() );
+    m_strScanConfigs.erase  ( m_strScanConfigs.begin(), m_strScanConfigs.end() );
+    //
     int size = settings.beginReadArray(g_str_SCANNER_SETTINGS);
     for (int i = 0; i < size; ++i)
     {
         settings.setArrayIndex(i);
-        m_strNames[i]       = settings.value(g_str_SCANNER_COFIG_NAME).toString();
-        m_strScanConfigs[i] = settings.value(g_str_SCANNER_COFIG_STR).toString();
+        m_strNames.push_back        ( settings.value(g_str_SCANNER_COFIG_NAME).toString() );
+        m_strScanConfigs.push_back  ( settings.value(g_str_SCANNER_COFIG_STR).toString()  );
     }
     settings.endArray();
 }
@@ -145,9 +215,11 @@ void ScannerSettings::createLayout()
     //-------------------
     i_row++;
     m_ptrScannerSettings = new QTableWidget();
+    //
     m_ptrScannerSettings->setColumnCount(2);
-    m_ptrScannerSettings->setColumnWidth(0,125);
-    m_ptrScannerSettings->setColumnWidth(1,325);
+    m_ptrScannerSettings->setColumnWidth(0,150);
+    m_ptrScannerSettings->setColumnWidth(1,297);
+    //
     m_ptrScannerSettings->setFixedHeight(330);
     m_ptrScannerSettings->setFixedWidth(470);
     m_ptrScannerSettings->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -194,34 +266,37 @@ void ScannerSettings::createLayout()
 
 void ScannerSettings::updateData (bool b_from_dialog, bool b_data_changed)
 {
-/*
+
     if(b_from_dialog)
     {
-        if (m_ptrEnableDirectScanning->checkState() == Qt::Checked)
-            m_bEnableScanner = true;
-        else
-            m_bEnableScanner  = false;
+        m_strNames.erase        ( m_strNames.begin(), m_strNames.end() );
+        m_strScanConfigs.erase  ( m_strScanConfigs.begin(), m_strScanConfigs.end() );
         //
-        for (int i = 0; i < m_ConfigName.size(); ++i)
+        for ( int i_row = 0; i_row < m_ptrScannerSettings->rowCount(); ++i_row )
         {
-            m_strNames[i]       = m_ConfigName[i]->text();
-            m_strScanConfigs[i] = m_ConfigLine[i]->text();
+            m_strNames.push_back        ( m_ptrScannerSettings->item(i_row, 0)->text() );
+            m_strScanConfigs.push_back  ( m_ptrScannerSettings->item(i_row, 1)->text() );
         };
     }else
     {
-        if (m_bEnableScanner)
-            m_ptrEnableDirectScanning->setCheckState(Qt::Checked);
-        else
-            m_ptrEnableDirectScanning->setCheckState(Qt::Unchecked);
+        //clear existing records
+        while (m_ptrScannerSettings->rowCount() > 0)
+            m_ptrScannerSettings->removeRow(0);
+        //set we amount of records
+        m_ptrScannerSettings->setRowCount( m_strNames.size() );
         //
-        for (int i = 0; i < m_ConfigName.size(); ++i)
+        for ( int i_row = 0; i_row < m_strNames.size(); ++i_row )
         {
-            m_ConfigName[i]->setText(m_strNames[i]);
-            m_ConfigLine[i]->setText(m_strScanConfigs[i]);
-        };
+            QTableWidgetItem* ptr_item_name = new QTableWidgetItem (m_strNames[i_row]);
+            m_ptrScannerSettings->setItem( i_row, 0, ptr_item_name );
+            //
+            QTableWidgetItem* ptr_item_config =  new QTableWidgetItem (m_strScanConfigs[i_row]);
+            m_ptrScannerSettings->setItem( i_row, 1, ptr_item_config );
 
+            continue;
+        };
     };
     //
     m_bChanged = b_data_changed;
-*/
+
 }

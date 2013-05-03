@@ -11,6 +11,7 @@
 //#include <QSpacerItem>
 #include <QTableWidget>
 #include <QPushButton>
+#include <QVector>
 //
 #include "abstractgraficeelements.h"
 //
@@ -41,8 +42,7 @@ private:
     void        readData        ();
     void        updateData      (bool b_from_dialog, bool b_data_changed = true); //exchange between dialog and variables
     void        createLayout    ();
-
-
+    bool        isTableCorrect  ();
 
 
 private:
@@ -58,11 +58,8 @@ private:
     QPushButton*    m_ptrButtonAdd;
     QPushButton*    m_ptrButtonRemove;
     //
-    QList <QLineEdit*> m_ConfigName;
-    QList <QLineEdit*> m_ConfigLine;
-    //
-    QStringList     m_strNames;
-    QStringList     m_strScanConfigs;
+    QVector<QString> m_strNames;
+    QVector<QString> m_strScanConfigs;
 };
 
 #endif // SCANNERSETTINGS_H
