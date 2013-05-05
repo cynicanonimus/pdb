@@ -19,6 +19,8 @@
 //
 #include <QDialog>
 #include <QByteArray>
+#include <QVector>
+#include <QProcess>
 
 //
 QT_FORWARD_DECLARE_CLASS(ImageLabel)
@@ -55,10 +57,14 @@ private:
     void                adjustScrollBar (QScrollBar* scrollBar, double factor);
     //
     void                debugOpen       ();
+    void                readScanSettings();
+    bool                prepareRawScanCmd(QString &str_raw_command);
     //
 private slots:
 
     void        onRotate    ();
+    //
+    void        onScan      ();
     //
     void        onZoomIn    ();
     void        onZoomOut   ();
@@ -73,12 +79,20 @@ private slots:
     //
     void        onSave      ();
     //
-    void        onCropAllowed(bool);
+    void        onCropAllowed   (bool);
+    void        onScanError     ( QProcess::ProcessError );
+    void        onScanFinished  (int);
 
 private:
     //
     QLabel*         m_ptrScanLabel;
     QComboBox*      m_ptrScanMode;
+    //
+    QVector<QString> m_strNames;
+    QVector<QString> m_strScanConfigs;
+    //
+    QProcess*       m_ptrScanProcess;
+    //
     QAction*        m_ptrScan;
     //
     QAction*        m_ptrRotate;
@@ -118,6 +132,7 @@ private:
     QPixmap*        m_ptrImage;
     QByteArray      m_baImageAsArray;
     QString         m_strImageName;
+    QString         m_strScanFileName;
     //
     double          m_dscaleFactor;
     //

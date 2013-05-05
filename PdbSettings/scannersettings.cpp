@@ -2,6 +2,8 @@
 #include "../CommonInclude/pdb/pdb_style.h"
 //
 #include <QSettings>
+#include <QImageReader>
+#include <QMessageBox>
 
 ScannerSettings::ScannerSettings(QGroupBox *ptr_parent_frame, QGridLayout *ptr_layout, QObject *parent) :
     AbstractGraficeElements(ptr_parent_frame, ptr_layout, parent)
@@ -29,7 +31,7 @@ ScannerSettings::ScannerSettings(QGroupBox *ptr_parent_frame, QGridLayout *ptr_l
     /*
     scanimage --help --device-name brother4
     scanimage --device-name brother4 -p  --resolution 150 --mode gray > img_grayscale_150.pgm
-    ssh server scanimage --device-name brother4 -p  --resolution 600  > /home/alex/WindowsShare/img_color_600.pnm
+    scanimage --device-name brother4 -p  --resolution 600  > /home/alex/WindowsShare/img_color_600.pnm
     */
     //
     onEnableClick(m_bEnableScanner);
@@ -138,6 +140,8 @@ void ScannerSettings::onAddNewRecord()
 
 void ScannerSettings::onEnableClick(bool state)
 {
+    m_bEnableScanner = state;
+    //
     m_ptrButtonAdd      ->setEnabled(state);
     m_ptrButtonRemove   ->setEnabled(state);
 
@@ -157,8 +161,80 @@ void ScannerSettings::onEnableClick(bool state)
 bool ScannerSettings::isTableCorrect()
 {
     bool b_res = true;
-
-
+    QString str_message;
+    //
+    // list of known extensions
+    //
+    QList<QByteArray> read_ext_list = QImageReader::supportedImageFormats();
+    //
+    QString str_supported_ext_list;
+    for ( int i = 0; i < read_ext_list.size(); ++i )
+    {
+        QString str_ext(read_ext_list[i]);
+        //
+        if (str_supported_ext_list.length() > 0)
+            str_supported_ext_list += ", ";
+        //
+        str_supported_ext_list += str_ext;
+    };
+    //
+    for ( int i_row = 0; i_row < m_ptrScannerSettings->rowCount(); ++i_row )
+    {
+        const QString str_config_name   = m_ptrScannerSettings->item(i_row, 0)->text().trimmed();
+        const QString str_config_cmd    = m_ptrScannerSettings->item(i_row, 1)->text().trimmed();
+        //
+        if ( str_config_name.length() == 0 )
+        {
+            str_message = QString("Row N %1: name of scanner configuration can not be empty").arg(i_row + 1);
+            b_res = false;
+            break;
+        };
+        //
+        if ( str_config_cmd.length() == 0 )
+        {
+            str_message = QString("Row N %1: scanner configuration string can not be empty").arg(i_row + 1);
+            b_res = false;
+            break;
+        };
+        //
+        if ( str_config_cmd.contains("%file")  == false )
+        {
+            str_message = QString("Row N %1: scanner configuration string has to contain '%file.ext'").arg(i_row + 1);
+            b_res = false;
+            break;
+        };
+        //
+        bool b_ext_found = false;
+        //
+        QByteArray ba;
+        foreach( ba, read_ext_list )
+        {
+            QString str_ext(ba);
+            QString str_search  = "file";
+            str_search += ".";
+            str_search += str_ext;
+            //
+            if ( str_config_cmd.indexOf(str_search,0,Qt::CaseInsensitive) != -1)
+            {
+                b_ext_found = true;
+                break;
+            };
+        };
+        //
+        if(false == b_ext_found)
+        {
+            str_message = QString("Row N %1: scanner configuration string has to contain known output file extension: %2").arg(i_row + 1).arg(str_supported_ext_list);
+            b_res = false;
+            break;
+        };
+    };
+    //
+    if (false == b_res)
+    {
+        str_message +="\nScanner configuration changes not saved.";
+        QMessageBox::critical(NULL,"Error",str_message, QMessageBox::Ok);
+    };
+    //
     return b_res;
 }
 
@@ -269,6 +345,8 @@ void ScannerSettings::updateData (bool b_from_dialog, bool b_data_changed)
 
     if(b_from_dialog)
     {
+        m_bEnableScanner = m_ptrEnableDirectScanning->isChecked();
+        //
         m_strNames.erase        ( m_strNames.begin(), m_strNames.end() );
         m_strScanConfigs.erase  ( m_strScanConfigs.begin(), m_strScanConfigs.end() );
         //
@@ -279,6 +357,7 @@ void ScannerSettings::updateData (bool b_from_dialog, bool b_data_changed)
         };
     }else
     {
+        m_ptrEnableDirectScanning->setChecked(m_bEnableScanner);
         //clear existing records
         while (m_ptrScannerSettings->rowCount() > 0)
             m_ptrScannerSettings->removeRow(0);

@@ -20,6 +20,7 @@
 #include "dlgrotateparams.h"
 #include "dlgsavescan.h"
 #include "imagelabel.h"
+#include "../CommonInclude/pdb/pdb_style.h"
 //
 #include <QSpinBox>
 #include <QScrollArea>
@@ -38,6 +39,9 @@
 #include <QScrollBar>
 #include <QCheckBox>
 #include <QMenu>
+#include <QSettings>
+#include <QDir>
+#include <QTime>
 //
 DlgScanImage::DlgScanImage(QWidget *parent) :
     QDialog(parent),
@@ -71,6 +75,7 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     //
     m_bIgnoreResize = true;
     //
+    readScanSettings();
     makeToolBar();
     setLinks();
     //
@@ -80,16 +85,14 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     this->resize(900, i_screen_height);
     this->setMinimumWidth(900);
     //
-    debugOpen();
+//    debugOpen();
     //
     int img_widh    = m_ptrImageLabel->width();
     int img_heigth  = m_ptrImageLabel->height();
     //
     double d_scale_factor = 1./std::max(((double)img_widh/(double)i_screen_width), ((double)img_heigth/(double)i_screen_height));
 
-    scaleImage(d_scale_factor);
-
-
+//    scaleImage(d_scale_factor);
 }
 
 DlgScanImage::~DlgScanImage()
@@ -120,6 +123,25 @@ DlgScanImage::~DlgScanImage()
 
 }
 
+void DlgScanImage::readScanSettings()
+{
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    //
+    m_strNames.erase        ( m_strNames.begin(), m_strNames.end() );
+    m_strScanConfigs.erase  ( m_strScanConfigs.begin(), m_strScanConfigs.end() );
+    //
+    int size = settings.beginReadArray(g_str_SCANNER_SETTINGS);
+    //
+    for (int i = 0; i < size; ++i)
+    {
+        settings.setArrayIndex(i);
+        m_strNames.push_back        ( settings.value(g_str_SCANNER_COFIG_NAME).toString() );
+        m_strScanConfigs.push_back  ( settings.value(g_str_SCANNER_COFIG_STR).toString()  );
+    }
+    //
+    settings.endArray();
+}
+
 void DlgScanImage::makeToolBar ()
 {
     m_ptrToolBar    = new QToolBar("Options", this);
@@ -127,9 +149,13 @@ void DlgScanImage::makeToolBar ()
     m_ptrScanLabel = new QLabel("Scanner params: ");
     //
     m_ptrScanMode   = new QComboBox(this);
-    m_ptrScanMode   ->addItem("400 DPI, Full color ");
-    m_ptrScanMode   ->addItem("200 DPI, Full color");
-    m_ptrScanMode   ->addItem("300 DPI, Grayscale");
+    for (int i = 0; i < m_strNames.size(); ++i)
+    {
+        m_ptrScanMode   ->addItem ( m_strNames[i] );
+    };
+    //
+    if (m_strNames.size() > 0)
+        m_ptrScanMode   ->setCurrentIndex(0);
     //
     m_ptrScan       = new QAction(tr("Scan..."), this);
     m_ptrScan       ->setIconVisibleInMenu(true);
@@ -290,8 +316,9 @@ void DlgScanImage::debugOpen ()
                                     tr("Open File"), QDir::currentPath());
 */
     //this is DEBUG code
-    const QString fileName = "/home/alex/Fun/Autum/darktable_exported/img_test.jpg";
-    m_ptrImage = new QPixmap(fileName);
+    //const QString fileName = "/home/alex/Fun/Autum/darktable_exported/img_test.jpg";
+    //m_ptrImage = new QPixmap(fileName);
+    m_ptrImage = new QPixmap(m_strScanFileName);
 /*
     if (!fileName.isEmpty())
     {
@@ -300,7 +327,7 @@ void DlgScanImage::debugOpen ()
         if (m_ptrImage->isNull())
         {
             QMessageBox::information(this, tr("Image Viewer"),
-                                     tr("Cannot load %1.").arg(fileName));
+                                     tr("Cannot load %1.").arg(m_strScanFileName));
             return;
         }
 
@@ -324,6 +351,8 @@ void DlgScanImage::setLinks ()
 {
     QObject::connect(m_ptrExit,         SIGNAL(triggered()),        this, SLOT(reject()             ));
     //
+    QObject::connect(m_ptrScan,         SIGNAL(triggered()),        this, SLOT(onScan()             ));
+    //
     QObject::connect(m_ptrRotate,       SIGNAL(triggered()),        this, SLOT(onRotate()           ));
     //
     QObject::connect(m_ptrZoomIn,       SIGNAL(triggered()),        this, SLOT(onZoomIn()           ));
@@ -339,6 +368,133 @@ void DlgScanImage::setLinks ()
     QObject::connect(m_ptrSave,         SIGNAL(triggered()),        this, SLOT(onSave()             ));
     //
     QObject::connect(m_ptrImageLabel,   SIGNAL(CropAllowed(bool)),  this, SLOT(onCropAllowed(bool)  ));
+}
+
+bool DlgScanImage::prepareRawScanCmd( QString& str_raw_command )
+{
+    const QString str_replacement = "%file";
+    //
+    const int i_current_index = m_ptrScanMode->currentIndex();
+    //
+    if ( i_current_index == -1 )
+        return false;
+    //
+    str_raw_command = m_strScanConfigs[m_ptrScanMode->currentIndex()];
+    //
+    if ( str_raw_command.contains("%file") == false )
+    {
+        QString str_message = "Command ";
+        str_message += str_raw_command;
+        str_message += " has to contain construction '";
+        str_message += str_replacement;
+        str_message += "'";
+        //
+        QMessageBox::critical(NULL,
+                                  trUtf8("Error!") ,
+                                  str_message,
+                                  QMessageBox::Ok,
+                                  QMessageBox::Ok
+                                            );
+        return false;
+    };
+    //
+    // create scanner target path
+    // get temporary directory or current directory
+    //
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    //
+    QString str_target_path = settings.value(g_str_ATTACH_TMP_PATH).toString();
+    //
+    if ( str_target_path.isEmpty() )
+    {
+        str_target_path = QDir::currentPath();
+    };
+    //
+    if (str_target_path.endsWith(g_strPATH_DELIMETER) == false)
+        str_target_path += g_strPATH_DELIMETER;
+    //
+    const QTime c_time = QTime::currentTime();
+    const QString m_str_timestamp = c_time.toString("hh_mm_ss");
+    //
+    m_strScanFileName = QString("%1scan_%2").arg( str_target_path ).arg( m_str_timestamp );
+    //
+    str_raw_command.replace(str_replacement, m_strScanFileName);
+    return true;
+}
+
+void DlgScanImage::onScan ()
+{
+/*
+    QString str_raw_command;
+    //
+    if ( prepareRawScanCmd(str_raw_command) == false )
+        return;
+    //
+    QStringList str_split_list = str_raw_command.split(" ",QString::SkipEmptyParts);
+    //
+    QString program = str_split_list.at(0);
+    str_split_list.removeAt(0);
+    QStringList arguments = str_split_list;
+    //
+    */
+    //scanimage --device-name=brother4 -p  --resolution 150 --mode=gray>%file.pgm
+    QString program = "scanimage";
+    QStringList arguments;
+    arguments<<"--device-name=brother4";
+    arguments<<"-p";
+    arguments<<"--resolution=150";
+    arguments<<"--mode=gray";
+    m_strScanFileName = "/home/alex/WindowsShare/o.pgm";
+    //
+    m_ptrScanProcess = new QProcess(this);
+    m_ptrScanProcess->setStandardOutputFile(m_strScanFileName);
+
+    //
+    QObject::connect(m_ptrScanProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT( onScanError    ( QProcess::ProcessError)  ));
+    QObject::connect(m_ptrScanProcess, SIGNAL(finished(int)),                 this, SLOT( onScanFinished (int)                      ));
+    //
+    m_ptrScanProcess->start(program, arguments);
+    //
+    return;
+}
+
+void DlgScanImage::onScanError     ( QProcess::ProcessError err )
+{
+    QMessageBox box;
+    QString     str_msg;
+    //
+    switch(err)
+    {
+    case QProcess::FailedToStart:
+        str_msg = "Can not scan. Process failed to start.";
+        break;
+    case QProcess::Crashed:
+        str_msg = "Scan process crashed";
+        break;
+    case QProcess::Timedout:
+        str_msg = "Process timeout expired";
+        break;
+    case QProcess::WriteError:
+        str_msg = "Can not write to process";
+        break;
+    case QProcess::ReadError:
+        str_msg = "Can not read from process";
+        break;
+    default:
+        str_msg = "Unknown error. Process stopped.";
+        break;
+    };
+    //
+    box.setText(str_msg);
+    box.exec();
+
+}
+
+void DlgScanImage::onScanFinished  (int i_res)
+{
+    debugOpen();
+    delete m_ptrScanProcess;
+    m_ptrScanProcess = NULL;
 }
 
 void DlgScanImage::onCrop ()
@@ -495,7 +651,6 @@ void DlgScanImage::onSave()
     //
     this->accepted();
 }
-
 
 void DlgScanImage::onZoomIn   ()
 {
