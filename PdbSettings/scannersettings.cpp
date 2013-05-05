@@ -203,7 +203,7 @@ bool ScannerSettings::isTableCorrect()
             b_res = false;
             break;
         };
-        //
+        //search construction like 'file.ext" where "ext" must be from list of known extentions
         bool b_ext_found = false;
         //
         QByteArray ba;

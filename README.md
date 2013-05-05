@@ -14,6 +14,7 @@ Product features:
 4. Support SSH-tunnels to the database. 
 5. Build-in text editor. 
 6. Import directories structure with all files, export tree of documents as directories structure. 
+7. Scan documents from the application and put it into DB directly.
 
 
 How to build the project: 

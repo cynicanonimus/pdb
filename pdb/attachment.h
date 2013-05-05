@@ -40,7 +40,16 @@ class Attachment : public AbstractDatabaseObject, public AdvThreadJob//QRunnable
 public:
     typedef  std::vector<Attachment*> AttachmentsList;
 public:
+
+    //-------------------------------------------------------------------
+    //this constructor used for creating Attachment from scanner
     //
+                        Attachment ( TreeLeaf*          ptr_parent_node,
+                                     const QString&     t_str_attach_name,
+                                     const QByteArray&  raw_data,
+                                     int                i_crypt_type,
+                                     bool               b_protected);
+
     //-------------------------------------------------------------------
     //this constructor used for creating Attachment from file
     //

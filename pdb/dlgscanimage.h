@@ -56,9 +56,11 @@ private:
     void                scaleImage      (double factor);
     void                adjustScrollBar (QScrollBar* scrollBar, double factor);
     //
-    void                debugOpen       ();
+    void                openImage       ();
     void                readScanSettings();
-    bool                prepareRawScanCmd(QString &str_raw_command);
+    bool                prepareRawScanCmd(QString &str_raw_command, bool &b_redefine_std_out);
+    //
+    void                enableInterface (bool b_enable, bool b_change_mouse_cursor);
     //
 private slots:
 

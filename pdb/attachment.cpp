@@ -50,7 +50,6 @@ Attachment::Attachment(const QString&      full_path_filename,
     m_pParentNode            = ptr_parent_leaf;
     m_iSize                  = 0;
     m_strFilePath            = full_path_filename;
-    m_iCryptType             = 0;
     m_bIsProtected           = b_protect_attachment;
     m_bDeleteFileAfterUpload = b_delete_files_after;
     m_iCryptType             = ui_encrypt_type;         //attachment must be encrypted in the thread pool using default key
@@ -99,6 +98,40 @@ Attachment::Attachment(int                  i_id,
     else
         setObjectStatus(OBJECT_DELETED);
 }
+//
+//from scanner
+//
+Attachment::Attachment ( TreeLeaf*          ptr_parent_node,
+                         const QString&     t_str_attach_name,
+                         const QByteArray&  raw_data,
+                         int                i_crypt_type,
+                         bool               b_protected):
+    AbstractDatabaseObject(-1,               //attachment has no ID now.
+                           true,             // attachment active
+                           QDateTime ( QDateTime::currentDateTime() ),
+                           NULL)
+{
+    if (NULL == ptr_parent_node)
+    {
+        Q_ASSERT(FALSE);
+        return;
+    };
+    //
+    //m_iID           = -1;
+    m_iSize         = raw_data.size();
+    m_strAttachName = t_str_attach_name;
+    m_pParentNode   = ptr_parent_node;
+    m_iCryptType    = i_crypt_type;
+    m_bIsProtected  = b_protected;
+    m_bIsBinary     = true;
+    m_ByteArray     = raw_data;
+    //
+    setObjectStatus(OBJECT_NOT_DEFINED);
+    m_iID = insertTo_DB ();
+    if (-1 != m_iID)
+        setObjectStatus(OBJECT_OK);
+}
+
 
 TreeLeaf* Attachment::getParentLeaf()
 {

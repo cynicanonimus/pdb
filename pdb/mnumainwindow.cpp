@@ -803,6 +803,8 @@ void MnuMainWindow::createHelpMenu ()
 
 void MnuMainWindow::createAttachmentControlMenu()
 {
+    QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
+    //
     m_ptrRestoreAttach  = new QAction(tr("Restore attachment"), this);
     m_ptrRestoreAttach  ->setIconVisibleInMenu(true);
     m_ptrRestoreAttach  ->setIcon(QIcon(":/images/images/cube_green_new.png"));
@@ -864,10 +866,13 @@ void MnuMainWindow::createAttachmentControlMenu()
     m_ptrDirectScan    ->setIcon(QIcon(":/images/images/scanner.png"));
     //m_ptrDirectScan    ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_O));
     m_ptrDirectScan    ->setStatusTip(tr("Scan new document and add it as attachment"));
-    //TODO
-    //m_ptrDirectScan    ->setEnabled(false);
-
     //
+    bool b_scan_enabled = settings.value(g_str_SCANNER_ENABLE).value<bool>();
+    if (false == b_scan_enabled)
+        m_ptrDirectScan    ->setToolTip("Scanner disabled in configuration");
+    //
+    m_ptrDirectScan    ->setEnabled(b_scan_enabled);
+  //
     if (NULL == m_ptrAttachmentToolBar)
         m_ptrAttachmentToolBar = new QToolBar;
     //

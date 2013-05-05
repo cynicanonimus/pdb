@@ -20,6 +20,7 @@
 #include "dlgrotateparams.h"
 #include "dlgsavescan.h"
 #include "imagelabel.h"
+#include "tmpfilecleaner.h"
 #include "../CommonInclude/pdb/pdb_style.h"
 //
 #include <QSpinBox>
@@ -75,6 +76,8 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     //
     m_bIgnoreResize = true;
     //
+    m_ptrScanProcess = NULL;
+    //
     readScanSettings();
     makeToolBar();
     setLinks();
@@ -85,14 +88,14 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     this->resize(900, i_screen_height);
     this->setMinimumWidth(900);
     //
-//    debugOpen();
+    //int img_widh    = m_ptrImageLabel->width();
+    //int img_heigth  = m_ptrImageLabel->height();
     //
-    int img_widh    = m_ptrImageLabel->width();
-    int img_heigth  = m_ptrImageLabel->height();
+    //double d_scale_factor = 1./std::max(((double)img_widh/(double)i_screen_width), ((double)img_heigth/(double)i_screen_height));
     //
-    double d_scale_factor = 1./std::max(((double)img_widh/(double)i_screen_width), ((double)img_heigth/(double)i_screen_height));
-
-//    scaleImage(d_scale_factor);
+    enableInterface(false, false);
+    m_ptrScan->setEnabled(true);
+    m_ptrScanMode->setEnabled(true);
 }
 
 DlgScanImage::~DlgScanImage()
@@ -102,24 +105,40 @@ DlgScanImage::~DlgScanImage()
     if ( m_ptrScanLabel ) delete m_ptrScanLabel;
     if ( m_ptrScanMode  ) delete m_ptrScanMode;
     if ( m_ptrScan      ) delete m_ptrScan;
+    //
     if ( m_ptrRotate    ) delete m_ptrRotate;
     if ( m_ptrZoomIn    ) delete m_ptrZoomIn;
     if ( m_ptrZoomOut   ) delete m_ptrZoomOut;
     if ( m_ptrZoom_1_1  ) delete m_ptrZoom_1_1;
     //
-    if ( m_ptrWidthBox  ) delete  m_ptrWidthBox;
+    if ( m_ptrCrop      ) delete m_ptrCrop;
+    //
+    if ( m_ptrWidthLabel) delete m_ptrWidthLabel;
+    if ( m_ptrWidthBox  ) delete m_ptrWidthBox;
+    //
     if ( m_SpaceLbl     ) delete m_SpaceLbl;
     if ( m_Proportional ) delete m_Proportional;
-    if ( m_ptrHeightBox ) delete  m_ptrHeightBox;
-    if ( m_pResize      ) delete  m_pResize;
+    //
+    if ( m_ptrHeightLabel) delete m_ptrHeightLabel;
+    if ( m_ptrHeightBox ) delete m_ptrHeightBox;
+    //
+    if ( m_pResize      ) delete m_pResize;
     //
     if ( m_ptrSave      ) delete m_ptrSave;
     if ( m_ptrExit      ) delete m_ptrExit;
+    //
     if ( m_ptrToolBar   ) delete m_ptrToolBar;
     //
     if (m_ptrImage      ) delete m_ptrImage;
+    //
     //if ( m_ptrScrollArea) delete m_ptrScrollArea;
-    //if ( m_ptrImageLabel) delete m_ptrImageLabel;
+    if ( m_ptrImageLabel) delete m_ptrImageLabel;
+    //
+    if (m_ptrScanProcess)
+    {
+        delete m_ptrScanProcess;
+        m_ptrScanProcess= NULL;
+    };
 
 }
 
@@ -169,29 +188,6 @@ void DlgScanImage::makeToolBar ()
     //m_ptrRotate    ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_O));
     m_ptrRotate       ->setStatusTip(tr("Rotate image on defined angle"));
     //
-    /*
-// make the dropdown toolbutton and the associated menu
-QToolBar *ptbar = new QToolBar(...);
-QToolButton *ptbut = new QToolButton( ptbar );
-
-QMenu *pmenu = new QMenu( ptbut );
-ptbut->setMenu( pmenu );
-ptbut->setPopupMode( QToolButton::MenuButtonPopup );
-
-// now make the actions
-QAction *pact1 = new QAction( ...
-QAction *pact2 = new QAction( ...
-...
-
-// add the actions to the menu
-pmenu->addAction( pact1 );
-pmenu->addAction( pact2 );
-...
-
-// make one of the actions the default, otherwise only a small triangle is shown
-ptbar->setDefaultAction( pact2 );
-    */
-
     m_ptrZoom       = new QToolButton();
     m_ptrZoom->setIcon(QIcon(":/images/images/zoom_in.png"));
     QMenu*  pmenu   = new QMenu( m_ptrZoom );
@@ -268,13 +264,7 @@ ptbar->setDefaultAction( pact2 );
     m_ptrToolBar   ->addSeparator();
     //
     m_ptrToolBar   ->addWidget(m_ptrZoom);
-/*
-    m_ptrToolBar   ->addAction(m_ptrZoomIn);
-    m_ptrToolBar   ->addSeparator();
-    m_ptrToolBar   ->addAction(m_ptrZoomOut);
-    m_ptrToolBar   ->addSeparator();
-    m_ptrToolBar   ->addAction(m_ptrZoom_1_1);
-*/
+    //
     m_ptrToolBar   ->addSeparator();
     m_ptrToolBar   ->addAction(m_ptrCrop);
     m_ptrToolBar   ->addSeparator();
@@ -309,42 +299,35 @@ ptbar->setDefaultAction( pact2 );
     layout->addWidget(m_ptrScrollArea,Qt::AlignBottom);
 }
 
-void DlgScanImage::debugOpen ()
+void DlgScanImage::openImage ()
 {
-/*
-    QString fileName = QFileDialog::getOpenFileName(this,
-                                    tr("Open File"), QDir::currentPath());
-*/
-    //this is DEBUG code
-    //const QString fileName = "/home/alex/Fun/Autum/darktable_exported/img_test.jpg";
-    //m_ptrImage = new QPixmap(fileName);
     m_ptrImage = new QPixmap(m_strScanFileName);
-/*
-    if (!fileName.isEmpty())
+    //
+    if (m_ptrImage->isNull())
     {
-*/
-//        QImage image(fileName);
-        if (m_ptrImage->isNull())
-        {
-            QMessageBox::information(this, tr("Image Viewer"),
+        QMessageBox::information(this, tr("Image Viewer"),
                                      tr("Cannot load %1.").arg(m_strScanFileName));
-            return;
-        }
-
-        m_ptrImageLabel->setPixmap(*m_ptrImage);
-        m_dscaleFactor = 1.0;
-
-        m_ptrWidthBox->setMaximum(m_ptrImage->width());
-        m_ptrWidthBox->setValue(m_ptrImage->width());
-        //
-        m_d_WH_Ratio = (double) m_ptrImage->width() / (double) m_ptrImage->height();
-        //
-        m_ptrHeightBox->setMaximum(m_ptrImage->height());
-        m_ptrHeightBox->setValue(m_ptrImage->height());
-        //
-        m_ptrImageLabel->adjustSize();
-        //
-        m_bIgnoreResize = false;
+        m_ptrSave ->setEnabled(false);
+        return;
+    };
+    //
+    TmpFileCleaner::getInstance().deleteFile(m_strScanFileName);
+    m_strScanFileName="";
+    //
+    m_ptrImageLabel->setPixmap(*m_ptrImage);
+    m_dscaleFactor = 1.0;
+    //
+    m_ptrWidthBox->setMaximum(m_ptrImage->width());
+    m_ptrWidthBox->setValue(m_ptrImage->width());
+    //
+    m_d_WH_Ratio = (double) m_ptrImage->width() / (double) m_ptrImage->height();
+    //
+    m_ptrHeightBox->setMaximum(m_ptrImage->height());
+    m_ptrHeightBox->setValue(m_ptrImage->height());
+    //
+    m_ptrImageLabel->adjustSize();
+    //
+    m_bIgnoreResize = false;
 }
 
 void DlgScanImage::setLinks ()
@@ -370,9 +353,9 @@ void DlgScanImage::setLinks ()
     QObject::connect(m_ptrImageLabel,   SIGNAL(CropAllowed(bool)),  this, SLOT(onCropAllowed(bool)  ));
 }
 
-bool DlgScanImage::prepareRawScanCmd( QString& str_raw_command )
+bool DlgScanImage::prepareRawScanCmd( QString& str_raw_command, bool& b_redefine_std_out )
 {
-    const QString str_replacement = "%file";
+    const QString str_p_file = "%file";
     //
     const int i_current_index = m_ptrScanMode->currentIndex();
     //
@@ -380,13 +363,26 @@ bool DlgScanImage::prepareRawScanCmd( QString& str_raw_command )
         return false;
     //
     str_raw_command = m_strScanConfigs[m_ptrScanMode->currentIndex()];
+    const int i_redirect_index = str_raw_command.indexOf(">", 0, Qt::CaseInsensitive);
     //
-    if ( str_raw_command.contains("%file") == false )
+    if ( -1 == i_redirect_index )
+    {
+        b_redefine_std_out = false; //probably it is something like "......output=%file.tiff"
+    }else
+    {
+        b_redefine_std_out = true;  //probably it is something like "...... > file.tiff"
+        //
+        str_raw_command.replace(">", " ");
+    };
+    //
+    const int i_index_of_file       = str_raw_command.indexOf(str_p_file+".", 0, Qt::CaseInsensitive);
+    //
+    if ( -1 == i_index_of_file )
     {
         QString str_message = "Command ";
         str_message += str_raw_command;
         str_message += " has to contain construction '";
-        str_message += str_replacement;
+        str_message += str_p_file;
         str_message += "'";
         //
         QMessageBox::critical(NULL,
@@ -397,6 +393,19 @@ bool DlgScanImage::prepareRawScanCmd( QString& str_raw_command )
                                             );
         return false;
     };
+    //extract extention
+    const int i_index_of_point = str_raw_command.indexOf(".", i_index_of_file);
+    const int i_index_of_space = str_raw_command.indexOf(" ", i_index_of_point);
+    //
+    QString str_ext;
+
+    if (-1 != i_index_of_space)
+    {
+        str_ext = str_raw_command.mid(i_index_of_point+1, (i_index_of_space - i_index_of_point -1 ) );
+    }else
+        str_ext = str_raw_command.mid(i_index_of_point+1);
+    //
+    str_ext = str_ext.trimmed();
     //
     // create scanner target path
     // get temporary directory or current directory
@@ -416,18 +425,24 @@ bool DlgScanImage::prepareRawScanCmd( QString& str_raw_command )
     const QTime c_time = QTime::currentTime();
     const QString m_str_timestamp = c_time.toString("hh_mm_ss");
     //
-    m_strScanFileName = QString("%1scan_%2").arg( str_target_path ).arg( m_str_timestamp );
+    m_strScanFileName = QString("%1scan_%2.%3").arg( str_target_path ).arg( m_str_timestamp).arg(str_ext);
     //
-    str_raw_command.replace(str_replacement, m_strScanFileName);
+    const QString str_replacement = str_p_file + "." + str_ext;
+    if (false == b_redefine_std_out)
+        str_raw_command.replace(str_replacement, m_strScanFileName);
+    else
+        str_raw_command.remove(i_index_of_file, ( str_raw_command.length() - i_index_of_file + 1) );
+    //
     return true;
 }
 
 void DlgScanImage::onScan ()
 {
-/*
+
     QString str_raw_command;
+    bool b_redefine_stdout = false;
     //
-    if ( prepareRawScanCmd(str_raw_command) == false )
+    if ( prepareRawScanCmd(str_raw_command, b_redefine_stdout) == false )
         return;
     //
     QStringList str_split_list = str_raw_command.split(" ",QString::SkipEmptyParts);
@@ -436,22 +451,23 @@ void DlgScanImage::onScan ()
     str_split_list.removeAt(0);
     QStringList arguments = str_split_list;
     //
-    */
-    //scanimage --device-name=brother4 -p  --resolution 150 --mode=gray>%file.pgm
-    QString program = "scanimage";
-    QStringList arguments;
-    arguments<<"--device-name=brother4";
-    arguments<<"-p";
-    arguments<<"--resolution=150";
-    arguments<<"--mode=gray";
-    m_strScanFileName = "/home/alex/WindowsShare/o.pgm";
+    if (m_ptrScanProcess)
+    {
+        delete m_ptrScanProcess;
+        m_ptrScanProcess= NULL;
+    };
     //
     m_ptrScanProcess = new QProcess(this);
-    m_ptrScanProcess->setStandardOutputFile(m_strScanFileName);
-
+    //
+    if (b_redefine_stdout)
+        m_ptrScanProcess->setStandardOutputFile(m_strScanFileName);
     //
     QObject::connect(m_ptrScanProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT( onScanError    ( QProcess::ProcessError)  ));
     QObject::connect(m_ptrScanProcess, SIGNAL(finished(int)),                 this, SLOT( onScanFinished (int)                      ));
+    //
+    this->setCursor(Qt::WaitCursor);
+    //
+    enableInterface(false, true);
     //
     m_ptrScanProcess->start(program, arguments);
     //
@@ -460,7 +476,8 @@ void DlgScanImage::onScan ()
 
 void DlgScanImage::onScanError     ( QProcess::ProcessError err )
 {
-    QMessageBox box;
+    enableInterface(true, true);
+    //
     QString     str_msg;
     //
     switch(err)
@@ -485,16 +502,45 @@ void DlgScanImage::onScanError     ( QProcess::ProcessError err )
         break;
     };
     //
-    box.setText(str_msg);
-    box.exec();
-
+    QMessageBox::critical(NULL, "Error!", str_msg, QMessageBox::Ok, QMessageBox::Ok);
 }
 
 void DlgScanImage::onScanFinished  (int i_res)
 {
-    debugOpen();
-    delete m_ptrScanProcess;
-    m_ptrScanProcess = NULL;
+    enableInterface(true, true);
+    //
+    if (0 == i_res)
+        openImage();
+    else
+    {
+        QMessageBox::critical(NULL, "Error!", "Scan finished unsuccessfully, no image has been generated.", QMessageBox::Ok, QMessageBox::Ok);
+        m_ptrSave ->setEnabled(false);
+    };
+}
+
+void DlgScanImage::enableInterface (bool b_enable, bool b_change_mouse_cursor)
+{
+    if (b_change_mouse_cursor)
+    {
+        if (b_enable)
+            this->setCursor(Qt::ArrowCursor);
+        else
+            this->setCursor(Qt::WaitCursor);
+    };
+    //
+    m_ptrScan       ->setEnabled(b_enable);
+    m_ptrScanMode   ->setEnabled(b_enable);
+    m_ptrRotate     ->setEnabled(b_enable);
+    m_ptrZoom       ->setEnabled(b_enable);
+    m_ptrZoomIn     ->setEnabled(b_enable);
+    m_ptrZoomOut    ->setEnabled(b_enable);
+    m_ptrZoom_1_1   ->setEnabled(b_enable);
+    //m_ptrCrop       ->setEnabled(b_enable);
+    m_ptrWidthBox   ->setEnabled(b_enable);
+    m_Proportional  ->setEnabled(b_enable);
+    m_ptrHeightBox  ->setEnabled(b_enable);
+    m_ptrSave       ->setEnabled(b_enable);
+    //m_ptrExit       ->setEnabled(b_enable);
 }
 
 void DlgScanImage::onCrop ()
@@ -630,10 +676,10 @@ void DlgScanImage::onSave()
     bool b_save =  m_ptrImage->save(&buffer, dlg.getAttachmentExt().toStdString().c_str(), dlg.getImageQuality());
     m_strImageName = dlg.getAttachmentName();
     //
-    Q_ASSERT (b_save);
-    //
     if (false == b_save)
     {
+        Q_ASSERT (b_save);
+        //
         QString str_message = "Can not save attachment '";
         str_message += m_strImageName;
         str_message += "' in ";
@@ -645,11 +691,12 @@ void DlgScanImage::onSave()
                                   str_message,
                                   QMessageBox::Ok,
                                   QMessageBox::Ok
-                                            );
+                             );
         return;
     };
     //
-    this->accepted();
+    this->accept();
+    //this->close();
 }
 
 void DlgScanImage::onZoomIn   ()

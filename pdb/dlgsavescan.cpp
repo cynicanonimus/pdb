@@ -80,5 +80,7 @@ void DlgSaveScan::onSave()
         return;
     };
     //
+    m_strAttachmentName = m_strAttachmentName + "." + m_strExtention;
+    //
     this->accept();
 }

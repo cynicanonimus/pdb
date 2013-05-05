@@ -92,3 +92,5 @@ Date 		CommitID		Changes
 03.05.2013 	03.05.2013-1		Finish scanner settings in cofiguration program.
 --------------------------------------------------------------------------------------------------------
 05.05.2013	05.05.2013-1		Add check correctness of scanner configuration
+05.05.2013      05.05.2013-2		Scan documents implemented in the pdb completely.
+--------------------------------------------------------------------------------------------------------

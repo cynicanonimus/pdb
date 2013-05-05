@@ -213,11 +213,28 @@ void  MyTree::onDirectScan ()
     //
     if (dlg.exec() == QDialog::Accepted)
     {
-
        //make new  attachment here
+        TreeLeaf* ptr_actual_item =  (TreeLeaf*) this->currentItem();
+        //
+        if (NULL == ptr_actual_item)
+            return;
+        //
+        Attachment* ptr_attachment = new Attachment(ptr_actual_item, dlg.getImageName(), dlg.getImage(), 0, false);
+        //
+        bool b_res = false;
+        if (-1 != ptr_attachment->getID())
+        {
+            ptr_actual_item->addAttachment(ptr_attachment);
+            b_res = true;
+        }
+        else
+        {
+            delete ptr_attachment;
+        };
+        //
+        leafAttachmentUpdated (ptr_actual_item, b_res, dlg.getImageName());
     };
     //
-
     return;
 }
 
