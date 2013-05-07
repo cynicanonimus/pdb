@@ -185,9 +185,6 @@ void Attachment::insert_new_attacment ()
 {
     if (CryptoSupport::NO_ENCRYPT != m_iCryptType)
     {
-        //QSettings settings( g_strCOMPANY, g_str_CNF_APP_NAME );
-        //const unsigned int ui_default_encrypt_method = settings.value(g_str_SEC_TEC_CODE).value<unsigned int>();
-        //
         QByteArray encrypted_aray;
         CryptoSupport crypto;
         bool b_encrypt = crypto.encrypt_bytearray( (CryptoSupport::SymmetricMethods) m_iCryptType, ServicesCfg::getInstance().getPassword(), m_ByteArray, encrypted_aray);

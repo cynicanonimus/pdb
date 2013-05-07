@@ -41,6 +41,11 @@ private slots:
     void onSave();
 
 private:
+    void            fillExtCombobox     ();
+    void            setExtComboboxSel   ();
+    void            saveExtComboboxSel  ();
+
+private:
     Ui::DlgSaveScan *ui;
 
 private:

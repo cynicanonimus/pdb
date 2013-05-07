@@ -89,10 +89,15 @@ const static QString  g_str_SEC_SCHRED_CMD  =   "security/schred_cmd";
 //
 const static QString  g_str_SEC_MARK_CRYPT  =   "security/mark_crypt";
 //------------------------------------------------------------------------
-const static QString  g_str_SCANNER_ENABLE  =   "scanner/scanner_enable";
-const static QString  g_str_SCANNER_SETTINGS=   "scanner_settings";
+const static QString  g_str_SCANNER_ENABLE     = "scanner/scanner_enable";
+//name of the settings array
+const static QString  g_str_SCANNER_SETTINGS   = "scanner_settings";
+//name of the cfg-names column
 const static QString  g_str_SCANNER_COFIG_NAME = "config_name";
+//name of the cfg-commands column
 const static QString  g_str_SCANNER_COFIG_STR  = "config_string";
+//name of default grafic-extension for saving images
+const static QString  g_str_SCANNER_DEFAULT_EXT= "scanner/img_ext";
 //
 
 enum ExportFormat
