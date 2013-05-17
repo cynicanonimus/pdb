@@ -95,3 +95,5 @@ Date 		CommitID		Changes
 05.05.2013      05.05.2013-2		Scan documents implemented in the pdb completely.
 --------------------------------------------------------------------------------------------------------
 07.05.2013      07.05.2013-1		Implement default extension for the scanned image
+--------------------------------------------------------------------------------------------------------
+17.05.2013	17.05.2013-1		Implement Undo and Redo for the scanned images

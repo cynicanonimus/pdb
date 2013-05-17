@@ -62,11 +62,20 @@ private:
     //
     void                enableInterface (bool b_enable, bool b_change_mouse_cursor);
     //
+    void                eraseUndoRedoBuffer ();
+    void                trimUndoRedoBuffer ();
+    //
+    void                addNewImage     (QPixmap* ptr_image, bool b_erase_buffer);
+    void                setCurrentImage (double d_scale_factor = -1.);
+    void                setUndoRedoAvailable ();
+    //
 private slots:
 
     void        onRotate    ();
     //
     void        onScan      ();
+    void        onUndo      ();
+    void        onRedo      ();
     //
     void        onZoomIn    ();
     void        onZoomOut   ();
@@ -87,58 +96,62 @@ private slots:
 
 private:
     //
-    QLabel*         m_ptrScanLabel;
-    QComboBox*      m_ptrScanMode;
+    QLabel*             m_ptrScanLabel;
+    QComboBox*          m_ptrScanMode;
     //
-    QVector<QString> m_strNames;
-    QVector<QString> m_strScanConfigs;
+    QVector<QString>    m_strNames;
+    QVector<QString>    m_strScanConfigs;
     //
-    QProcess*       m_ptrScanProcess;
+    QProcess*           m_ptrScanProcess;
     //
-    QAction*        m_ptrScan;
+    QAction*            m_ptrScan;
     //
-    QAction*        m_ptrRotate;
+    QAction*            m_ptrUndo;
+    QAction*            m_ptrRedo;
     //
-    QToolButton*    m_ptrZoom;
-    QAction*        m_ptrZoomIn;
-    QAction*        m_ptrZoomOut;
-    QAction*        m_ptrZoom_1_1;
+    QAction*            m_ptrRotate;
     //
-    QAction*        m_ptrCrop;
+    QToolButton*        m_ptrZoom;
+    QAction*            m_ptrZoomIn;
+    QAction*            m_ptrZoomOut;
+    QAction*            m_ptrZoom_1_1;
     //
-    QLabel*         m_ptrWidthLabel;
-    QSpinBox*       m_ptrWidthBox;
+    QAction*            m_ptrCrop;
     //
-    QLabel*         m_SpaceLbl;
-    QCheckBox*      m_Proportional;
+    QLabel*             m_ptrWidthLabel;
+    QSpinBox*           m_ptrWidthBox;
     //
-    QLabel*         m_ptrHeightLabel;
-    QSpinBox*       m_ptrHeightBox;
+    QLabel*             m_SpaceLbl;
+    QCheckBox*          m_Proportional;
     //
-    bool            m_bIgnoreResize;
+    QLabel*             m_ptrHeightLabel;
+    QSpinBox*           m_ptrHeightBox;
     //
-    double          m_d_WH_Ratio;
+    bool                m_bIgnoreResize;
     //
-    QPushButton*    m_pResize;
+    double              m_d_WH_Ratio;
     //
-    QAction*        m_ptrSave;
-    QAction*        m_ptrExit;
+    QPushButton*        m_pResize;
     //
-    // draw_params.png
+    QAction*            m_ptrSave;
+    QAction*            m_ptrExit;
     //
-    QToolBar*       m_ptrToolBar;
     //
-    QScrollArea*    m_ptrScrollArea;
-    ImageLabel*     m_ptrImageLabel;
+    QToolBar*           m_ptrToolBar;
     //
-    QPixmap*        m_ptrImage;
-    QByteArray      m_baImageAsArray;
-    QString         m_strImageName;
-    QString         m_strScanFileName;
+    QScrollArea*        m_ptrScrollArea;
+    ImageLabel*         m_ptrImageLabel;
     //
-    double          m_dscaleFactor;
+    int                 m_iCurrentActiveImageIndex;
+    QVector<QPixmap*>   m_vActionsBuffer;
     //
-    Ui::DlgScanImage *ui;
+    QByteArray          m_baImageAsArray;
+    QString             m_strImageName;
+    QString             m_strScanFileName;
+    //
+    double              m_dscaleFactor;
+    //
+    Ui::DlgScanImage*   ui;
 };
 
 #endif // DLGSCANIMAGE_H

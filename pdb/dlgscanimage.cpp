@@ -54,6 +54,9 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     m_ptrScanMode   = NULL;
     m_ptrScan       = NULL;
     //
+    m_ptrUndo       = NULL;
+    m_ptrRedo       = NULL;
+    //
     m_ptrRotate     = NULL;
     m_ptrCrop       = NULL;
     //
@@ -72,11 +75,12 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     m_ptrScrollArea = NULL;
     m_ptrImageLabel = NULL;
     //
-    m_ptrImage      = NULL;
-    //
     m_bIgnoreResize = true;
     //
     m_ptrScanProcess = NULL;
+    //
+    m_iCurrentActiveImageIndex = -1;
+    m_dscaleFactor = 1.;
     //
     readScanSettings();
     makeToolBar();
@@ -85,7 +89,7 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     const int i_screen_width = QApplication::desktop()->width();
     const int i_screen_height = QApplication::desktop()->height();
     //
-    this->resize(900, i_screen_height);
+    this->resize(1000, i_screen_height);
     this->setMinimumWidth(900);
     //
     //int img_widh    = m_ptrImageLabel->width();
@@ -129,9 +133,6 @@ DlgScanImage::~DlgScanImage()
     //
     if ( m_ptrToolBar   ) delete m_ptrToolBar;
     //
-    if (m_ptrImage      ) delete m_ptrImage;
-    //
-    //if ( m_ptrScrollArea) delete m_ptrScrollArea;
     if ( m_ptrImageLabel) delete m_ptrImageLabel;
     //
     if (m_ptrScanProcess)
@@ -139,7 +140,25 @@ DlgScanImage::~DlgScanImage()
         delete m_ptrScanProcess;
         m_ptrScanProcess= NULL;
     };
+    //
+    eraseUndoRedoBuffer();
+}
 
+void DlgScanImage::eraseUndoRedoBuffer ()
+{
+    m_iCurrentActiveImageIndex = -1;
+    //
+    QVector<QPixmap*>::const_iterator itr = m_vActionsBuffer.begin();
+    //
+    for(; itr != m_vActionsBuffer.end(); ++itr)
+    {
+        delete (*itr);
+    };
+    //
+    m_vActionsBuffer.erase( m_vActionsBuffer.begin(), m_vActionsBuffer.end() );
+    //
+    setUndoRedoAvailable();
+    //
 }
 
 void DlgScanImage::readScanSettings()
@@ -181,6 +200,20 @@ void DlgScanImage::makeToolBar ()
     m_ptrScan       ->setIcon(QIcon(":/images/images/scanner.png"));
     //m_ptrDirectScan    ->setShortcut(QKeySequence (Qt::CTRL +Qt::Key_O));
     m_ptrScan       ->setStatusTip(tr("Scan new document with selected scanner settings"));
+    //
+    m_ptrUndo      = new QAction(tr("Undo"), this);
+    m_ptrUndo      ->setIconVisibleInMenu(true);
+    m_ptrUndo      ->setIcon(QIcon(":/images/images/undo.png"));
+    //m_ptrUndo      ->setShortcut(QKeySequence (Qt::CTRL + Qt::Key_Z));
+    m_ptrUndo      ->setStatusTip(tr("Undo last action"));
+    m_ptrUndo      ->setEnabled(false);
+    //
+    m_ptrRedo      = new QAction(tr("Redo"), this);
+    m_ptrRedo      ->setIconVisibleInMenu(true);
+    m_ptrRedo      ->setIcon(QIcon(":/images/images/redo.png"));
+    //m_ptrRedo      ->setShortcut(QKeySequence ("Ctrl+Shift+Z") );
+    m_ptrRedo      ->setStatusTip(tr("Redo last action"));
+    m_ptrRedo      ->setEnabled(false);
     //
     m_ptrRotate       = new QAction(tr("Rotate"), this);
     m_ptrRotate       ->setIconVisibleInMenu(true);
@@ -260,6 +293,10 @@ void DlgScanImage::makeToolBar ()
     m_ptrToolBar   ->addSeparator();
     m_ptrToolBar   ->addAction(m_ptrScan);
     m_ptrToolBar   ->addSeparator();
+    m_ptrToolBar   ->addAction(m_ptrUndo);
+    m_ptrToolBar   ->addSeparator();
+    m_ptrToolBar   ->addAction(m_ptrRedo);
+    m_ptrToolBar   ->addSeparator();
     m_ptrToolBar   ->addAction(m_ptrRotate);
     m_ptrToolBar   ->addSeparator();
     //
@@ -299,11 +336,100 @@ void DlgScanImage::makeToolBar ()
     layout->addWidget(m_ptrScrollArea,Qt::AlignBottom);
 }
 
+void DlgScanImage::addNewImage (QPixmap* ptr_image, bool b_erase_buffer)
+{
+    if (b_erase_buffer)
+        eraseUndoRedoBuffer();
+    //
+    if (NULL == ptr_image)
+        return;
+    //
+    m_vActionsBuffer.push_front(ptr_image);
+    //
+    m_iCurrentActiveImageIndex = 0;
+    //
+    setCurrentImage(1.);
+    //
+    if (m_vActionsBuffer.size() > 1)
+        m_ptrUndo->setEnabled(true);
+    else
+        m_ptrUndo->setEnabled(false);
+}
+
+void DlgScanImage::trimUndoRedoBuffer ()
+{
+    if (m_iCurrentActiveImageIndex <= 0)
+        return; //nothing to do in this case.
+    //
+    // remove all element from 0 to current.
+    //
+    //
+    //clear memory
+    //
+    for (int i = 0; i < m_iCurrentActiveImageIndex; ++i)
+    {
+        delete m_vActionsBuffer[i];
+    };
+    //
+    //remove this elements from vector
+    //
+    m_vActionsBuffer.erase(m_vActionsBuffer.begin(), (m_vActionsBuffer.begin() + m_iCurrentActiveImageIndex - 1));
+    //
+    //push pointer on the head
+    //
+    m_iCurrentActiveImageIndex = 0;
+}
+
+void DlgScanImage::setCurrentImage (double d_scale_factor)
+{
+    if ( (m_iCurrentActiveImageIndex < 0) || ( m_iCurrentActiveImageIndex > (m_vActionsBuffer.size()-1) ) )
+    {
+        Q_ASSERT(FALSE);
+        return;
+    }
+    //
+    bool b_resize = false;
+    //
+    if (d_scale_factor > 0) // != -1
+    {
+        b_resize = (m_dscaleFactor != d_scale_factor);
+        //
+        if (b_resize)
+        {
+            m_dscaleFactor = d_scale_factor;
+        };
+    };
+    //
+    QPixmap* ptr_image = m_vActionsBuffer[m_iCurrentActiveImageIndex];
+    //
+    m_ptrImageLabel->setPixmap(*ptr_image);
+    //
+    m_bIgnoreResize = true;
+    m_ptrWidthBox->setMaximum(ptr_image->width());
+    m_ptrWidthBox->setValue(ptr_image->width());
+    //
+    m_d_WH_Ratio = (double) ptr_image->width() / (double) ptr_image->height();
+    //
+    m_bIgnoreResize = true;
+    m_ptrHeightBox->setMaximum(ptr_image->height());
+    m_ptrHeightBox->setValue(ptr_image->height());
+    //
+    m_ptrImageLabel->adjustSize();
+    //
+    if (b_resize)
+        scaleImage(m_dscaleFactor);
+    //
+    m_bIgnoreResize = false;
+    //
+    setUndoRedoAvailable();
+}
+
 void DlgScanImage::openImage ()
 {
-    m_ptrImage = new QPixmap(m_strScanFileName);
     //
-    if (m_ptrImage->isNull())
+    QPixmap* ptr_image = new QPixmap(m_strScanFileName);
+    //
+    if (ptr_image->isNull())
     {
         QMessageBox::information(this, tr("Image Viewer"),
                                      tr("Cannot load %1.").arg(m_strScanFileName));
@@ -314,18 +440,21 @@ void DlgScanImage::openImage ()
     TmpFileCleaner::getInstance().deleteFile(m_strScanFileName);
     m_strScanFileName="";
     //
-    m_ptrImageLabel->setPixmap(*m_ptrImage);
+    addNewImage(ptr_image, true);
+/*
+    m_ptrImageLabel->setPixmap(*ptr_image);
     m_dscaleFactor = 1.0;
     //
-    m_ptrWidthBox->setMaximum(m_ptrImage->width());
-    m_ptrWidthBox->setValue(m_ptrImage->width());
+    m_ptrWidthBox->setMaximum(ptr_image->width());
+    m_ptrWidthBox->setValue(ptr_image->width());
     //
-    m_d_WH_Ratio = (double) m_ptrImage->width() / (double) m_ptrImage->height();
+    m_d_WH_Ratio = (double) ptr_image->width() / (double) ptr_image->height();
     //
-    m_ptrHeightBox->setMaximum(m_ptrImage->height());
-    m_ptrHeightBox->setValue(m_ptrImage->height());
+    m_ptrHeightBox->setMaximum(ptr_image->height());
+    m_ptrHeightBox->setValue(ptr_image->height());
     //
     m_ptrImageLabel->adjustSize();
+*/
     //
     m_bIgnoreResize = false;
 }
@@ -335,6 +464,9 @@ void DlgScanImage::setLinks ()
     QObject::connect(m_ptrExit,         SIGNAL(triggered()),        this, SLOT(reject()             ));
     //
     QObject::connect(m_ptrScan,         SIGNAL(triggered()),        this, SLOT(onScan()             ));
+    //
+    QObject::connect(m_ptrUndo,         SIGNAL(triggered()),        this, SLOT(onUndo()             ));
+    QObject::connect(m_ptrRedo,         SIGNAL(triggered()),        this, SLOT(onRedo()             ));
     //
     QObject::connect(m_ptrRotate,       SIGNAL(triggered()),        this, SLOT(onRotate()           ));
     //
@@ -351,6 +483,54 @@ void DlgScanImage::setLinks ()
     QObject::connect(m_ptrSave,         SIGNAL(triggered()),        this, SLOT(onSave()             ));
     //
     QObject::connect(m_ptrImageLabel,   SIGNAL(CropAllowed(bool)),  this, SLOT(onCropAllowed(bool)  ));
+}
+
+void DlgScanImage::onUndo ()
+{
+    if (m_iCurrentActiveImageIndex >= (m_vActionsBuffer.size() - 1) )
+    {
+        Q_ASSERT(FALSE);
+        return;
+    };
+    //
+    m_iCurrentActiveImageIndex++;
+    setCurrentImage(-1.);
+    //
+    setUndoRedoAvailable();
+}
+
+void DlgScanImage::onRedo ()
+{
+    if (m_iCurrentActiveImageIndex == 0 )
+    {
+        Q_ASSERT(FALSE);
+        return;
+    };
+    //
+    m_iCurrentActiveImageIndex--;
+    setCurrentImage(-1.);
+    //
+    setUndoRedoAvailable();
+}
+
+
+void DlgScanImage::setUndoRedoAvailable ()
+{
+    if( (m_vActionsBuffer.size() > 1) && (m_iCurrentActiveImageIndex < m_vActionsBuffer.size() - 1) )
+    {
+        m_ptrUndo->setEnabled(true);
+    }else
+    {
+        m_ptrUndo->setEnabled(false);
+    };
+    //
+    if(m_iCurrentActiveImageIndex > 0 )
+    {
+        m_ptrRedo->setEnabled(true);
+    }else
+    {
+        m_ptrRedo->setEnabled(false);
+    };
 }
 
 bool DlgScanImage::prepareRawScanCmd( QString& str_raw_command, bool& b_redefine_std_out )
@@ -541,6 +721,18 @@ void DlgScanImage::enableInterface (bool b_enable, bool b_change_mouse_cursor)
     m_ptrHeightBox  ->setEnabled(b_enable);
     m_ptrSave       ->setEnabled(b_enable);
     //m_ptrExit       ->setEnabled(b_enable);
+    //
+    if (false == b_enable)
+    {
+        if (m_ptrUndo)
+            m_ptrUndo->setEnabled(false);
+        //
+        if (m_ptrRedo)
+            m_ptrRedo->setEnabled(false);
+    }else
+    {
+        setUndoRedoAvailable();
+    };
 }
 
 void DlgScanImage::onCrop ()
@@ -559,9 +751,15 @@ void DlgScanImage::onCrop ()
     copy_rect.setTop   ( copy_rect.top()   / m_dscaleFactor );
     copy_rect.setBottom( copy_rect.bottom()/ m_dscaleFactor );
     //
-    QPixmap* ptr_tmp = new QPixmap (m_ptrImage->copy(copy_rect));
-    delete m_ptrImage;
-    m_ptrImage = ptr_tmp;
+    trimUndoRedoBuffer();
+    //
+    QPixmap* ptr_actual_img = m_vActionsBuffer[m_iCurrentActiveImageIndex];
+    QPixmap* ptr_tmp = new QPixmap (ptr_actual_img->copy(copy_rect));
+    //
+    addNewImage(ptr_tmp, false);
+    //delete m_ptrImage;
+    //m_ptrImage = ptr_tmp;
+    /*
     m_ptrImageLabel->setPixmap(*m_ptrImage);
     m_dscaleFactor = 1.0;
     m_ptrImageLabel->adjustSize();
@@ -572,6 +770,7 @@ void DlgScanImage::onCrop ()
     m_bIgnoreResize = true;
     m_ptrWidthBox->setMaximum(m_ptrImage->width());
     m_ptrWidthBox->setValue(m_ptrImage->width());
+    */
 }
 
 void DlgScanImage::onCropAllowed(bool b)
@@ -596,12 +795,17 @@ void DlgScanImage::onRotate ()
     QTransform transform;
     QTransform trans = transform.rotate(i_angle);
     //
-    QPixmap* ptr_pixmap_tmp = new QPixmap(m_ptrImage->transformed(trans));
+    QPixmap* ptr_actual_img = m_vActionsBuffer[m_iCurrentActiveImageIndex];
+    QPixmap* ptr_tmp_image = new QPixmap(ptr_actual_img->transformed(trans));
+    //
+    addNewImage(ptr_tmp_image, false);
+/*
     delete m_ptrImage;
     m_ptrImage = ptr_pixmap_tmp;
     m_ptrImageLabel->setPixmap(*m_ptrImage);
     m_ptrImageLabel->adjustSize();
     m_dscaleFactor = 1.;
+*/
 }
 
 void DlgScanImage::onResize()
@@ -611,7 +815,8 @@ void DlgScanImage::onResize()
     m_ptrWidthBox->setMaximum( m_ptrWidthBox->value() );
     m_ptrHeightBox->setMaximum( m_ptrHeightBox->value() );
     //
-    QPixmap* ptr_tmp_image = new QPixmap (m_ptrImage->scaled(m_ptrWidthBox->value(), m_ptrHeightBox->value(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+    QPixmap* ptr_actual_img = m_vActionsBuffer[m_iCurrentActiveImageIndex];
+    QPixmap* ptr_tmp_image = new QPixmap (ptr_actual_img->scaled(m_ptrWidthBox->value(), m_ptrHeightBox->value(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
     //
     if (ptr_tmp_image->isNull())
     {
@@ -620,11 +825,14 @@ void DlgScanImage::onResize()
         return;
     };
     //
+    addNewImage(ptr_tmp_image, false);
+/*
     delete m_ptrImage;
     m_ptrImage = ptr_tmp_image;
     m_ptrImageLabel->setPixmap(*m_ptrImage);
     m_ptrImageLabel->adjustSize();
     m_dscaleFactor = 1.;
+*/
 }
 
 void DlgScanImage::onWidthChanged(int i_width)
@@ -673,7 +881,8 @@ void DlgScanImage::onSave()
     QBuffer buffer(&m_baImageAsArray); //( (const char *) ptr_img->bits(), ptr_img->numBytes() );
     buffer.open(QIODevice::WriteOnly);
     //
-    bool b_save =  m_ptrImage->save(&buffer, dlg.getAttachmentExt().toStdString().c_str(), dlg.getImageQuality());
+    QPixmap* ptr_actual_img = m_vActionsBuffer[m_iCurrentActiveImageIndex];
+    bool b_save =  ptr_actual_img->save(&buffer, dlg.getAttachmentExt().toStdString().c_str(), dlg.getImageQuality());
     m_strImageName = dlg.getAttachmentName();
     //
     if (false == b_save)
