@@ -156,7 +156,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //
     statusBar()->showMessage(tr("Ready"));
     //
-    return;
+    m_bReadyToQuit = false;
 }
 
 MainWindow::~MainWindow()
@@ -274,7 +274,8 @@ void MainWindow::conSignalsAndSlotsForTreeMnu ()
     QObject::connect(m_pMainMenu->m_ptrSearchInTree,    SIGNAL(triggered()), this,              SLOT(saveCurrentNodeDescriptor ()   ));
     QObject::connect(m_pMainMenu->m_ptrSearchInTree,    SIGNAL(triggered()), this,              SLOT ( onSearch()                   ));
     QObject::connect(m_pMainMenu->m_ptrBackupDatabase, SIGNAL(triggered()),  this,              SLOT ( onBackupDatabaseNow()        ));
-    QObject::connect(m_pMainMenu->m_ptrExitApp,         SIGNAL(triggered()), this,              SLOT (  close   () ));
+    //QObject::connect(m_pMainMenu->m_ptrExitApp,         SIGNAL(triggered()), this,              SLOT (  close   () ));
+    QObject::connect(m_pMainMenu->m_ptrExitApp,         SIGNAL(triggered()), this,              SLOT (  onCloseApp          () ));
 }
 
 void MainWindow::conSignalsAndSlotsForEditor ()
@@ -663,19 +664,30 @@ void MainWindow::saveCurrentNodeDescriptor ()
         saveTextOfDescription(ptr_actual_item);
 }
 
-void MainWindow::closeEvent(QCloseEvent *e)
+void MainWindow::onCloseApp()
 {
+    if(false == m_bReadyToQuit)
+    {
+        prepareToQuit();
+    };
+    //
+    this->close();
+    qApp->exit();
+}
+
+void MainWindow::prepareToQuit ()
+{
+    if(true == m_bReadyToQuit)
+        return;
+    //
     DatabaseCleaner* ptr_cleaner = new DatabaseCleaner();
     ptr_cleaner->setPriority(QThread::HighPriority);
     AdvThreadPool::getInstance().execute(ptr_cleaner);
     statusBar()->showMessage(tr("DB cleaner...."));
     //
-    AdvThreadPool::getInstance().stop();
-    //
     saveWindowParams ();
     saveCurrentNodeDescriptor ();
     //
-    //setCursor(Qt::BusyCursor);
     statusBar()->showMessage(tr("Save node state..."));
     ui->m_TreeOfNodes->saveExpandStateOfAllTrees();
     statusBar()->showMessage(tr("Save last ID..."));
@@ -683,26 +695,43 @@ void MainWindow::closeEvent(QCloseEvent *e)
     statusBar()->showMessage(tr("Clean temporary files..."));
     TmpFileCleaner::getInstance().clearAll();
     //
-    m_dlgWaiting.show();
-    //
     //mark actual db is not in use now
     ServicesCfg::getInstance().dropInstance();
-    //
-    statusBar()->showMessage(tr("Stop engine...."));
-    //QThreadPool::globalInstance()->waitForDone();
-    //
-    m_dlgWaiting.hide();
-    //
-    statusBar()->showMessage(tr("destroy tunnel..."));
-    m_Tunnel.destroyTunnel();
-    //
     statusBar()->showMessage(tr("Stop logging...."));
     Logger::getInstance().stopLog();
     //
+    AdvThreadPool::getInstance().stop();
+    statusBar()->showMessage(tr("destroy tunnel..."));
+    m_Tunnel.destroyTunnel();
+    //
     //setCursor(Qt::ArrowCursor);
     statusBar()->showMessage(tr("End."));
+    //
+    m_bReadyToQuit = true;
+}
+
+void MainWindow::closeEvent(QCloseEvent *e)
+{
+    if(false == m_bReadyToQuit)
+    {
+        e->ignore();
+        prepareToQuit();
+        this->close();
+    }else
+    {
+        e->accept();
+    };
+    //
+/*
+    m_dlgWaiting.show();
+    //
+    statusBar()->showMessage(tr("Stop engine...."));
+    //
+    m_dlgWaiting.hide();
+    //
     e->accept();
     //
+*/
     exit(0);
 }
 

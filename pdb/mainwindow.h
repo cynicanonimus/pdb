@@ -61,6 +61,7 @@ public slots:
     void onTakeConn                 ();
     void onCheckPassword            (bool);
     void onUpdateLog                (QString);
+    void onCloseApp                 ();
 //    void onCreateChangePassword     ();
     //void onEstablishConnectionToDB(const QString& str_host_name, const QString& str_db_name);
 
@@ -128,6 +129,7 @@ private:
     QLabel*             m_ptrDbInUseLabel;
     //
     QProcess*           m_ptrBackupProcess;
+    bool                m_bReadyToQuit;
     //IconLoader          m_IconLoaderThread;
 private:
     //
@@ -162,6 +164,7 @@ private:
     //
     void enableInterfaceElements        (bool b_enable = true);
     void showInterfaceElements          (bool b_show);
+    void prepareToQuit                  ();
 
     //
 };

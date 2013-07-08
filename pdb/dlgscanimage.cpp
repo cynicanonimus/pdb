@@ -92,11 +92,6 @@ DlgScanImage::DlgScanImage(QWidget *parent) :
     this->resize(1000, i_screen_height);
     this->setMinimumWidth(900);
     //
-    //int img_widh    = m_ptrImageLabel->width();
-    //int img_heigth  = m_ptrImageLabel->height();
-    //
-    //double d_scale_factor = 1./std::max(((double)img_widh/(double)i_screen_width), ((double)img_heigth/(double)i_screen_height));
-    //
     enableInterface(false, false);
     m_ptrScan->setEnabled(true);
     m_ptrScanMode->setEnabled(true);
@@ -158,7 +153,6 @@ void DlgScanImage::eraseUndoRedoBuffer ()
     m_vActionsBuffer.erase( m_vActionsBuffer.begin(), m_vActionsBuffer.end() );
     //
     setUndoRedoAvailable();
-    //
 }
 
 void DlgScanImage::readScanSettings()
