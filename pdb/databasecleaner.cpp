@@ -44,6 +44,9 @@ bool DatabaseCleaner::exec()
         clearAttachments();
     }
     //
+    //
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 1000);
+    //
     return true;
 }
 

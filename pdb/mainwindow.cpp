@@ -681,7 +681,6 @@ void MainWindow::prepareToQuit ()
         return;
     //
     DatabaseCleaner* ptr_cleaner = new DatabaseCleaner();
-    ptr_cleaner->setPriority(QThread::HighPriority);
     AdvThreadPool::getInstance().execute(ptr_cleaner);
     statusBar()->showMessage(tr("DB cleaner...."));
     //
@@ -701,6 +700,15 @@ void MainWindow::prepareToQuit ()
     Logger::getInstance().stopLog();
     //
     AdvThreadPool::getInstance().stop();
+    //sleep(2);
+    //
+    //QMessageBox box;
+    //box.setText(tr("wait!"));
+    //box.exec();
+    //sleep(1);
+    //box.setText(tr("Can not establish connection to database. Check settings."));
+    //box.exec();
+    //
     statusBar()->showMessage(tr("destroy tunnel..."));
     m_Tunnel.destroyTunnel();
     //
@@ -722,16 +730,6 @@ void MainWindow::closeEvent(QCloseEvent *e)
         e->accept();
     };
     //
-/*
-    m_dlgWaiting.show();
-    //
-    statusBar()->showMessage(tr("Stop engine...."));
-    //
-    m_dlgWaiting.hide();
-    //
-    e->accept();
-    //
-*/
     exit(0);
 }
 
