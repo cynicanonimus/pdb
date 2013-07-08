@@ -99,4 +99,5 @@ Date 		CommitID		Changes
 17.05.2013	17.05.2013-1		Implement Undo and Redo for the scanned images
 --------------------------------------------------------------------------------------------------------
 08.07.2013	08.07.2013-1		Implement new thread pool, make correct exit from application.
+08.07.2013	08.07.2013-2		Fix the problem with cut and paste attachments
 --------------------------------------------------------------------------------------------------------

@@ -909,11 +909,10 @@ void MyTable::onReplaceAttachment()
 void MyTable::onCutAttachment ()
 {
     Attachment::AttachmentsList v_attachments;
+    getSelectedAttaches(v_attachments);
     //
     if (v_attachments.size() > 0 )
     {
-        getSelectedAttaches(v_attachments);
-        //
         QString str_msg;
         //
         str_msg=tr("Choose another node and click \"Paste attachment\" or just Ctrl+P");
