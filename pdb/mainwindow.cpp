@@ -723,6 +723,8 @@ void MainWindow::closeEvent(QCloseEvent *e)
     if(false == m_bReadyToQuit)
     {
         e->ignore();
+        this->setWindowFlags(Qt::WindowTitleHint);
+        m_pMainMenu->m_ptrExitApp->setDisabled(true);
         prepareToQuit();
         this->close();
     }else

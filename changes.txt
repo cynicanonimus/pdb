@@ -102,3 +102,4 @@ Date 		CommitID		Changes
 08.07.2013	08.07.2013-2		Fix the problem with cut and paste attachments
 08.07.2013      08.07.2013-3            Use new threadpool
 --------------------------------------------------------------------------------------------------------
+31.07.2013	31.07.2013-1		Make exit buttons unavailable after 1-st click, use new threadpool
