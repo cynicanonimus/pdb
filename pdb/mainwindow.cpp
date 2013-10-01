@@ -146,13 +146,15 @@ MainWindow::MainWindow(QWidget *parent) :
     //
     //initialize node reading
     //
+    ServicesCfg::getInstance().getDataAndCheckInstance();
+    //
     ui->m_TreeOfNodes->init();
     //
     IconLoader* ptr_icon_loader = new IconLoader();
     AdvThreadPool::getInstance().execute(ptr_icon_loader);
     //m_IconLoaderThread.start(QThread::IdlePriority);
     //
-    ServicesCfg::getInstance().getDataAndCheckInstance();
+    //ServicesCfg::getInstance().getDataAndCheckInstance();
     //
     statusBar()->showMessage(tr("Ready"));
     //
